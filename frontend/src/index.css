@@ -1,0 +1,198 @@
+/* ── Google Fonts — must be first @import ────────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+
+@import "tailwindcss";
+
+/* ── Design Tokens ────────────────────────────────────────────────────────── */
+:root {
+  /* Palette */
+  --night-ink:    #0B1320;
+  --slate-core:   #1F2937;
+  --signal-blue:  #3AA0FF;
+  --amber-pulse:  #F2B33D;
+  --rose-alert:   #EA526F;
+  --paper-mist:   #F7F4EF;
+
+  /* Semantic roles */
+  --bg:           var(--paper-mist);
+  --surface:      #FFFFFF;
+  --surface-alt:  #F0EDE8;
+  --border:       rgba(31, 41, 55, 0.10);
+  --border-strong: rgba(31, 41, 55, 0.20);
+  --primary:      var(--signal-blue);
+  --primary-dark: #2888e8;
+  --accent:       var(--amber-pulse);
+  --danger:       var(--rose-alert);
+  --text-primary: var(--night-ink);
+  --text-secondary: #4B5563;
+  --text-muted:   #9CA3AF;
+  --text-on-dark: #F7F4EF;
+
+  /* Dark surface tokens */
+  --dark-bg:      var(--night-ink);
+  --dark-surface: var(--slate-core);
+  --dark-border:  rgba(255, 255, 255, 0.08);
+  --dark-muted:   rgba(255, 255, 255, 0.40);
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px rgba(11,19,32,0.06), 0 1px 2px rgba(11,19,32,0.04);
+  --shadow-md:  0 4px 12px rgba(11,19,32,0.08), 0 2px 4px rgba(11,19,32,0.05);
+  --shadow-lg:  0 12px 32px rgba(11,19,32,0.12), 0 4px 8px rgba(11,19,32,0.06);
+  --shadow-xl:  0 24px 48px rgba(11,19,32,0.16), 0 8px 16px rgba(11,19,32,0.08);
+  --glow-blue:  0 0 24px rgba(58,160,255,0.30);
+  --glow-amber: 0 0 20px rgba(242,179,61,0.30);
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-expo:  cubic-bezier(0.64, 0, 0.78, 0);
+
+  /* Typography */
+  --font-heading: "Space Grotesk", system-ui, sans-serif;
+  --font-body:    "Instrument Sans", system-ui, sans-serif;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Base Reset ───────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ── Typography ───────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+/* ── Grain Texture (subtle, via SVG data URI) ─────────────────────────────── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+#root { position: relative; z-index: 1; }
+
+/* ── Geometric Background Pattern ─────────────────────────────────────────── */
+.bg-pattern {
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(58,160,255,0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(242,179,61,0.05) 0%, transparent 50%),
+    radial-gradient(circle at 60% 10%, rgba(234,82,111,0.04) 0%, transparent 40%);
+}
+
+/* ── Custom Scrollbar ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(31, 41, 55, 0.18);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(31, 41, 55, 0.32); }
+
+/* ── Page Transition (used with framer-motion) ───────────────────────────── */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 280ms var(--ease-out-expo), transform 280ms var(--ease-out-expo);
+}
+
+/* ── Glass Surface ────────────────────────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.60);
+}
+
+.glass-dark {
+  background: rgba(11, 19, 32, 0.80);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Signal Badge (live pulse) ────────────────────────────────────────────── */
+.live-badge::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  margin-right: 6px;
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.75); }
+}
+
+/* ── Shimmer Loader ───────────────────────────────────────────────────────── */
+.shimmer {
+  background: linear-gradient(90deg, var(--surface-alt) 25%, #e8e5e0 50%, var(--surface-alt) 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* ── Glow utilities ────────────────────────────────────────────────────────── */
+.glow-blue  { box-shadow: var(--glow-blue); }
+.glow-amber { box-shadow: var(--glow-amber); }
+
+/* ── Card base ────────────────────────────────────────────────────────────── */
+.ql-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 240ms var(--ease-out-expo), transform 240ms var(--ease-out-expo);
+}
+.ql-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* ── Reduce motion ────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

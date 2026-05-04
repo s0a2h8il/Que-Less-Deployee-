@@ -78,7 +78,7 @@ const Notifications = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
-            <h1 className="text-4xl font-black text-slate-900 mb-2 flex items-center gap-3">
+            <h1 className="text-4xl font-black text-slate-900 mb-2 flex items-center gap-3 whitespace-nowrap">
               <Bell className="text-indigo-600" size={36} />
               Notifications
             </h1>

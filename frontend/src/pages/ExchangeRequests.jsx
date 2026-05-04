@@ -78,7 +78,7 @@ const ExchangeRequests = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
-            <h1 className="text-4xl font-black text-slate-900 mb-2 flex items-center gap-3">
+            <h1 className="text-4xl font-black text-slate-900 mb-2 flex items-center gap-3 whitespace-nowrap">
               <ArrowRightLeft className="text-indigo-600" size={36} />
               Spot Exchange
             </h1>
@@ -104,7 +104,7 @@ const ExchangeRequests = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`
-                flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all text-sm
+                flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all text-sm whitespace-nowrap
                 ${
                   activeTab === tab.id
                     ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"

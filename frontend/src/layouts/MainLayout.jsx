@@ -14,7 +14,13 @@ const MainLayout = () => {
   );
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-slate-50">
+    <div
+      className="flex min-h-screen w-full flex-col"
+      style={{
+        background:
+          "linear-gradient(145deg, rgba(255,247,234,1) 0%, rgba(255,252,246,1) 50%, rgba(244,251,247,1) 100%)",
+      }}
+    >
       <Navbar />
       <main className="flex-1 w-full overflow-x-hidden">
         <Outlet />

@@ -6,6 +6,8 @@ import { ToastProvider } from "./context/ToastContext";
 import App from "./App.jsx";
 import "./index.css";
 
+document.title = "Queue-Less";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>

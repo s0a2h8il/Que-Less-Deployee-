@@ -46,12 +46,12 @@ const UserPositionCard = ({ userMember, queue }) => {
             <motion.div 
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-orange-600 font-black text-[10px] uppercase tracking-widest"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-orange-600 font-black text-[10px] uppercase tracking-widest whitespace-nowrap"
             >
               <AlertCircle size={14} />
               Turn Near
             </motion.div>
-          )}
+          )}}
         </div>
 
         <div className="grid grid-cols-2 gap-4 mt-auto">

@@ -84,7 +84,7 @@ const AdminDashboard = () => {
               </div>
               <button
                 onClick={refetch}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all whitespace-nowrap"
                 style={{
                   background: "rgba(247,244,239,0.06)",
                   border: "1px solid rgba(247,244,239,0.12)",
@@ -173,7 +173,7 @@ const AdminDashboard = () => {
                   </h2>
                   <button
                     onClick={() => setActiveTab("create-queue")}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all whitespace-nowrap"
                     style={{
                       background: "#3AA0FF",
                       color: "#0B1320",
@@ -208,7 +208,7 @@ const AdminDashboard = () => {
               </h1>
               <button
                 onClick={() => setShowCreateBiz(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap"
                 style={{
                   background: "#3AA0FF",
                   color: "#0B1320",
@@ -343,7 +343,7 @@ const AdminDashboard = () => {
               </h1>
               <button
                 onClick={() => setActiveTab("create-queue")}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap"
                 style={{
                   background: "#3AA0FF",
                   color: "#0B1320",
@@ -420,7 +420,7 @@ const AdminDashboard = () => {
             <button
               type="button"
               onClick={() => setIsSidebarOpen((prev) => !prev)}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all whitespace-nowrap"
               style={{
                 background: "rgba(247,244,239,0.06)",
                 border: "1px solid rgba(247,244,239,0.12)",

@@ -97,29 +97,52 @@ const QueueDetail = () => {
         >
           <AlertTriangle size={36} style={{ color: "#EA526F" }} />
         </div>
-        <h2 className="text-3xl font-black mb-2" style={{ fontFamily: "var(--font-heading)", color: "var(--text-primary)" }}>
+        <h2
+          className="text-3xl font-black mb-2"
+          style={{
+            fontFamily: "var(--font-heading)",
+            color: "var(--text-primary)",
+          }}
+        >
           Queue Not Found
         </h2>
         <p className="max-w-md mb-8" style={{ color: "var(--text-muted)" }}>
-          {error || "The queue you are looking for does not exist or has been deleted."}
+          {error ||
+            "The queue you are looking for does not exist or has been deleted."}
         </p>
         <div className="flex gap-3">
           <Link
             to="/explore"
-            className="group inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold text-sm transition-all duration-200"
-            style={{ border: "1.5px solid var(--border-strong)", color: "var(--text-secondary)", background: "var(--surface)", fontFamily: "var(--font-heading)" }}
+            className="group inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold text-sm transition-all duration-200 whitespace-nowrap"
+            style={{
+              border: "1.5px solid var(--border-strong)",
+              color: "var(--text-secondary)",
+              background: "var(--surface)",
+              fontFamily: "var(--font-heading)",
+            }}
           >
-            <ChevronLeft size={15} className="transition-transform duration-200 group-hover:-translate-x-0.5" />
+            <ChevronLeft
+              size={15}
+              className="transition-transform duration-200 group-hover:-translate-x-0.5"
+            />
             Back to Explore
           </Link>
 
           <button
             onClick={fetchQueue}
-            className="group relative overflow-hidden inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold text-sm"
-            style={{ background: "#3AA0FF", color: "#0B1320", fontFamily: "var(--font-heading)", boxShadow: "0 4px 14px rgba(58,160,255,0.35)" }}
+            className="group relative overflow-hidden inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold text-sm whitespace-nowrap"
+            style={{
+              background: "#3AA0FF",
+              color: "#0B1320",
+              fontFamily: "var(--font-heading)",
+              boxShadow: "0 4px 14px rgba(58,160,255,0.35)",
+            }}
           >
             <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
-            <RefreshCcw size={15} className="relative transition-transform duration-500 group-hover:rotate-180" />
+            <RefreshCcw
+              size={15}
+              className="relative transition-transform duration-500 group-hover:rotate-180"
+            />
             <span className="relative">Retry</span>
           </button>
         </div>
@@ -132,15 +155,22 @@ const QueueDetail = () => {
       {/* Header Navigation */}
       <div
         className="py-4 mb-8"
-        style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)" }}
+        style={{
+          background: "var(--surface)",
+          borderBottom: "1px solid var(--border)",
+        }}
       >
         <div className="container mx-auto px-6 flex items-center justify-between">
           <Link
             to="/explore"
-            className="flex items-center gap-2 text-sm font-semibold transition-colors"
+            className="flex items-center gap-2 text-sm font-semibold transition-colors whitespace-nowrap"
             style={{ color: "var(--text-muted)" }}
-            onMouseEnter={e => { e.currentTarget.style.color = "#3AA0FF"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--text-muted)"; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "#3AA0FF";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--text-muted)";
+            }}
           >
             <ChevronLeft size={16} />
             Back to Explore
@@ -149,8 +179,12 @@ const QueueDetail = () => {
             onClick={copyShareLink}
             className="p-2 rounded-lg transition-colors"
             style={{ color: "var(--text-muted)" }}
-            onMouseEnter={e => { e.currentTarget.style.color = "#3AA0FF"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--text-muted)"; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "#3AA0FF";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--text-muted)";
+            }}
           >
             <Share2 size={18} />
           </button>

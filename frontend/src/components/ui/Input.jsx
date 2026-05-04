@@ -6,31 +6,47 @@ const Input = React.forwardRef(
     return (
       <div className={cn("flex flex-col gap-1.5", fullWidth ? "w-full" : "")}>
         {label && (
-          <label className="text-sm font-medium text-slate-700 ml-1">
+          <label
+            className="text-sm font-medium ml-1"
+            style={{ color: "var(--text-secondary)" }}
+          >
             {label}
           </label>
         )}
         <div className="relative group">
           {Icon && (
-            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors">
+            <div
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors"
+              style={{ color: "var(--text-muted)" }}
+            >
               <Icon size={18} />
             </div>
           )}
           <input
             ref={ref}
             className={cn(
-              "flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 transition-all disabled:cursor-not-allowed disabled:opacity-50",
+              "flex h-11 w-full rounded-2xl border px-3.5 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50",
               Icon && "pl-11",
-              error && "border-red-500 focus-visible:ring-red-500/20 focus-visible:border-red-500",
-              className
+              error && "focus-visible:ring-rose-500/20",
+              className,
             )}
+            style={{
+              background: "rgba(255,255,255,0.84)",
+              borderColor: error ? "#E07A5F" : "rgba(61,64,91,0.12)",
+              color: "var(--text-primary)",
+              boxShadow: "0 8px 20px rgba(61,64,91,0.04)",
+            }}
             {...props}
           />
         </div>
-        {error && <p className="text-xs font-medium text-red-500 ml-1">{error}</p>}
+        {error && (
+          <p className="text-xs font-medium ml-1" style={{ color: "#E07A5F" }}>
+            {error}
+          </p>
+        )}
       </div>
     );
-  }
+  },
 );
 
 Input.displayName = "Input";

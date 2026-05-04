@@ -31,7 +31,7 @@ const CreateExchangeRequest = ({ initialQueueId, onCancel, onSubmit }) => {
         // or have a specific endpoint for 'exchangeable' users.
         // Assuming the backend returns members in the response now or we can use the existing data.
         const members = res.data.queue.members || [];
-        setWaitingUsers(members.filter(m => m.status === "waiting"));
+        setWaitingUsers(members.filter((m) => m.status === "waiting"));
       }
     } catch (err) {
       setError("Failed to load queue members");
@@ -59,13 +59,17 @@ const CreateExchangeRequest = ({ initialQueueId, onCancel, onSubmit }) => {
 
   return (
     <Card className="p-6 border-indigo-100 shadow-xl overflow-visible">
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-6 whitespace-nowrap">
         <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
           <Users size={20} />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-slate-800">New Exchange Request</h3>
-          <p className="text-sm text-slate-500">Request to swap spots with someone ahead of you</p>
+          <h3 className="text-lg font-bold text-slate-800">
+            New Exchange Request
+          </h3>
+          <p className="text-sm text-slate-500">
+            Request to swap spots with someone ahead of you
+          </p>
         </div>
       </div>
 
@@ -87,12 +91,14 @@ const CreateExchangeRequest = ({ initialQueueId, onCancel, onSubmit }) => {
                     onClick={() => setTargetUserId(member.userId._id)}
                     className={`
                       cursor-pointer p-4 rounded-2xl border-2 transition-all flex items-center justify-between
-                      ${targetUserId === member.userId._id 
-                        ? "border-indigo-600 bg-indigo-50 shadow-md ring-2 ring-indigo-600/10" 
-                        : "border-slate-100 bg-white hover:border-slate-200"}
+                      ${
+                        targetUserId === member.userId._id
+                          ? "border-indigo-600 bg-indigo-50 shadow-md ring-2 ring-indigo-600/10"
+                          : "border-slate-100 bg-white hover:border-slate-200"
+                      }
                     `}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 whitespace-nowrap">
                       <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500">
                         #{member.tokenNumber}
                       </div>
@@ -111,7 +117,9 @@ const CreateExchangeRequest = ({ initialQueueId, onCancel, onSubmit }) => {
             ) : (
               <div className="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
                 <Info size={24} className="mx-auto text-slate-300 mb-2" />
-                <p className="text-sm text-slate-500">No other waiting users available for swap</p>
+                <p className="text-sm text-slate-500">
+                  No other waiting users available for swap
+                </p>
               </div>
             )}
           </div>
@@ -125,7 +133,7 @@ const CreateExchangeRequest = ({ initialQueueId, onCancel, onSubmit }) => {
           />
 
           {error && (
-            <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-sm flex items-center gap-2 animate-shake">
+            <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-sm flex items-center gap-2 animate-shake whitespace-nowrap">
               <AlertCircle size={16} />
               {error}
             </div>

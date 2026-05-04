@@ -9,8 +9,12 @@ const IncomingExchangeRequests = ({ requests, onAccept, onReject }) => {
     return (
       <Card className="p-12 text-center border-dashed border-slate-200">
         <ArrowRightLeft size={48} className="mx-auto text-slate-200 mb-4" />
-        <h3 className="text-lg font-bold text-slate-700">No incoming requests</h3>
-        <p className="text-slate-500">When someone wants to swap spots with you, it will appear here</p>
+        <h3 className="text-lg font-bold text-slate-700">
+          No incoming requests
+        </h3>
+        <p className="text-slate-500">
+          When someone wants to swap spots with you, it will appear here
+        </p>
       </Card>
     );
   }
@@ -18,7 +22,10 @@ const IncomingExchangeRequests = ({ requests, onAccept, onReject }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {requests.map((request) => (
-        <Card key={request._id} className="p-6 border-indigo-50 hover:border-indigo-200 transition-all group">
+        <Card
+          key={request._id}
+          className="p-6 border-indigo-50 hover:border-indigo-200 transition-all group"
+        >
           <div className="flex justify-between items-start mb-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-lg border-2 border-indigo-100">
@@ -32,13 +39,17 @@ const IncomingExchangeRequests = ({ requests, onAccept, onReject }) => {
               </div>
             </div>
             <span className="text-[10px] uppercase font-black tracking-widest text-slate-400 bg-slate-50 px-2 py-1 rounded-lg">
-              {formatDistanceToNow(new Date(request.createdAt), { addSuffix: true })}
+              {formatDistanceToNow(new Date(request.createdAt), {
+                addSuffix: true,
+              })}
             </span>
           </div>
 
           <div className="mb-6">
-            <h4 className="font-bold text-slate-800 text-lg mb-1">{request.fromUser?.name}</h4>
-            <p className="text-sm text-slate-500 flex items-center gap-1">
+            <h4 className="font-bold text-slate-800 text-lg mb-1">
+              {request.fromUser?.name}
+            </h4>
+            <p className="text-sm text-slate-500 flex items-center gap-1 whitespace-nowrap">
               <Clock size={12} /> {request.queueId?.title}
             </p>
             {request.message && (

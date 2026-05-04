@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import HeroSection from "../components/home/HeroSection";
 import HowItWorks from "../components/home/HowItWorks";
 import QueueBenefits from "../components/home/QueueBenefits";
@@ -26,14 +27,22 @@ const Home = () => {
       {/* Final Bottom CTA */}
       <section className="py-24 bg-blue-600 text-white text-center">
         <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-extrabold mb-8">Ready to skip the line?</h2>
+          <h2 className="text-4xl font-extrabold mb-8">
+            Ready to skip the line?
+          </h2>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="h-14 px-10 rounded-2xl bg-white text-blue-600 font-black hover:bg-slate-50 transition-all">
+            <Link
+              to="/register"
+              className="h-14 inline-flex items-center justify-center px-10 rounded-2xl bg-white text-blue-600 font-black hover:bg-slate-50 transition-all"
+            >
               Join for Free
-            </button>
-            <button className="h-14 px-10 rounded-2xl bg-blue-700 text-white font-black hover:bg-blue-800 transition-all border border-blue-500">
+            </Link>
+            <Link
+              to="/contact"
+              className="h-14 inline-flex items-center justify-center px-10 rounded-2xl bg-blue-700 text-white font-black hover:bg-blue-800 transition-all border border-blue-500"
+            >
               Talk to Sales
-            </button>
+            </Link>
           </div>
         </div>
       </section>

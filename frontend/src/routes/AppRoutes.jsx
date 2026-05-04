@@ -24,6 +24,12 @@ const AnalyticsDashboard = lazyLoad(
 const SuperAdminDashboard = lazyLoad(
   () => import("../pages/dashboard/SuperAdminDashboard"),
 );
+const Business = lazyLoad(() => import("../pages/Business"));
+const HowItWorksPage = lazyLoad(() => import("../pages/HowItWorksPage"));
+const About = lazyLoad(() => import("../pages/About"));
+const Careers = lazyLoad(() => import("../pages/Careers"));
+const Contact = lazyLoad(() => import("../pages/Contact"));
+const Privacy = lazyLoad(() => import("../pages/Privacy"));
 const ExchangeRequests = lazyLoad(() => import("../pages/ExchangeRequests"));
 const Notifications = lazyLoad(() => import("../pages/Notifications"));
 const NotFound = lazyLoad(() => import("../pages/NotFound"));
@@ -55,8 +61,21 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/explore" element={<ExploreQueues />} />
+        <Route path="/how-it-works" element={<HowItWorksPage />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/careers" element={<Careers />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/privacy" element={<Privacy />} />
         <Route path="/queue/:id" element={<QueueDetail />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route
+          path="/business"
+          element={
+            <ProtectedRoute allowedRoles={["user", "admin", "superadmin"]}>
+              <Business />
+            </ProtectedRoute>
+          }
+        />
 
         {/* User Protected Routes */}
         <Route

@@ -32,7 +32,7 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
             key={item.id}
             onClick={() => setActiveTab(item.id)}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 whitespace-nowrap",
               activeTab === item.id
                 ? "bg-indigo-50 text-indigo-600"
                 : "text-slate-600 hover:bg-slate-50",
@@ -47,7 +47,7 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
       <div className="mt-auto p-4 border-t border-slate-100">
         <button
           onClick={logout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors whitespace-nowrap"
         >
           <LogOut size={20} />
           Logout

@@ -9,17 +9,21 @@ const CurrentTokenCard = ({ queue }) => {
   return (
     <Card className="relative overflow-hidden bg-white border-slate-100 shadow-soft p-8">
       <div className="absolute top-0 right-0 p-4">
-         <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
-           <Activity size={14} className="animate-pulse" />
-           <span className="text-[10px] font-black uppercase tracking-widest">Live Now</span>
-         </div>
+        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100 whitespace-nowrap">
+          <Activity size={14} className="animate-pulse" />
+          <span className="text-[10px] font-black uppercase tracking-widest">
+            Live Now
+          </span>
+        </div>
       </div>
 
       <div className="flex flex-col items-center text-center py-4">
         <div className="h-12 w-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4">
-           <Hash size={24} />
+          <Hash size={24} />
         </div>
-        <h4 className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Now Serving</h4>
+        <h4 className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">
+          Now Serving
+        </h4>
         <motion.div
           key={currentToken}
           initial={{ scale: 0.5, opacity: 0 }}

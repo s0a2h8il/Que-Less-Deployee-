@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
@@ -9,12 +9,30 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [toast, setToast] = useState({ open: false, message: "", type: "info" });
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    type: "info",
+  });
   const { login, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state?.from?.pathname || "/";
+
+  useEffect(() => {
+    const redirectToast = location.state?.toast;
+    if (redirectToast) {
+      setToast({
+        open: true,
+        type: redirectToast.type || "info",
+        message: redirectToast.message || "Please sign in to continue.",
+      });
+      // Replace the history state to remove the toast data
+      // This prevents it from showing again on refresh
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [location.state]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,8 +48,12 @@ const Login = () => {
 
     const result = await login(formData);
     if (result.success) {
-      setToast({ open: true, message: "Logged in successfully!", type: "success" });
-      setTimeout(() => navigate(from, { replace: true }), 1000);
+      setToast({
+        open: true,
+        message: "Logged in successfully!",
+        type: "success",
+      });
+      setTimeout(() => navigate(from, { replace: true }), 2500);
     } else {
       setError(result.message);
     }
@@ -46,7 +68,9 @@ const Login = () => {
       >
         <Card className="p-8">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-extrabold text-slate-900">Welcome Back</h1>
+            <h1 className="text-3xl font-extrabold text-slate-900">
+              Welcome Back
+            </h1>
             <p className="mt-2 text-slate-500">Sign in to manage your queues</p>
           </div>
 
@@ -88,19 +112,17 @@ const Login = () => {
               </p>
             )}
 
-            <Button
-              type="submit"
-              fullWidth
-              size="lg"
-              isLoading={loading}
-            >
+            <Button type="submit" fullWidth size="lg" isLoading={loading}>
               Sign In
             </Button>
           </form>
 
           <div className="mt-8 text-center text-sm text-slate-500">
             Don't have an account?{" "}
-            <Link to="/register" className="font-bold text-blue-600 hover:underline">
+            <Link
+              to="/register"
+              className="font-bold text-blue-600 hover:underline"
+            >
               Create one now
             </Link>
           </div>
@@ -111,6 +133,7 @@ const Login = () => {
         isOpen={toast.open}
         message={toast.message}
         type={toast.type}
+        duration={2500}
         onClose={() => setToast({ ...toast, open: false })}
       />
     </div>

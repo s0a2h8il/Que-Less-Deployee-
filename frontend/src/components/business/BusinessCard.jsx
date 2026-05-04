@@ -87,7 +87,7 @@ const BusinessCard = ({ business, index }) => {
           <div className="absolute top-3 right-3">
             {isActive && hasActiveQueue ? (
               <span
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap"
                 style={{
                   background: "rgba(34,197,94,0.12)",
                   color: "#22c55e",
@@ -170,7 +170,7 @@ const BusinessCard = ({ business, index }) => {
 
           {/* Location */}
           <div
-            className="flex items-center gap-1.5 mb-4"
+            className="flex items-center gap-1.5 mb-4 whitespace-nowrap"
             style={{ color: "var(--text-muted)" }}
           >
             <MapPin size={13} className="shrink-0" />
@@ -181,7 +181,7 @@ const BusinessCard = ({ business, index }) => {
 
           {/* Rating */}
           {rating && (
-            <div className="flex items-center gap-1 mb-4">
+            <div className="flex items-center gap-1 mb-4 whitespace-nowrap">
               <Star size={13} style={{ color: "#F2B33D" }} fill="#F2B33D" />
               <span
                 className="text-sm font-bold"

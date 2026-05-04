@@ -24,7 +24,7 @@ const SuperAdminSidebar = ({ activeTab, setActiveTab }) => {
       <div className="mb-8">
         <Link
           to="/"
-          className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity whitespace-nowrap"
         >
           <ArrowLeft size={20} />
           <span className="font-bold text-sm">Back to App</span>
@@ -53,7 +53,7 @@ const SuperAdminSidebar = ({ activeTab, setActiveTab }) => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm transition-all",
+                "w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm transition-all whitespace-nowrap",
                 isActive
                   ? "bg-indigo-600 text-white shadow-lg"
                   : "text-slate-300 hover:bg-slate-800 hover:text-white",
@@ -69,7 +69,7 @@ const SuperAdminSidebar = ({ activeTab, setActiveTab }) => {
       <div className="pt-4 border-t border-slate-700">
         <Link
           to="/dashboard"
-          className="flex items-center gap-2 px-4 py-2 text-sm text-slate-400 hover:text-slate-200 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-sm text-slate-400 hover:text-slate-200 transition-colors whitespace-nowrap"
         >
           <ArrowLeft size={16} />
           <span>Regular Dashboard</span>

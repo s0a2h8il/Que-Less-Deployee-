@@ -12,11 +12,38 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return (
+      <Navigate
+        to="/login"
+        state={{
+          from: location,
+          toast: {
+            type: "error",
+            title: "Login required",
+            message: "Please sign in to access this page.",
+          },
+        }}
+        replace
+      />
+    );
   }
 
   if (allowedRoles.length > 0 && !allowedRoles.includes(user?.role)) {
-    return <Navigate to="/unauthorized" replace />;
+    return (
+      <Navigate
+        to="/login"
+        state={{
+          from: location,
+          toast: {
+            type: "error",
+            title: "Access restricted",
+            message:
+              "This page is only available after signing in with the right account.",
+          },
+        }}
+        replace
+      />
+    );
   }
 
   return children;

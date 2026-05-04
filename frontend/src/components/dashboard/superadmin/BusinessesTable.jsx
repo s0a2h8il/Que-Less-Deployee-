@@ -169,12 +169,12 @@ const BusinessesTable = ({
                   </td>
                   <td className="px-6 py-4">
                     {business.isVerified ? (
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 whitespace-nowrap">
                         <CheckCircle size={14} />
                         Verified
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 whitespace-nowrap">
                         <XCircle size={14} />
                         Unverified
                       </span>

@@ -63,7 +63,7 @@ const AnalyticsFilterBar = ({ filters, onFilterChange, onDateRangeChange }) => {
 
         {/* Start Date */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-300 flex items-center gap-2">
+          <label className="text-sm font-medium text-slate-300 flex items-center gap-2 whitespace-nowrap">
             <Calendar size={16} />
             Start Date
           </label>
@@ -86,7 +86,7 @@ const AnalyticsFilterBar = ({ filters, onFilterChange, onDateRangeChange }) => {
 
         {/* End Date */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-300 flex items-center gap-2">
+          <label className="text-sm font-medium text-slate-300 flex items-center gap-2 whitespace-nowrap">
             <Calendar size={16} />
             End Date
           </label>
@@ -109,7 +109,7 @@ const AnalyticsFilterBar = ({ filters, onFilterChange, onDateRangeChange }) => {
       {/* Business Filter (for superadmin) */}
       {user?.role === "superadmin" && businesses.length > 0 && (
         <div className="pt-2 border-t border-slate-700/50">
-          <label className="text-sm font-medium text-slate-300 flex items-center gap-2 mb-2">
+          <label className="text-sm font-medium text-slate-300 flex items-center gap-2 mb-2 whitespace-nowrap">
             <Building2 size={16} />
             Filter by Business
           </label>

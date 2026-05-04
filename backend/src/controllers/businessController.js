@@ -1,4 +1,5 @@
 import Business from "../models/Business.js";
+import Queue from "../models/Queue.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -18,20 +19,39 @@ const paginate = (page, limit) => {
 // @access  Private (admin, superadmin)
 // ─────────────────────────────────────────────────────────────────────────────
 export const createBusiness = asyncHandler(async (req, res) => {
-  const { name, category, description, address, city, state, phone, email, openingTime, closingTime } = req.body;
+  const {
+    name,
+    category,
+    description,
+    address,
+    city,
+    state,
+    phone,
+    email,
+    openingTime,
+    closingTime,
+  } = req.body;
 
   if (!name || !category || !address || !city)
     throw new ApiError(400, "Please provide name, category, address and city");
 
   const business = await Business.create({
     ownerId: req.user._id,
-    name, category, description,
-    address, city, state,
-    phone, email,
-    openingTime, closingTime,
+    name,
+    category,
+    description,
+    address,
+    city,
+    state,
+    phone,
+    email,
+    openingTime,
+    closingTime,
   });
 
-  res.status(201).json(new ApiResponse(201, { business }, "Business created successfully"));
+  res
+    .status(201)
+    .json(new ApiResponse(201, { business }, "Business created successfully"));
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -50,7 +70,15 @@ export const getMyBusinesses = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 })
     .lean();
 
-  res.status(200).json(new ApiResponse(200, { businesses }, "Managed businesses fetched successfully"));
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { businesses },
+        "Managed businesses fetched successfully",
+      ),
+    );
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -59,7 +87,14 @@ export const getMyBusinesses = asyncHandler(async (req, res) => {
 // @access  Public
 // ─────────────────────────────────────────────────────────────────────────────
 export const getAllBusinesses = asyncHandler(async (req, res) => {
-  const { search, category, city, isVerified, page = 1, limit = 10 } = req.query;
+  const {
+    search,
+    category,
+    city,
+    isVerified,
+    page = 1,
+    limit = 10,
+  } = req.query;
   const { pageNum, limitNum, skip } = paginate(page, limit);
 
   const filter = { isActive: true };
@@ -85,17 +120,49 @@ export const getAllBusinesses = asyncHandler(async (req, res) => {
     Business.countDocuments(filter),
   ]);
 
-  res.status(200).json(new ApiResponse(200, {
-    businesses,
-    pagination: {
-      currentPage: pageNum,
-      totalPages: Math.ceil(total / limitNum),
-      totalResults: total,
-      limit: limitNum,
-      hasNextPage: pageNum < Math.ceil(total / limitNum),
-      hasPrevPage: pageNum > 1,
-    },
-  }, "Businesses fetched successfully"));
+  const businessIds = businesses.map((business) => business._id);
+  let activeQueueByBusiness = new Map();
+
+  if (businessIds.length > 0) {
+    const activeQueues = await Queue.find({
+      businessId: { $in: businessIds },
+      status: "active",
+    })
+      .select("_id businessId status")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    activeQueueByBusiness = new Map(
+      activeQueues.map((queue) => [queue.businessId.toString(), queue]),
+    );
+  }
+
+  const enrichedBusinesses = businesses.map((business) => {
+    const activeQueue = activeQueueByBusiness.get(business._id.toString());
+    return {
+      ...business,
+      activeQueueId: activeQueue?._id || null,
+      activeQueueStatus: activeQueue?.status || null,
+    };
+  });
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        businesses: enrichedBusinesses,
+        pagination: {
+          currentPage: pageNum,
+          totalPages: Math.ceil(total / limitNum),
+          totalResults: total,
+          limit: limitNum,
+          hasNextPage: pageNum < Math.ceil(total / limitNum),
+          hasPrevPage: pageNum > 1,
+        },
+      },
+      "Businesses fetched successfully",
+    ),
+  );
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -104,10 +171,14 @@ export const getAllBusinesses = asyncHandler(async (req, res) => {
 // @access  Public
 // ─────────────────────────────────────────────────────────────────────────────
 export const getBusinessById = asyncHandler(async (req, res) => {
-  const business = await Business.findById(req.params.id).populate("ownerId", "name email avatar").lean();
+  const business = await Business.findById(req.params.id)
+    .populate("ownerId", "name email avatar")
+    .lean();
   if (!business) throw new ApiError(404, "Business not found");
 
-  res.status(200).json(new ApiResponse(200, { business }, "Business fetched successfully"));
+  res
+    .status(200)
+    .json(new ApiResponse(200, { business }, "Business fetched successfully"));
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -124,7 +195,18 @@ export const updateBusiness = asyncHandler(async (req, res) => {
   if (!isOwner && !isSuperAdmin)
     throw new ApiError(403, "You are not authorized to update this business");
 
-  const ALLOWED_FIELDS = ["name", "category", "description", "address", "city", "state", "phone", "email", "openingTime", "closingTime"];
+  const ALLOWED_FIELDS = [
+    "name",
+    "category",
+    "description",
+    "address",
+    "city",
+    "state",
+    "phone",
+    "email",
+    "openingTime",
+    "closingTime",
+  ];
   if (isSuperAdmin) ALLOWED_FIELDS.push("isVerified", "isActive");
 
   const updates = {};
@@ -138,8 +220,16 @@ export const updateBusiness = asyncHandler(async (req, res) => {
   const updatedBusiness = await Business.findByIdAndUpdate(
     req.params.id,
     { $set: updates },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   ).populate("ownerId", "name email avatar");
 
-  res.status(200).json(new ApiResponse(200, { business: updatedBusiness }, "Business updated successfully"));
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { business: updatedBusiness },
+        "Business updated successfully",
+      ),
+    );
 });

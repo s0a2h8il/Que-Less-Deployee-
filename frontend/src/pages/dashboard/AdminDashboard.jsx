@@ -8,23 +8,45 @@ import QueueControlPanel from "../../components/dashboard/admin/QueueControlPane
 import WaitingUsersList from "../../components/dashboard/admin/WaitingUsersList";
 import { Loader } from "../../components/ui/Loader";
 import { Toast } from "../../components/ui/Toast";
-import { Plus, RefreshCcw, Building2, Zap } from "lucide-react";
+import {
+  Plus,
+  RefreshCcw,
+  Building2,
+  Zap,
+  PanelLeftClose,
+  PanelLeftOpen,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [showCreateBiz, setShowCreateBiz] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const {
-    businesses, queues, selectedQueue, loading, error,
-    createBusinessHandler, createQueueHandler,
-    callNextHandler, pauseHandler, resumeHandler, closeHandler,
-    selectQueue, refetch, toast, hideToast,
+    businesses,
+    queues,
+    selectedQueue,
+    loading,
+    error,
+    createBusinessHandler,
+    createQueueHandler,
+    callNextHandler,
+    pauseHandler,
+    resumeHandler,
+    closeHandler,
+    selectQueue,
+    refetch,
+    toast,
+    hideToast,
   } = useAdminDashboard();
 
   if (loading && !businesses?.length && !queues?.length) {
     return (
-      <div className="flex h-screen items-center justify-center" style={{ background: "var(--night-ink)" }}>
+      <div
+        className="flex h-screen items-center justify-center"
+        style={{ background: "var(--night-ink)" }}
+      >
         <Loader size="lg" />
       </div>
     );
@@ -39,10 +61,24 @@ const AdminDashboard = () => {
             {/* Section header */}
             <div className="flex justify-between items-center">
               <div>
-                <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 800, color: "#F7F4EF", letterSpacing: "-0.02em" }}>
+                <h1
+                  style={{
+                    fontFamily: "var(--font-heading)",
+                    fontSize: "2rem",
+                    fontWeight: 800,
+                    color: "#F7F4EF",
+                    letterSpacing: "-0.02em",
+                  }}
+                >
                   Operator Overview
                 </h1>
-                <p style={{ color: "rgba(247,244,239,0.45)", fontFamily: "var(--font-body)", marginTop: 2 }}>
+                <p
+                  style={{
+                    color: "rgba(247,244,239,0.45)",
+                    fontFamily: "var(--font-body)",
+                    marginTop: 2,
+                  }}
+                >
                   Real-time status of your queues
                 </p>
               </div>
@@ -55,8 +91,14 @@ const AdminDashboard = () => {
                   color: "rgba(247,244,239,0.60)",
                   fontFamily: "var(--font-body)",
                 }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(58,160,255,0.40)"; e.currentTarget.style.color = "#3AA0FF"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(247,244,239,0.12)"; e.currentTarget.style.color = "rgba(247,244,239,0.60)"; }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(58,160,255,0.40)";
+                  e.currentTarget.style.color = "#3AA0FF";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(247,244,239,0.12)";
+                  e.currentTarget.style.color = "rgba(247,244,239,0.60)";
+                }}
               >
                 <RefreshCcw size={15} />
                 Refresh
@@ -77,7 +119,8 @@ const AdminDashboard = () => {
                   <div
                     className="rounded-2xl p-6"
                     style={{
-                      background: "linear-gradient(135deg, rgba(58,160,255,0.12) 0%, rgba(242,179,61,0.06) 100%)",
+                      background:
+                        "linear-gradient(135deg, rgba(58,160,255,0.12) 0%, rgba(242,179,61,0.06) 100%)",
                       border: "1px solid rgba(58,160,255,0.20)",
                     }}
                   >
@@ -88,12 +131,26 @@ const AdminDashboard = () => {
                       >
                         <Zap size={15} style={{ color: "#3AA0FF" }} />
                       </div>
-                      <h3 style={{ fontFamily: "var(--font-heading)", fontWeight: 700, color: "#F7F4EF" }}>
+                      <h3
+                        style={{
+                          fontFamily: "var(--font-heading)",
+                          fontWeight: 700,
+                          color: "#F7F4EF",
+                        }}
+                      >
                         Pro Tip
                       </h3>
                     </div>
-                    <p style={{ color: "rgba(247,244,239,0.55)", fontFamily: "var(--font-body)", fontSize: "0.9rem" }}>
-                      Use "Call Next" to notify the next person in line — they'll receive an instant push notification on their device.
+                    <p
+                      style={{
+                        color: "rgba(247,244,239,0.55)",
+                        fontFamily: "var(--font-body)",
+                        fontSize: "0.9rem",
+                      }}
+                    >
+                      Use "Call Next" to notify the next person in line —
+                      they'll receive an instant push notification on their
+                      device.
                     </p>
                   </div>
                 </div>
@@ -104,13 +161,25 @@ const AdminDashboard = () => {
             ) : (
               <div className="space-y-5">
                 <div className="flex items-center justify-between">
-                  <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 700, color: "#F7F4EF", fontSize: "1.2rem" }}>
+                  <h2
+                    style={{
+                      fontFamily: "var(--font-heading)",
+                      fontWeight: 700,
+                      color: "#F7F4EF",
+                      fontSize: "1.2rem",
+                    }}
+                  >
                     Your Queues
                   </h2>
                   <button
                     onClick={() => setActiveTab("create-queue")}
                     className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-                    style={{ background: "#3AA0FF", color: "#0B1320", fontFamily: "var(--font-heading)", boxShadow: "0 4px 14px rgba(58,160,255,0.35)" }}
+                    style={{
+                      background: "#3AA0FF",
+                      color: "#0B1320",
+                      fontFamily: "var(--font-heading)",
+                      boxShadow: "0 4px 14px rgba(58,160,255,0.35)",
+                    }}
                   >
                     <Plus size={15} />
                     New Queue
@@ -126,13 +195,26 @@ const AdminDashboard = () => {
         return (
           <div className="space-y-8">
             <div className="flex justify-between items-center">
-              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 800, color: "#F7F4EF", letterSpacing: "-0.02em" }}>
+              <h1
+                style={{
+                  fontFamily: "var(--font-heading)",
+                  fontSize: "2rem",
+                  fontWeight: 800,
+                  color: "#F7F4EF",
+                  letterSpacing: "-0.02em",
+                }}
+              >
                 My Businesses
               </h1>
               <button
                 onClick={() => setShowCreateBiz(true)}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
-                style={{ background: "#3AA0FF", color: "#0B1320", fontFamily: "var(--font-heading)", boxShadow: "0 4px 14px rgba(58,160,255,0.35)" }}
+                style={{
+                  background: "#3AA0FF",
+                  color: "#0B1320",
+                  fontFamily: "var(--font-heading)",
+                  boxShadow: "0 4px 14px rgba(58,160,255,0.35)",
+                }}
               >
                 <Plus size={16} />
                 Register Business
@@ -140,11 +222,14 @@ const AdminDashboard = () => {
             </div>
 
             {showCreateBiz ? (
-              <CreateBusinessForm onSubmit={createBusinessHandler} onCancel={() => setShowCreateBiz(false)} />
+              <CreateBusinessForm
+                onSubmit={createBusinessHandler}
+                onCancel={() => setShowCreateBiz(false)}
+              />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                 {businesses?.length > 0 ? (
-                  businesses.map(biz => (
+                  businesses.map((biz) => (
                     <div
                       key={biz._id}
                       className="rounded-2xl p-6 transition-all"
@@ -152,28 +237,85 @@ const AdminDashboard = () => {
                         background: "rgba(247,244,239,0.04)",
                         border: "1px solid rgba(247,244,239,0.10)",
                       }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(58,160,255,0.30)"; e.currentTarget.style.background = "rgba(58,160,255,0.05)"; }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(247,244,239,0.10)"; e.currentTarget.style.background = "rgba(247,244,239,0.04)"; }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor =
+                          "rgba(58,160,255,0.30)";
+                        e.currentTarget.style.background =
+                          "rgba(58,160,255,0.05)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor =
+                          "rgba(247,244,239,0.10)";
+                        e.currentTarget.style.background =
+                          "rgba(247,244,239,0.04)";
+                      }}
                     >
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(58,160,255,0.15)" }}>
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                        style={{ background: "rgba(58,160,255,0.15)" }}
+                      >
                         <Building2 size={20} style={{ color: "#3AA0FF" }} />
                       </div>
-                      <h3 className="font-bold mb-1" style={{ fontFamily: "var(--font-heading)", color: "#F7F4EF" }}>{biz.name}</h3>
-                      <p className="text-sm mb-3" style={{ color: "rgba(247,244,239,0.45)" }}>{biz.category} · {biz.city}</p>
+                      <h3
+                        className="font-bold mb-1"
+                        style={{
+                          fontFamily: "var(--font-heading)",
+                          color: "#F7F4EF",
+                        }}
+                      >
+                        {biz.name}
+                      </h3>
+                      <p
+                        className="text-sm mb-3"
+                        style={{ color: "rgba(247,244,239,0.45)" }}
+                      >
+                        {biz.category} · {biz.city}
+                      </p>
                       {biz.openingTime && (
-                        <p className="text-xs" style={{ color: "rgba(247,244,239,0.30)" }}>{biz.openingTime} – {biz.closingTime}</p>
+                        <p
+                          className="text-xs"
+                          style={{ color: "rgba(247,244,239,0.30)" }}
+                        >
+                          {biz.openingTime} – {biz.closingTime}
+                        </p>
                       )}
                     </div>
                   ))
                 ) : (
-                  <div className="col-span-full flex flex-col items-center justify-center py-16 rounded-2xl text-center" style={{ border: "1px dashed rgba(247,244,239,0.15)" }}>
-                    <Building2 size={40} style={{ color: "rgba(247,244,239,0.20)", marginBottom: 16 }} />
-                    <h3 className="font-bold mb-1" style={{ fontFamily: "var(--font-heading)", color: "rgba(247,244,239,0.60)" }}>No businesses registered</h3>
-                    <p className="text-sm mb-5" style={{ color: "rgba(247,244,239,0.35)" }}>Register a business first to start creating queues</p>
+                  <div
+                    className="col-span-full flex flex-col items-center justify-center py-16 rounded-2xl text-center"
+                    style={{ border: "1px dashed rgba(247,244,239,0.15)" }}
+                  >
+                    <Building2
+                      size={40}
+                      style={{
+                        color: "rgba(247,244,239,0.20)",
+                        marginBottom: 16,
+                      }}
+                    />
+                    <h3
+                      className="font-bold mb-1"
+                      style={{
+                        fontFamily: "var(--font-heading)",
+                        color: "rgba(247,244,239,0.60)",
+                      }}
+                    >
+                      No businesses registered
+                    </h3>
+                    <p
+                      className="text-sm mb-5"
+                      style={{ color: "rgba(247,244,239,0.35)" }}
+                    >
+                      Register a business first to start creating queues
+                    </p>
                     <button
                       onClick={() => setShowCreateBiz(true)}
                       className="px-5 py-2.5 rounded-xl text-sm font-semibold"
-                      style={{ background: "#3AA0FF", color: "#0B1320", fontFamily: "var(--font-heading)" }}
+                      style={{
+                        background: "#3AA0FF",
+                        color: "#0B1320",
+                        fontFamily: "var(--font-heading)",
+                      }}
                     >
                       Add Business
                     </button>
@@ -188,49 +330,131 @@ const AdminDashboard = () => {
         return (
           <div className="space-y-8">
             <div className="flex justify-between items-center">
-              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 800, color: "#F7F4EF", letterSpacing: "-0.02em" }}>
+              <h1
+                style={{
+                  fontFamily: "var(--font-heading)",
+                  fontSize: "2rem",
+                  fontWeight: 800,
+                  color: "#F7F4EF",
+                  letterSpacing: "-0.02em",
+                }}
+              >
                 Manage Queues
               </h1>
               <button
                 onClick={() => setActiveTab("create-queue")}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold"
-                style={{ background: "#3AA0FF", color: "#0B1320", fontFamily: "var(--font-heading)" }}
+                style={{
+                  background: "#3AA0FF",
+                  color: "#0B1320",
+                  fontFamily: "var(--font-heading)",
+                }}
               >
                 <Plus size={16} />
                 New Queue
               </button>
             </div>
-            <QueueList queues={queues} onSelect={id => { selectQueue(id); setActiveTab("overview"); }} />
+            <QueueList
+              queues={queues}
+              onSelect={(id) => {
+                selectQueue(id);
+                setActiveTab("overview");
+              }}
+            />
           </div>
         );
 
       case "create-queue":
         return (
           <div className="space-y-8">
-            <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 800, color: "#F7F4EF", letterSpacing: "-0.02em" }}>
+            <h1
+              style={{
+                fontFamily: "var(--font-heading)",
+                fontSize: "2rem",
+                fontWeight: 800,
+                color: "#F7F4EF",
+                letterSpacing: "-0.02em",
+              }}
+            >
               Create Queue
             </h1>
-            <CreateQueueForm businesses={businesses} onSubmit={createQueueHandler} onCancel={() => setActiveTab("overview")} />
+            <CreateQueueForm
+              businesses={businesses}
+              onSubmit={createQueueHandler}
+              onCancel={() => setActiveTab("overview")}
+            />
           </div>
         );
 
-      default: return null;
+      default:
+        return null;
     }
   };
 
   return (
-    <div className="flex min-h-screen" style={{ background: "var(--night-ink)" }}>
-      <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div
+      className="flex min-h-[calc(100vh-5rem)]"
+      style={{ background: "var(--night-ink)" }}
+    >
+      <AnimatePresence initial={false}>
+        {isSidebarOpen && (
+          <motion.aside
+            className="fixed top-20 left-0 z-30"
+            initial={{ x: -280, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -280, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+          </motion.aside>
+        )}
+      </AnimatePresence>
 
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main
+        className={`flex-1 p-8 transition-all ${
+          isSidebarOpen ? "ml-64" : "ml-0"
+        }`}
+      >
         <div className="max-w-7xl mx-auto">
+          <div className="mb-6 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setIsSidebarOpen((prev) => !prev)}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
+              style={{
+                background: "rgba(247,244,239,0.06)",
+                border: "1px solid rgba(247,244,239,0.12)",
+                color: "rgba(247,244,239,0.70)",
+                fontFamily: "var(--font-body)",
+              }}
+              aria-label={isSidebarOpen ? "Hide sidebar" : "Show sidebar"}
+            >
+              {isSidebarOpen ? (
+                <PanelLeftClose size={16} />
+              ) : (
+                <PanelLeftOpen size={16} />
+              )}
+              {isSidebarOpen ? "Hide Menu" : "Show Menu"}
+            </button>
+          </div>
+
           {error && (
             <div
               className="mb-6 p-4 rounded-2xl flex justify-between items-center"
-              style={{ background: "rgba(234,82,111,0.10)", border: "1px solid rgba(234,82,111,0.25)", color: "#EA526F" }}
+              style={{
+                background: "rgba(234,82,111,0.10)",
+                border: "1px solid rgba(234,82,111,0.25)",
+                color: "#EA526F",
+              }}
             >
               <p style={{ fontFamily: "var(--font-body)" }}>{error}</p>
-              <button onClick={refetch} className="text-sm font-semibold px-3 py-1 rounded-lg" style={{ background: "rgba(234,82,111,0.15)" }}>Retry</button>
+              <button
+                onClick={refetch}
+                className="text-sm font-semibold px-3 py-1 rounded-lg"
+                style={{ background: "rgba(234,82,111,0.15)" }}
+              >
+                Retry
+              </button>
             </div>
           )}
 
@@ -248,7 +472,12 @@ const AdminDashboard = () => {
         </div>
       </main>
 
-      <Toast isOpen={toast.show} message={toast.message} type={toast.type} onClose={hideToast} />
+      <Toast
+        isOpen={toast.show}
+        message={toast.message}
+        type={toast.type}
+        onClose={hideToast}
+      />
     </div>
   );
 };

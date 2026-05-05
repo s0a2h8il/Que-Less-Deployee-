@@ -20,7 +20,10 @@ export const useQueue = (queueId) => {
     try {
       const res = await queueApi.getQueueById(queueId);
       if (res.success) {
-        setQueue(res.data);
+        // API returns { queue: {...}, stats: {...}, userStatus: {...} }
+        // Flatten so components can access queue.title, queue.status, etc directly
+        const { queue: queueData, stats, userStatus } = res.data;
+        setQueue({ ...queueData, stats, userStatus });
       }
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch queue details");
@@ -39,7 +42,7 @@ export const useQueue = (queueId) => {
     try {
       const res = await queueApi.joinQueue(queueId);
       if (res.success) {
-        setQueue(res.data);
+        await fetchQueue();
         return { success: true };
       }
     } catch (err) {
@@ -54,7 +57,7 @@ export const useQueue = (queueId) => {
     try {
       const res = await queueApi.leaveQueue(queueId);
       if (res.success) {
-        setQueue(res.data);
+        await fetchQueue();
         return { success: true };
       }
     } catch (err) {

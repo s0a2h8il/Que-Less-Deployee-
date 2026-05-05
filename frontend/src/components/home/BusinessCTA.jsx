@@ -2,9 +2,13 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/Button";
+import { useAuth } from "../../context/AuthContext";
 import { CheckCircle2, TrendingUp, Monitor } from "lucide-react";
 
 const BusinessCTA = () => {
+  const { isAuthenticated, user } = useAuth();
+  const isAdmin = user?.role === "admin" || user?.role === "superadmin";
+
   const palette = {
     cream: "#FFF7EA",
     sand: "#F2CC8F",
@@ -145,7 +149,7 @@ const BusinessCTA = () => {
                 />
               </div>
 
-              <Link to="/register">
+              <Link to={isAdmin ? "/admin/dashboard" : "/register"}>
                 <Button
                   size="lg"
                   className="h-14 rounded-2xl border-none px-8 text-base font-bold shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.01] sm:h-16 sm:px-10 sm:text-lg"
@@ -156,7 +160,7 @@ const BusinessCTA = () => {
                     boxShadow: "0 16px 34px rgba(61,64,91,0.26)",
                   }}
                 >
-                  Create Business Queue
+                  {isAdmin ? "Manage My Queues" : "Create Business Queue"}
                 </Button>
               </Link>
 

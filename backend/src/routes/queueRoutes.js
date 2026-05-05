@@ -8,6 +8,7 @@ import {
   pauseQueue,
   resumeQueue,
   closeQueue,
+  startQueue,
   updateMemberStatus,
   getMyActiveQueues,
   getAdminQueues
@@ -18,22 +19,25 @@ import { validateRequest } from "../middleware/validateRequest.js";
 
 const router = Router();
 
-// All queue routes require authentication
-router.use(protect);
+// ── Specific protected routes first (must be before /:id) ──
+router.get("/", protect, getAdminQueues);
+router.get("/my-active", protect, getMyActiveQueues);
+router.post("/", protect, queueValidator, validateRequest, createQueue);
 
-// User & Shared routes
-router.get("/", getAdminQueues);
-router.get("/my-active", getMyActiveQueues);
-router.post("/", queueValidator, validateRequest, createQueue);
+// ── Public route ────────────────────────────────────────
+// Anyone can view queue details (no login required)
 router.get("/:id", getQueueDetails);
-router.post("/:id/join", joinQueue);
-router.post("/:id/leave", leaveQueue);
+
+// ── Protected parameterized routes ──────────────────────
+router.post("/:id/join", protect, joinQueue);
+router.post("/:id/leave", protect, leaveQueue);
 
 // Admin Control routes
-router.post("/:id/next", callNext);
-router.put("/:id/pause", pauseQueue);
-router.put("/:id/resume", resumeQueue);
-router.put("/:id/close", closeQueue);
-router.put("/:id/members/:memberId/status", statusUpdateValidator, validateRequest, updateMemberStatus);
+router.post("/:id/next", protect, callNext);
+router.put("/:id/pause", protect, pauseQueue);
+router.put("/:id/resume", protect, resumeQueue);
+router.put("/:id/close", protect, closeQueue);
+router.put("/:id/start", protect, startQueue);
+router.put("/:id/members/:memberId/status", protect, statusUpdateValidator, validateRequest, updateMemberStatus);
 
 export default router;

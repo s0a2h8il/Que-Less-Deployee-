@@ -15,7 +15,8 @@ const QueueControlPanel = ({
   onCallNext, 
   onPause, 
   onResume, 
-  onClose 
+  onClose,
+  onStart
 }) => {
   if (!queue) return null;
 
@@ -82,13 +83,24 @@ const QueueControlPanel = ({
           <Button
             size="lg"
             variant="outline"
-            className="h-24 flex flex-col gap-2 rounded-3xl border-red-200 text-red-600 hover:bg-red-50 col-span-2"
+            className={`h-24 flex flex-col gap-2 rounded-3xl border-red-200 text-red-600 hover:bg-red-50 ${isClosed ? 'col-span-1' : 'col-span-2'}`}
             onClick={onClose}
             disabled={isClosed}
           >
             <XCircle size={28} />
             <span>Close Queue</span>
           </Button>
+
+          {isClosed && (
+            <Button
+              size="lg"
+              className="h-24 flex flex-col gap-2 rounded-3xl bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-100"
+              onClick={onStart}
+            >
+              <Play size={28} />
+              <span>Start Queue</span>
+            </Button>
+          )}
         </div>
       </div>
       

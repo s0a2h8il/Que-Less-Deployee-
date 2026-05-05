@@ -4,7 +4,7 @@ import { ChevronLeft, Share2, RefreshCcw, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useQueue } from "../hooks/useQueue";
 import { useQueueSocket } from "../hooks/useQueueSocket";
-import { Button, Loader, Toast } from "../components";
+import { Button, Card, Loader, Toast } from "../components";
 
 // Components
 import QueueStatusCard from "../components/queue/QueueStatusCard";

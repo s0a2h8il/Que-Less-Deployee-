@@ -129,7 +129,7 @@ const Button = React.forwardRef(
             {leftIcon}
           </span>
         )}
-        {children && <span className="leading-none">{children}</span>}
+        {children && <span className="inline-flex items-center gap-2 leading-none">{children}</span>}
         {!isLoading && rightIcon && (
           <span className="flex shrink-0 items-center justify-center">
             {rightIcon}

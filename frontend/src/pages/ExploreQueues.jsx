@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { RefreshCcw, AlertTriangle, SlidersHorizontal } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
@@ -10,8 +10,10 @@ import EmptyBusinessState from "../components/business/EmptyBusinessState";
 import { Loader } from "../components";
 
 const ExploreQueues = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const initialSearch = searchParams.get("search") || "";
+  const initialCategory = searchParams.get("category") || "";
+  const initialCity = searchParams.get("city") || "";
 
   const {
     businesses,
@@ -21,7 +23,25 @@ const ExploreQueues = () => {
     setFilters,
     refetch,
     pagination,
-  } = useBusinesses({ search: initialSearch });
+  } = useBusinesses({
+    search: initialSearch,
+    category: initialCategory,
+    city: initialCity,
+  });
+
+  // Keep URL in sync with filters (skip the initial render)
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const params = new URLSearchParams();
+    if (filters.search) params.set("search", filters.search);
+    if (filters.category) params.set("category", filters.category);
+    if (filters.city) params.set("city", filters.city);
+    setSearchParams(params, { replace: true });
+  }, [filters.search, filters.category, filters.city, setSearchParams]);
 
   const handleReset = () => setFilters({ search: "", category: "", city: "" });
 
@@ -136,20 +156,39 @@ const ExploreQueues = () => {
       {/* ── Control Deck (Search + Filters) ─────────────────── */}
       <div className="container mx-auto px-4 md:px-6">
         <div
-          className="relative -mt-8 rounded-2xl p-4 mb-8 flex flex-col md:flex-row md:items-center gap-4"
+          className="relative -mt-10 rounded-3xl mb-10 overflow-hidden"
           style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            boxShadow: "var(--shadow-lg)",
+            background: "rgba(255,255,255,0.82)",
+            backdropFilter: "blur(20px) saturate(160%)",
+            WebkitBackdropFilter: "blur(20px) saturate(160%)",
+            border: "1px solid rgba(61,64,91,0.08)",
+            boxShadow:
+              "0 20px 60px rgba(61,64,91,0.10), 0 2px 8px rgba(61,64,91,0.04)",
           }}
         >
-          <div className="w-full md:flex-1">
+          {/* Top accent line */}
+          <div
+            style={{
+              height: 3,
+              background:
+                "linear-gradient(90deg, #81B29A, #3AA0FF, #F2CC8F, #E07A5F)",
+              borderRadius: "3px 3px 0 0",
+            }}
+          />
+
+          {/* Search Row */}
+          <div
+            className="px-5 md:px-8 pt-6 pb-4"
+            style={{ borderBottom: "1px solid rgba(61,64,91,0.06)" }}
+          >
             <BusinessSearchBar
               onSearch={setFilters}
               initialValue={filters.search}
             />
           </div>
-          <div className="w-full md:w-auto">
+
+          {/* Filters Row */}
+          <div className="px-5 md:px-8 py-4">
             <BusinessFilters filters={filters} setFilters={setFilters} />
           </div>
         </div>

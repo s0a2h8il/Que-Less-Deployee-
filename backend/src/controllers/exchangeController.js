@@ -150,7 +150,7 @@ export const acceptExchangeRequest = asyncHandler(async (req, res) => {
   ).catch(err => console.error("Notification Error:", err));
   
   // Notify all in queue about update
-  emitQueueUpdated(queue, "Two users swapped their spots!");
+  await emitQueueUpdated(queue, "Two users swapped their spots!");
 
   res.status(200).json(new ApiResponse(200, request, "Exchange request accepted. Spots swapped!"));
 });

@@ -14,4 +14,5 @@ export const adminApi = {
   pauseQueue: (id) => api.put(`/queues/${id}/pause`).then(r => r.data),
   resumeQueue: (id) => api.put(`/queues/${id}/resume`).then(r => r.data),
   closeQueue: (id) => api.put(`/queues/${id}/close`).then(r => r.data),
+  startQueue: (id) => api.put(`/queues/${id}/start`).then(r => r.data),
 };

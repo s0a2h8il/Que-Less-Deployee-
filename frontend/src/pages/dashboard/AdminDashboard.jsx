@@ -35,6 +35,7 @@ const AdminDashboard = () => {
     pauseHandler,
     resumeHandler,
     closeHandler,
+    startHandler,
     selectQueue,
     refetch,
     toast,
@@ -114,6 +115,7 @@ const AdminDashboard = () => {
                     onPause={pauseHandler}
                     onResume={resumeHandler}
                     onClose={closeHandler}
+                    onStart={startHandler}
                   />
                   {/* Info panel */}
                   <div
@@ -393,48 +395,46 @@ const AdminDashboard = () => {
 
   return (
     <div
-      className="flex min-h-[calc(100vh-5rem)]"
+      className="flex min-h-[calc(100vh-4rem)] relative"
       style={{ background: "var(--night-ink)" }}
     >
-      <AnimatePresence initial={false}>
-        {isSidebarOpen && (
-          <motion.aside
-            className="fixed top-20 left-0 z-30"
-            initial={{ x: -280, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -280, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-          </motion.aside>
-        )}
-      </AnimatePresence>
+      <motion.aside
+        className="fixed top-16 left-0 z-30 h-[calc(100vh-4rem)]"
+        initial={false}
+        animate={{ width: isSidebarOpen ? 256 : 80 }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <AdminSidebar 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+          collapsed={!isSidebarOpen} 
+        />
+      </motion.aside>
 
       <main
-        className={`flex-1 p-8 transition-all ${
-          isSidebarOpen ? "ml-64" : "ml-0"
-        }`}
+        className="flex-1 p-8 transition-all duration-300 ease-[0.22,1,0.36,1]"
+        style={{ marginLeft: isSidebarOpen ? 256 : 80 }}
       >
         <div className="max-w-7xl mx-auto">
           <div className="mb-6 flex items-center justify-between">
             <button
               type="button"
               onClick={() => setIsSidebarOpen((prev) => !prev)}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all whitespace-nowrap"
+              className="group flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-sm"
               style={{
-                background: "rgba(247,244,239,0.06)",
-                border: "1px solid rgba(247,244,239,0.12)",
-                color: "rgba(247,244,239,0.70)",
-                fontFamily: "var(--font-body)",
+                background: isSidebarOpen ? "rgba(247,244,239,0.06)" : "rgba(58,160,255,0.12)",
+                border: isSidebarOpen ? "1px solid rgba(247,244,239,0.12)" : "1px solid rgba(58,160,255,0.30)",
+                color: isSidebarOpen ? "rgba(247,244,239,0.60)" : "#3AA0FF",
+                fontFamily: "var(--font-heading)",
               }}
-              aria-label={isSidebarOpen ? "Hide sidebar" : "Show sidebar"}
+              aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
             >
               {isSidebarOpen ? (
-                <PanelLeftClose size={16} />
+                <PanelLeftClose size={16} className="transition-transform group-hover:-translate-x-0.5" />
               ) : (
-                <PanelLeftOpen size={16} />
+                <PanelLeftOpen size={16} className="transition-transform group-hover:translate-x-0.5" />
               )}
-              {isSidebarOpen ? "Hide Menu" : "Show Menu"}
+              <span>{isSidebarOpen ? "Collapse" : "Expand"}</span>
             </button>
           </div>
 

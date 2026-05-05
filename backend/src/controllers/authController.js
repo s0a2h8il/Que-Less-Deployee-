@@ -65,3 +65,27 @@ export const getMe = asyncHandler(async (req, res) => {
 
   res.status(200).json(new ApiResponse(200, { user }, "User profile fetched successfully"));
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+// ─────────────────────────────────────────────────────────────────────────────
+export const updateProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (!user) throw new ApiError(404, "User not found");
+
+  const { name, email } = req.body;
+
+  if (email && email !== user.email) {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) throw new ApiError(409, "Email already in use");
+    user.email = email;
+  }
+
+  if (name) user.name = name;
+
+  const updatedUser = await user.save();
+
+  res.status(200).json(new ApiResponse(200, { user: safeUser(updatedUser) }, "Profile updated successfully"));
+});

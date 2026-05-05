@@ -98,24 +98,31 @@ export const getQueueDetails = asyncHandler(async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     throw new ApiError(400, "Invalid Queue ID");
 
-  const queue = await Queue.findById(id).populate("businessId", "name address city ownerId");
+  const queue = await Queue.findById(id)
+    .populate("businessId", "name address city ownerId")
+    .populate("members.userId", "name avatar email");
   if (!queue) throw new ApiError(404, "Queue not found");
 
-  const isOwner = queue.businessId?.ownerId?.toString() === req.user._id.toString();
-  const isSuperAdmin = req.user.role === "superadmin";
+  // Safely check ownership — req.user may be undefined for public access
+  const userId = req.user?._id;
+  const isOwner = userId && queue.businessId?.ownerId?.toString() === userId.toString();
+  const isSuperAdmin = req.user?.role === "superadmin";
 
-  const currentUserMember = queue.members.find(
-    (m) => m.userId.toString() === req.user._id.toString() && ["waiting", "called"].includes(m.status)
-  );
-
+  let currentUserMember = null;
   let position = null;
   let estimatedWaitTime = null;
 
-  if (currentUserMember?.status === "waiting") {
-    position = queue.members.filter(
-      (m) => m.status === "waiting" && m.joinedAt < currentUserMember.joinedAt
-    ).length + 1;
-    estimatedWaitTime = position * queue.estimatedTimePerUser;
+  if (userId) {
+    currentUserMember = queue.members.find(
+      (m) => (m.userId._id || m.userId).toString() === userId.toString() && ["waiting", "called"].includes(m.status)
+    );
+
+    if (currentUserMember?.status === "waiting") {
+      position = queue.members.filter(
+        (m) => m.status === "waiting" && m.joinedAt < currentUserMember.joinedAt
+      ).length + 1;
+      estimatedWaitTime = position * queue.estimatedTimePerUser;
+    }
   }
 
   const waitingCount = queue.members.filter((m) => m.status === "waiting").length;
@@ -130,7 +137,14 @@ export const getQueueDetails = asyncHandler(async (req, res) => {
       estimatedTimePerUser: queue.estimatedTimePerUser,
       maxUsers: queue.maxUsers,
       business: queue.businessId,
-      members: isOwner || isSuperAdmin ? queue.members : undefined,
+      members: isOwner || isSuperAdmin
+        ? queue.members
+        : queue.members.map((m) => ({
+            userId: m.userId ? (m.userId._id || m.userId) : null,
+            tokenNumber: m.tokenNumber,
+            status: m.status,
+            joinedAt: m.joinedAt,
+          })),
     },
     stats: {
       totalWaitingUsers: waitingCount,
@@ -168,7 +182,7 @@ export const joinQueue = asyncHandler(async (req, res) => {
   queue.nextTokenNumber += 1;
   await queue.save();
 
-  emitQueueUpdated(queue, `${req.user.name} joined the queue`);
+  await emitQueueUpdated(queue, `${req.user.name} joined the queue`);
   emitTurnNear(queue);
 
   res.status(200).json(new ApiResponse(200, { tokenNumber, position: waitingCount + 1 }, "Joined queue successfully"));
@@ -193,7 +207,7 @@ export const leaveQueue = asyncHandler(async (req, res) => {
   queue.members[memberIndex].leftAt = new Date();
   await queue.save();
 
-  emitQueueUpdated(queue, "A member left the queue");
+  await emitQueueUpdated(queue, "A member left the queue");
   emitTurnNear(queue);
 
   res.status(200).json(new ApiResponse(200, null, "You have left the queue"));
@@ -235,7 +249,7 @@ export const callNext = asyncHandler(async (req, res) => {
   await queue.save();
 
   emitCalledNext(id, nextUser);
-  emitQueueUpdated(queue, `Token #${nextUser.tokenNumber} is called`);
+  await emitQueueUpdated(queue, `Token #${nextUser.tokenNumber} is called`);
   emitTurnNear(queue);
 
   res.status(200).json(new ApiResponse(200, {
@@ -259,7 +273,7 @@ export const pauseQueue = asyncHandler(async (req, res) => {
   queue.status = "paused";
   await queue.save();
 
-  emitQueueUpdated(queue, "Queue has been paused");
+  await emitQueueUpdated(queue, "Queue has been paused");
   notificationService.notifyQueueStatus(getActiveUserIds(queue), queue._id, queue.title, "paused");
 
   res.status(200).json(new ApiResponse(200, { status: queue.status }, "Queue paused successfully"));
@@ -279,7 +293,7 @@ export const resumeQueue = asyncHandler(async (req, res) => {
   queue.status = "active";
   await queue.save();
 
-  emitQueueUpdated(queue, "Queue is now active");
+  await emitQueueUpdated(queue, "Queue is now active");
   notificationService.notifyQueueStatus(getActiveUserIds(queue), queue._id, queue.title, "resumed");
 
   res.status(200).json(new ApiResponse(200, { status: queue.status }, "Queue resumed successfully"));
@@ -310,7 +324,7 @@ export const closeQueue = asyncHandler(async (req, res) => {
   queue.closedAt = new Date();
   await queue.save();
 
-  emitQueueUpdated(queue, "Queue has been closed");
+  await emitQueueUpdated(queue, "Queue has been closed");
   notificationService.notifyQueueStatus(affectedUserIds, queue._id, queue.title, "closed");
 
   res.status(200).json(new ApiResponse(200, {
@@ -321,6 +335,28 @@ export const closeQueue = asyncHandler(async (req, res) => {
       cancelled: queue.members.filter((m) => m.status === "cancelled").length,
     },
   }, "Queue closed successfully"));
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// @desc    Start/Reopen a closed queue (reset for a new session)
+// @route   PUT /api/queues/:id/start
+// ─────────────────────────────────────────────────────────────────────────────
+export const startQueue = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { queue, error } = await checkQueueOwnership(id, req.user._id, req.user.role);
+  if (error) throw error;
+
+  // Reset logic for a fresh session
+  queue.status = "active";
+  queue.currentToken = 0;
+  queue.nextTokenNumber = 1;
+  queue.members = []; 
+  queue.closedAt = undefined;
+
+  await queue.save();
+  await emitQueueUpdated(queue, "Queue has been started for a new session");
+
+  res.status(200).json(new ApiResponse(200, queue, "Queue started successfully"));
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -350,7 +386,7 @@ export const updateMemberStatus = asyncHandler(async (req, res) => {
 
   await queue.save();
 
-  emitQueueUpdated(queue, `Status updated for Token #${member.tokenNumber}`);
+  await emitQueueUpdated(queue, `Status updated for Token #${member.tokenNumber}`);
   emitTurnNear(queue);
 
   res.status(200).json(new ApiResponse(200, { member }, "Member status updated successfully"));

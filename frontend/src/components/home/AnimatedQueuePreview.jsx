@@ -81,21 +81,30 @@ const AnimatedQueuePreview = () => {
           ? await queueApi.getMyActive().catch(() => null)
           : null;
 
-        let queue = activeQueueResponse?.data ?? activeQueueResponse ?? null;
+        let queueData = activeQueueResponse?.data ?? activeQueueResponse ?? null;
+        let queueId = null;
 
-        if (!queue && isAuthenticated) {
+        if (Array.isArray(queueData) && queueData.length > 0) {
+          queueId = queueData[0]._id;
+        }
+
+        if (!queueId && isAuthenticated) {
           const allQueuesResponse = await queueApi.getAll().catch(() => null);
-          const allQueues = Array.isArray(allQueuesResponse?.data)
-            ? allQueuesResponse.data
-            : Array.isArray(allQueuesResponse)
-              ? allQueuesResponse
-              : [];
+          let allQueues = allQueuesResponse?.data ?? allQueuesResponse ?? [];
+          if (!Array.isArray(allQueues)) allQueues = [];
 
-          queue = allQueues.find((item) =>
+          const found = allQueues.find((item) =>
             Array.isArray(item.members)
               ? item.members.some((member) => member.userId === user?._id)
               : false,
           );
+          queueId = found?._id;
+        }
+
+        let queue = null;
+        if (queueId) {
+          const fullDetailRes = await queueApi.getQueueById(queueId).catch(() => null);
+          queue = fullDetailRes?.data?.queue || fullDetailRes?.data;
         }
 
         if (cancelled) return;
@@ -260,18 +269,21 @@ const AnimatedQueuePreview = () => {
       <motion.div
         animate={{ y: [0, -12, 0], x: [0, 6, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute z-20 flex h-14 w-14 items-center justify-center rounded-full text-white"
+        className="absolute z-20 flex h-14 w-14 flex-col items-center justify-center rounded-full text-white"
         style={{
           top: "-1.8rem",
           right: "-1rem",
           background: "linear-gradient(135deg, #E07A5F 0%, #F2CC8F 100%)",
           boxShadow: "0 12px 28px rgba(224,122,95,0.35)",
           fontFamily: "var(--font-heading)",
-          fontSize: "1.15rem",
-          fontWeight: 800,
         }}
       >
-        {(aheadCount ?? 0) + 1}
+        <div style={{ fontSize: "1.15rem", fontWeight: 800, lineHeight: 1 }}>
+          {(aheadCount ?? 0) + 1}
+        </div>
+        <div style={{ fontSize: "7px", fontWeight: 900, textTransform: "uppercase", opacity: 0.8 }}>
+          Pos
+        </div>
       </motion.div>
 
       <motion.div
@@ -292,10 +304,10 @@ const AnimatedQueuePreview = () => {
       >
         <div className="text-center">
           <div
-            className="text-[10px] font-medium"
+            className="text-[10px] font-bold uppercase tracking-widest"
             style={{ color: "rgba(255,255,255,0.78)" }}
           >
-            Token
+            Serving
           </div>
           <div
             style={{
@@ -306,7 +318,7 @@ const AnimatedQueuePreview = () => {
               color: "#FFFFFF",
             }}
           >
-            {currentToken ?? "-"}
+            #{currentToken ?? "0"}
           </div>
         </div>
       </motion.div>
@@ -342,31 +354,31 @@ const AnimatedQueuePreview = () => {
                 className="w-1.5 h-1.5 rounded-full animate-pulse inline-block"
                 style={{ background: palette.mint }}
               />
-              Live Queue
+              Live Status
             </div>
             <BellRing size={17} style={{ color: palette.ink }} />
           </div>
           <div className="text-center">
             <h4
-              className="text-sm font-medium"
+              className="text-sm font-bold uppercase tracking-widest opacity-60"
               style={{
-                color: "rgba(61,64,91,0.70)",
-                fontFamily: "var(--font-body)",
+                color: palette.ink,
+                fontFamily: "var(--font-heading)",
               }}
             >
-              Your Queue
+              Your Token
             </h4>
             <div
               style={{
                 fontFamily: "var(--font-heading)",
-                fontSize: "2.5rem",
+                fontSize: "2.8rem",
                 fontWeight: 900,
                 color: palette.ink,
-                marginTop: 8,
+                marginTop: 4,
                 letterSpacing: "-0.03em",
               }}
             >
-              Token {currentToken ?? "-"}
+              #{members.find(m => m.label === "You")?.token ?? "-"}
             </div>
           </div>
         </div>

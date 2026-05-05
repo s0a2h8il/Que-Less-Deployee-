@@ -6,7 +6,13 @@ import QueueBenefits from "../components/home/QueueBenefits";
 import BusinessCTA from "../components/home/BusinessCTA";
 import Testimonials from "../components/home/Testimonials";
 
+import { useAuth } from "../context/AuthContext";
+
 const Home = () => {
+  const { isAuthenticated, user } = useAuth();
+  const isAdmin = user?.role === "admin" || user?.role === "superadmin";
+  const dashboardPath = isAdmin ? "/admin/dashboard" : "/dashboard";
+
   return (
     <div className="bg-white">
       {/* 1. Hero Section (with GSAP & Animated Queue Preview) */}
@@ -32,10 +38,10 @@ const Home = () => {
           </h2>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
-              to="/register"
+              to={isAuthenticated ? dashboardPath : "/register"}
               className="h-14 inline-flex items-center justify-center px-10 rounded-2xl bg-white text-blue-600 font-black hover:bg-slate-50 transition-all"
             >
-              Join for Free
+              {isAuthenticated ? "Go to Dashboard" : "Join for Free"}
             </Link>
             <Link
               to="/contact"

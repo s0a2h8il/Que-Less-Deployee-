@@ -166,7 +166,25 @@ export const useAdminDashboard = () => {
   const callNextHandler = async () => {
     if (!selectedQueue) return;
     try {
-      await adminApi.callNext(selectedQueue._id);
+      const res = await adminApi.callNext(selectedQueue._id);
+      const updatedQueue = res?.data?.queue || res?.data || res;
+      
+      // Update selected queue immediately
+      setSelectedQueue(prev => ({ 
+        ...prev, 
+        ...updatedQueue,
+        status: "active", // Call next implies active
+        stats: {
+          ...prev.stats,
+          currentToken: updatedQueue.currentToken || prev.stats.currentToken,
+          waitingCount: Math.max(0, (prev.stats.waitingCount || 0) - 1),
+          completedCount: (prev.stats.completedCount || 0) + 1
+        }
+      }));
+
+      // Update in the main list
+      setQueues(prev => prev.map(q => q._id === selectedQueue._id ? { ...q, status: "active", stats: { ...q.stats, currentToken: updatedQueue.currentToken } } : q));
+      
       showToast("Next customer called!", "success");
     } catch (err) {
       showToast(err.response?.data?.message || "Failed to call next", "error");
@@ -176,7 +194,12 @@ export const useAdminDashboard = () => {
   const pauseHandler = async () => {
     if (!selectedQueue) return;
     try {
-      await adminApi.pauseQueue(selectedQueue._id);
+      const res = await adminApi.pauseQueue(selectedQueue._id);
+      const updatedStatus = res?.data?.status || "paused";
+      
+      setSelectedQueue(prev => ({ ...prev, status: updatedStatus }));
+      setQueues(prev => prev.map(q => q._id === selectedQueue._id ? { ...q, status: updatedStatus } : q));
+      
       showToast("Queue paused", "warning");
     } catch (err) {
       showToast(
@@ -189,7 +212,12 @@ export const useAdminDashboard = () => {
   const resumeHandler = async () => {
     if (!selectedQueue) return;
     try {
-      await adminApi.resumeQueue(selectedQueue._id);
+      const res = await adminApi.resumeQueue(selectedQueue._id);
+      const updatedStatus = res?.data?.status || "active";
+
+      setSelectedQueue(prev => ({ ...prev, status: updatedStatus }));
+      setQueues(prev => prev.map(q => q._id === selectedQueue._id ? { ...q, status: updatedStatus } : q));
+      
       showToast("Queue resumed", "success");
     } catch (err) {
       showToast(
@@ -202,11 +230,47 @@ export const useAdminDashboard = () => {
   const closeHandler = async () => {
     if (!selectedQueue) return;
     try {
-      await adminApi.closeQueue(selectedQueue._id);
+      const res = await adminApi.closeQueue(selectedQueue._id);
+      const updatedData = res?.data || res;
+      
+      setSelectedQueue(prev => ({ 
+        ...prev, 
+        status: "closed",
+        members: prev.members.map(m => ["waiting", "called"].includes(m.status) ? { ...m, status: "cancelled" } : m)
+      }));
+      setQueues(prev => prev.map(q => q._id === selectedQueue._id ? { ...q, status: "closed" } : q));
+      
       showToast("Queue closed", "error");
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to close queue",
+        "error",
+      );
+    }
+  };
+
+  const startHandler = async () => {
+    if (!selectedQueue) return;
+    try {
+      const res = await adminApi.startQueue(selectedQueue._id);
+      const freshQueue = res?.data?.queue || res?.data || res;
+
+      // Start queue returns a fresh queue object with 0 members and active status
+      setSelectedQueue({ 
+        ...freshQueue, 
+        stats: { 
+          waitingCount: 0, 
+          completedCount: 0, 
+          totalJoined: 0, 
+          currentToken: 0 
+        } 
+      });
+      setQueues(prev => prev.map(q => q._id === selectedQueue._id ? { ...q, status: "active", stats: { ...q.stats, currentToken: 0, waitingCount: 0 } } : q));
+
+      showToast("Queue started for new session!", "success");
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || "Failed to start queue",
         "error",
       );
     }
@@ -226,6 +290,7 @@ export const useAdminDashboard = () => {
     pauseHandler,
     resumeHandler,
     closeHandler,
+    startHandler,
     selectQueue,
     refetch: fetchData,
   };

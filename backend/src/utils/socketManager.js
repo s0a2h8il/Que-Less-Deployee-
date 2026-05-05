@@ -27,8 +27,14 @@ export const getSocketInstance = () => {
  * @param {object} queue - The queue document
  * @param {string} message - A friendly message
  */
-export const emitQueueUpdated = (queue, message = "Queue updated") => {
+export const emitQueueUpdated = async (queue, message = "Queue updated") => {
   if (!io) return;
+
+  // Ensure members.userId is populated if we want to send names via socket
+  // Note: We'll do a quick check if it's already populated
+  if (queue.members.length > 0 && typeof queue.members[0].userId === 'string') {
+    await queue.populate("members.userId", "name avatar");
+  }
 
   const waitingCount = queue.members.filter((m) => m.status === "waiting").length;
 
@@ -40,10 +46,25 @@ export const emitQueueUpdated = (queue, message = "Queue updated") => {
     estimatedWaitTime: waitingCount * queue.estimatedTimePerUser,
     updatedAt: queue.updatedAt,
     message,
+    // Send sanitized members list for UI updates
+    members: queue.members.map(m => ({
+      _id: m._id,
+      userId: m.userId ? {
+        _id: m.userId._id || m.userId,
+        name: m.userId.name || "Guest User",
+        avatar: m.userId.avatar
+      } : {
+        _id: null,
+        name: "Guest User"
+      },
+      tokenNumber: m.tokenNumber,
+      status: m.status,
+      joinedAt: m.joinedAt
+    }))
   };
 
   io.to(`queue:${queue._id}`).emit("queueUpdated", payload);
-  console.log(`📡 Emitted queueUpdated to room: queue:${queue._id}`);
+  console.log(`📡 Emitted queueUpdated to room: queue:${queue._id} with members list`);
 };
 
 /**

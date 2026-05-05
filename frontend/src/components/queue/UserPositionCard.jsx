@@ -51,7 +51,7 @@ const UserPositionCard = ({ userMember, queue }) => {
               <AlertCircle size={14} />
               Turn Near
             </motion.div>
-          )}}
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-4 mt-auto">

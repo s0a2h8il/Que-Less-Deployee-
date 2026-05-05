@@ -1,9 +1,11 @@
 import express from "express";
-import dotenv from "dotenv";
+import "dotenv/config";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import helmet from "helmet";
+import path from "path";
+import { fileURLToPath } from "url";
 import { createServer } from "http";
 import connectDB from "./config/db.js";
 import initSocket from "./sockets/socket.js";
@@ -22,7 +24,8 @@ import superAdminRoutes   from "./routes/superAdminRoutes.js";
 import analyticsRoutes    from "./routes/analyticsRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app  = express();
 const PORT = process.env.PORT || 5000;
@@ -54,6 +57,18 @@ app.use("/api/admin",         sensitiveActionLimiter, superAdminRoutes);
 app.use("/api/analytics",     apiLimiter,            analyticsRoutes);
 app.use("/api/notifications",  apiLimiter,            notificationRoutes);
 
+// ── Serving Frontend (Production) ─────────────────────────────────────────────
+if (process.env.NODE_ENV === "production") {
+  const frontendPath = path.join(__dirname, "../../frontend/dist");
+  app.use(express.static(frontendPath));
+
+  app.get("*", (req, res) => {
+    if (!req.path.startsWith("/api")) {
+      res.sendFile(path.join(frontendPath, "index.html"));
+    }
+  });
+}
+
 // ── Error handling ────────────────────────────────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);
@@ -72,6 +87,14 @@ httpServer.on("error", (err) => {
   process.exit(1);
 });
 
+if (!process.env.MONGODB_URI) {
+  console.error("❌ ERROR: MONGODB_URI is not defined in environment variables!");
+  process.exit(1);
+}
+
 connectDB()
   .then(() => httpServer.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`)))
-  .catch((err) => { console.error("MongoDB connection failed:", err); process.exit(1); });
+  .catch((err) => { 
+    console.error("❌ MongoDB connection failed:", err.message); 
+    process.exit(1); 
+  });

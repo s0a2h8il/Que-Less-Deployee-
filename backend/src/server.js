@@ -29,6 +29,10 @@ const __dirname = path.dirname(__filename);
 
 const app  = express();
 const PORT = process.env.PORT || 5000;
+const ENV  = process.env.NODE_ENV || "development";
+
+console.log(`📡 Starting server in ${ENV} mode...`);
+console.log(`🔌 Assigned Port: ${PORT}`);
 
 // ── Security middleware (order matters) ───────────────────────────────────────
 app.use(helmet());
@@ -93,8 +97,14 @@ if (!process.env.MONGODB_URI) {
 }
 
 connectDB()
-  .then(() => httpServer.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`)))
+  .then(() => {
+    httpServer.listen(PORT, () => {
+      console.log(`🚀 SUCCESS: Server is live at http://localhost:${PORT}`);
+      console.log(`🌐 Environment: ${ENV}`);
+    });
+  })
   .catch((err) => { 
-    console.error("❌ MongoDB connection failed:", err.message); 
+    console.error("❌ CRITICAL: MongoDB connection failed!");
+    console.error("👉 Error Details:", err.message || err); 
     process.exit(1); 
   });

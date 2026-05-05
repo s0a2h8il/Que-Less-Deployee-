@@ -55,7 +55,7 @@ const About = () => {
                 </div>
                 <div>
                   <p className="font-semibold">Designed for calmer service</p>
-                  <p className="text-sm text-[var(--text-secondary)]"
+                  <p className="text-sm text-[var(--text-secondary)]">
                     One shared system for businesses and customers.
                   </p>
                 </div>

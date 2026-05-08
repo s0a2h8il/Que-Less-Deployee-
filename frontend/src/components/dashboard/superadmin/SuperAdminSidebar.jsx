@@ -6,11 +6,13 @@ import {
   ListOrdered,
   FileText,
   ArrowLeft,
+  Zap,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../../../utils/cn";
+import { motion } from "framer-motion";
 
-const SuperAdminSidebar = ({ activeTab, setActiveTab }) => {
+const SuperAdminSidebar = ({ activeTab, setActiveTab, onNavigate }) => {
   const tabs = [
     { id: "overview", label: "Overview", icon: BarChart3 },
     { id: "users", label: "Users", icon: Users },
@@ -21,25 +23,37 @@ const SuperAdminSidebar = ({ activeTab, setActiveTab }) => {
 
   return (
     <aside className="w-64 bg-slate-900 text-white p-6 flex flex-col border-r border-slate-800">
-      <div className="mb-8">
+      <div className="mb-8 flex flex-col gap-6">
         <Link
           to="/"
-          className="flex items-center gap-3 hover:opacity-80 transition-opacity whitespace-nowrap"
+          onClick={onNavigate}
+          className="flex items-center gap-3 group"
         >
-          <ArrowLeft size={20} />
-          <span className="font-bold text-sm">Back to App</span>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg shrink-0"
+            style={{
+              background: "linear-gradient(135deg, #E07A5F 0%, #F2CC8F 100%)",
+              boxShadow: "0 8px 16px rgba(224,122,95,0.2)",
+            }}
+          >
+            <Zap size={18} fill="white" className="text-white" />
+          </motion.div>
+          <div className="flex flex-col leading-none">
+            <span className="text-lg font-bold tracking-tight text-white">
+              Queue<span className="text-[#E07A5F]">-Less</span>
+            </span>
+            <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+              Virtual Queue
+            </span>
+          </div>
         </Link>
-      </div>
 
-      <div className="mb-8">
-        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
-          Super Admin Panel
-        </h2>
-        <div className="text-sm text-slate-300">
-          <p className="font-semibold">Platform Management</p>
-          <p className="text-slate-400 text-xs mt-1">
-            Manage users, businesses & content
-          </p>
+        <div>
+          <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+            Platform Admin
+          </h2>
         </div>
       </div>
 
@@ -51,7 +65,10 @@ const SuperAdminSidebar = ({ activeTab, setActiveTab }) => {
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => {
+                setActiveTab(tab.id);
+                onNavigate?.();
+              }}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm transition-all whitespace-nowrap",
                 isActive
@@ -69,6 +86,7 @@ const SuperAdminSidebar = ({ activeTab, setActiveTab }) => {
       <div className="pt-4 border-t border-slate-700">
         <Link
           to="/dashboard"
+          onClick={onNavigate}
           className="flex items-center gap-2 px-4 py-2 text-sm text-slate-400 hover:text-slate-200 transition-colors whitespace-nowrap"
         >
           <ArrowLeft size={16} />

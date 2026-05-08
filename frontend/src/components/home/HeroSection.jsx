@@ -54,12 +54,15 @@ const HeroSection = () => {
 
   return (
     <section
-      className="relative bg-pattern"
+      className="relative bg-pattern overflow-hidden"
       style={{
         background:
           "linear-gradient(145deg, rgba(255,247,234,1) 0%, rgba(255,242,221,1) 38%, rgba(231,251,243,1) 100%)",
-        paddingTop: "clamp(5rem, 10vw, 8rem)",
-        paddingBottom: "clamp(6rem, 12vw, 10rem)",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        paddingTop: "5rem", 
+        paddingBottom: "3rem",
       }}
     >
       {/* Background radial blobs */}
@@ -88,18 +91,6 @@ const HeroSection = () => {
               "radial-gradient(circle, rgba(129,178,154,0.26) 0%, transparent 70%)",
           }}
         />
-        <div
-          style={{
-            position: "absolute",
-            top: "24%",
-            right: "18%",
-            width: 280,
-            height: 280,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(190,227,248,0.38) 0%, transparent 70%)",
-          }}
-        />
       </div>
 
       {/* Subtle grid lines */}
@@ -113,13 +104,13 @@ const HeroSection = () => {
       />
 
       <div className="relative container mx-auto px-6">
-        <div className="flex flex-col items-center lg:flex-row lg:gap-16">
+        <div className="flex flex-col items-center lg:flex-row lg:gap-8">
           {/* ── Left ─────────────────────────────────────── */}
-          <div className="flex-1 text-center lg:text-left">
+          <div className="flex-[0.9] text-center lg:text-left">
             {/* Badge */}
             <div
               ref={badgeRef}
-              className="mb-6 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-widest whitespace-nowrap"
+              className="mb-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest whitespace-nowrap"
               style={{
                 background: "rgba(255,255,255,0.74)",
                 border: "1px solid rgba(61,64,91,0.12)",
@@ -138,12 +129,12 @@ const HeroSection = () => {
             {/* Headline */}
             <h1
               ref={titleRef}
-              className="mb-7"
+              className="mb-5"
               style={{
                 fontFamily: "var(--font-heading)",
-                fontSize: "clamp(2.8rem, 6vw, 5rem)",
+                fontSize: "clamp(2.5rem, 4.5vw, 4rem)",
                 fontWeight: 800,
-                lineHeight: 1.08,
+                lineHeight: 1.1,
                 letterSpacing: "-0.03em",
                 color: palette.ink,
               }}
@@ -165,29 +156,28 @@ const HeroSection = () => {
             {/* Subtitle */}
             <p
               ref={subRef}
-              className="mb-10 max-w-xl"
+              className="mb-8 max-w-lg"
               style={{
                 fontFamily: "var(--font-body)",
-                fontSize: "1.125rem",
-                lineHeight: 1.75,
+                fontSize: "1rem",
+                lineHeight: 1.6,
                 color: "rgba(61,64,91,0.78)",
-                marginLeft: "auto",
+                marginLeft: "0",
                 marginRight: "auto",
               }}
             >
               QueueLess helps businesses create a calmer queue experience, while
-              customers enjoy clear updates, less waiting stress, and a smoother
-              flow from phone to counter.
+              customers enjoy clear updates and smoother flow from phone to counter.
             </p>
 
             {/* CTAs */}
             <div
               ref={ctaRef}
-              className="mb-16 flex flex-col items-center gap-3 sm:flex-row lg:justify-start"
+              className="mb-12 flex flex-col items-center gap-3 sm:flex-row lg:justify-start"
             >
               <Link to="/explore">
                 <button
-                  className="group relative overflow-hidden px-8 py-4 rounded-2xl font-bold text-base transition-all duration-300"
+                  className="group relative overflow-hidden px-7 py-3.5 rounded-xl font-bold text-sm transition-all duration-300"
                   style={{
                     background:
                       "linear-gradient(135deg, #3D405B 0%, #4F5D75 100%)",
@@ -207,13 +197,12 @@ const HeroSection = () => {
                   }}
                 >
                   <span className="relative z-10">Join a Queue</span>
-                  {/* shimmer */}
                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
                 </button>
               </Link>
               <Link to="/business">
                 <button
-                  className="px-8 py-4 rounded-2xl font-semibold text-base transition-all duration-300"
+                  className="px-7 py-3.5 rounded-xl font-semibold text-sm transition-all duration-300"
                   style={{
                     background: "rgba(255,255,255,0.70)",
                     color: palette.ink,
@@ -240,7 +229,7 @@ const HeroSection = () => {
             {/* Stats */}
             <div
               ref={statsRef}
-              className="flex flex-wrap justify-center gap-8 pt-8 lg:justify-start lg:gap-12"
+              className="flex flex-wrap justify-center gap-6 pt-6 lg:justify-start lg:gap-10"
               style={{ borderTop: "1px solid rgba(61,64,91,0.10)" }}
             >
               <StatItem value="10k+" label="Spots Saved" />
@@ -250,12 +239,13 @@ const HeroSection = () => {
           </div>
 
           {/* ── Right: Animated Preview ──────────────────── */}
-          {/* The outer padding gives the floating badges room (-top-10 / -bottom-8 / -left-10 / -right-4) */}
           <div
-            className="mt-20 flex-1 lg:mt-0"
-            style={{ padding: "3rem 1.5rem 3rem 3rem" }}
+            className="mt-12 flex-1 lg:mt-0 flex justify-center lg:justify-end"
+            style={{ padding: "1rem" }}
           >
-            <AnimatedQueuePreview />
+            <div className="scale-90 lg:scale-95 transition-transform origin-center">
+              <AnimatedQueuePreview />
+            </div>
           </div>
         </div>
       </div>
@@ -266,7 +256,7 @@ const HeroSection = () => {
 const StatItem = ({ value, label }) => (
   <div className="text-center lg:text-left">
     <div
-      className="text-3xl font-black"
+      className="text-2xl font-black"
       style={{
         fontFamily: "var(--font-heading)",
         color: "#3D405B",
@@ -276,7 +266,7 @@ const StatItem = ({ value, label }) => (
       {value}
     </div>
     <div
-      className="text-sm font-medium"
+      className="text-[11px] font-bold uppercase tracking-widest"
       style={{ color: "rgba(61,64,91,0.58)", fontFamily: "var(--font-body)" }}
     >
       {label}

@@ -10,7 +10,8 @@ import PeakHoursChart from "../../components/analytics/PeakHoursChart.jsx";
 import CompletionRateChart from "../../components/analytics/CompletionRateChart.jsx";
 import BusinessPerformanceTable from "../../components/analytics/BusinessPerformanceTable.jsx";
 import { Loader } from "../../components/ui/Loader.jsx";
-import { AlertCircle, RotateCw } from "lucide-react";
+import { Link } from "react-router-dom";
+import { AlertCircle, RotateCw, Zap } from "lucide-react";
 
 const AnalyticsDashboard = () => {
   const { user } = useAuth();
@@ -61,8 +62,31 @@ const AnalyticsDashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-6"
       >
+        {/* Brand Logo Link */}
+        <Link to="/" className="flex items-center gap-3 group mb-10 w-fit">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg"
+            style={{
+              background: "linear-gradient(135deg, #E07A5F 0%, #F2CC8F 100%)",
+              boxShadow: "0 8px 16px rgba(224,122,95,0.2)",
+            }}
+          >
+            <Zap size={18} fill="white" className="text-white" />
+          </motion.div>
+          <div className="flex flex-col leading-none">
+            <span className="text-lg font-bold tracking-tight text-white">
+              Queue<span className="text-[#E07A5F]">-Less</span>
+            </span>
+            <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+              Virtual Queue
+            </span>
+          </div>
+        </Link>
+
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-white">
               Analytics Dashboard
@@ -76,9 +100,15 @@ const AnalyticsDashboard = () => {
             whileTap={{ scale: 0.95 }}
             onClick={refetch}
             disabled={loading}
-            className="p-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white transition"
+            className="self-start p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white transition-all shadow-lg shadow-indigo-200 sm:self-auto flex items-center justify-center gap-2"
           >
-            <RotateCw size={20} />
+            <motion.div
+              animate={loading ? { rotate: 360 } : { rotate: 0 }}
+              transition={{ duration: 1, repeat: loading ? Infinity : 0, ease: "linear" }}
+            >
+              <RotateCw size={20} />
+            </motion.div>
+            {loading && <span className="text-sm font-bold pr-1">Refreshing...</span>}
           </motion.button>
         </div>
 

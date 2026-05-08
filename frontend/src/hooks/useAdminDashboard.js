@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { adminApi } from "../api/adminApi";
 import { useQueueSocket } from "./useQueueSocket";
 
@@ -31,6 +31,8 @@ export const useAdminDashboard = () => {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
+      
+      // Fetch businesses and queues list
       const [bizResult, queueResult] = await Promise.allSettled([
         adminApi.getMyBusinesses(),
         adminApi.getMyQueues(),
@@ -55,6 +57,18 @@ export const useAdminDashboard = () => {
         );
       }
 
+      // If a queue is currently selected, refresh its specific details too
+      if (selectedQueue?._id) {
+        try {
+          const detailRes = await adminApi.getQueueDetails(selectedQueue._id);
+          const queueBase = detailRes?.data?.queue || detailRes?.data || detailRes;
+          const stats = detailRes?.data?.stats || {};
+          setSelectedQueue({ ...queueBase, stats });
+        } catch (err) {
+          console.error("Failed to refresh selected queue details:", err);
+        }
+      }
+
       if (
         bizResult.status === "rejected" &&
         queueResult.status === "fulfilled"
@@ -71,15 +85,43 @@ export const useAdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedQueue?._id]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
+  const queueIds = useMemo(
+    () => queues.map((queue) => queue._id).filter(Boolean),
+    [queues],
+  );
+
+  const mergeQueueUpdate = useCallback((queue, updatedData) => {
+    const merged = { ...queue, ...updatedData };
+
+    if (updatedData.members) {
+      merged.members = updatedData.members;
+    }
+
+    const waitingCount = updatedData.waitingCount ?? queue.stats?.waitingCount;
+    const completedCount = updatedData.completedCount ?? queue.stats?.completedCount;
+    const totalJoined = updatedData.totalJoined ?? queue.stats?.totalJoined;
+    const currentToken = updatedData.currentToken ?? queue.stats?.currentToken;
+
+    merged.stats = {
+      ...queue.stats,
+      waitingCount,
+      completedCount,
+      totalJoined,
+      currentToken,
+    };
+
+    return merged;
+  }, []);
+
   // Real-time updates for selected queue
   useQueueSocket(
-    selectedQueue?._id,
+    queueIds,
     (updatedData) => {
       if (!updatedData) return;
 
@@ -91,22 +133,19 @@ export const useAdminDashboard = () => {
       // Update selected queue if it's the one being updated
       setSelectedQueue((prev) => {
         if (!prev || prev._id !== qId) return prev;
-
-        // Merge the update (handles both full queue objects and partial status updates)
-        const merged = { ...prev, ...updatedData };
-        // If the backend sent stats separately or flat, we might need to handle it
-        if (updatedData.waitingCount !== undefined) {
-          merged.stats = {
-            ...merged.stats,
-            waitingCount: updatedData.waitingCount,
-          };
-        }
-        return merged;
+        const merged = mergeQueueUpdate(prev, updatedData);
+        return { ...merged, _lastUpdate: Date.now() }; // Trigger animation
       });
 
       // Update the queue list as well
       setQueues((prev) =>
-        prev.map((q) => (q._id === qId ? { ...q, ...updatedData } : q)),
+        prev.map((q) => {
+          if (q._id === qId) {
+            const merged = mergeQueueUpdate(q, updatedData);
+            return { ...merged, _lastUpdate: Date.now() };
+          }
+          return q;
+        }),
       );
     },
     (event) => {
@@ -116,9 +155,9 @@ export const useAdminDashboard = () => {
     },
   );
 
-  const createBusinessHandler = async (data) => {
+  const createBusinessHandler = async (formData) => {
     try {
-      const response = await adminApi.createBusiness(data);
+      const response = await adminApi.createBusiness(formData);
       const newBiz = response?.data?.business || response?.data || response;
       setBusinesses((prev) => [...prev, newBiz]);
       showToast("Business created successfully!", "success");
@@ -168,23 +207,52 @@ export const useAdminDashboard = () => {
     try {
       const res = await adminApi.callNext(selectedQueue._id);
       const updatedQueue = res?.data?.queue || res?.data || res;
-      
-      // Update selected queue immediately
-      setSelectedQueue(prev => ({ 
-        ...prev, 
-        ...updatedQueue,
-        status: "active", // Call next implies active
-        stats: {
-          ...prev.stats,
-          currentToken: updatedQueue.currentToken || prev.stats.currentToken,
-          waitingCount: Math.max(0, (prev.stats.waitingCount || 0) - 1),
-          completedCount: (prev.stats.completedCount || 0) + 1
-        }
-      }));
+
+      // Update selected queue immediately with correct member status
+      setSelectedQueue((prev) => {
+        if (!prev) return prev;
+        
+        // Find and update the member that was called
+        const updatedMembers = prev.members?.map(m => 
+          m.tokenNumber === updatedQueue.currentToken 
+            ? { ...m, status: "called", calledAt: new Date().toISOString() }
+            : m.status === "called" 
+              ? { ...m, status: "completed", completedAt: new Date().toISOString() } // auto-complete previous
+              : m
+        );
+
+        return {
+          ...prev,
+          ...updatedQueue,
+          status: "active",
+          members: updatedMembers,
+          stats: {
+            ...prev.stats,
+            currentToken: updatedQueue.currentToken || prev.stats.currentToken,
+            waitingCount: Math.max(0, (prev.stats.waitingCount || 0) - 1),
+            completedCount: (prev.stats.completedCount || 0) + 1,
+          },
+        };
+      });
 
       // Update in the main list
-      setQueues(prev => prev.map(q => q._id === selectedQueue._id ? { ...q, status: "active", stats: { ...q.stats, currentToken: updatedQueue.currentToken } } : q));
-      
+      setQueues((prev) =>
+        prev.map((q) =>
+          q._id === selectedQueue._id
+            ? {
+                ...q,
+                status: "active",
+                stats: { 
+                  ...q.stats, 
+                  currentToken: updatedQueue.currentToken,
+                  waitingCount: Math.max(0, (q.stats.waitingCount || 0) - 1),
+                  completedCount: (q.stats.completedCount || 0) + 1,
+                },
+              }
+            : q,
+        ),
+      );
+
       showToast("Next customer called!", "success");
     } catch (err) {
       showToast(err.response?.data?.message || "Failed to call next", "error");
@@ -196,10 +264,14 @@ export const useAdminDashboard = () => {
     try {
       const res = await adminApi.pauseQueue(selectedQueue._id);
       const updatedStatus = res?.data?.status || "paused";
-      
-      setSelectedQueue(prev => ({ ...prev, status: updatedStatus }));
-      setQueues(prev => prev.map(q => q._id === selectedQueue._id ? { ...q, status: updatedStatus } : q));
-      
+
+      setSelectedQueue((prev) => ({ ...prev, status: updatedStatus }));
+      setQueues((prev) =>
+        prev.map((q) =>
+          q._id === selectedQueue._id ? { ...q, status: updatedStatus } : q,
+        ),
+      );
+
       showToast("Queue paused", "warning");
     } catch (err) {
       showToast(
@@ -215,9 +287,13 @@ export const useAdminDashboard = () => {
       const res = await adminApi.resumeQueue(selectedQueue._id);
       const updatedStatus = res?.data?.status || "active";
 
-      setSelectedQueue(prev => ({ ...prev, status: updatedStatus }));
-      setQueues(prev => prev.map(q => q._id === selectedQueue._id ? { ...q, status: updatedStatus } : q));
-      
+      setSelectedQueue((prev) => ({ ...prev, status: updatedStatus }));
+      setQueues((prev) =>
+        prev.map((q) =>
+          q._id === selectedQueue._id ? { ...q, status: updatedStatus } : q,
+        ),
+      );
+
       showToast("Queue resumed", "success");
     } catch (err) {
       showToast(
@@ -232,14 +308,22 @@ export const useAdminDashboard = () => {
     try {
       const res = await adminApi.closeQueue(selectedQueue._id);
       const updatedData = res?.data || res;
-      
-      setSelectedQueue(prev => ({ 
-        ...prev, 
+
+      setSelectedQueue((prev) => ({
+        ...prev,
         status: "closed",
-        members: prev.members.map(m => ["waiting", "called"].includes(m.status) ? { ...m, status: "cancelled" } : m)
+        members: prev.members.map((m) =>
+          ["waiting", "called"].includes(m.status)
+            ? { ...m, status: "cancelled" }
+            : m,
+        ),
       }));
-      setQueues(prev => prev.map(q => q._id === selectedQueue._id ? { ...q, status: "closed" } : q));
-      
+      setQueues((prev) =>
+        prev.map((q) =>
+          q._id === selectedQueue._id ? { ...q, status: "closed" } : q,
+        ),
+      );
+
       showToast("Queue closed", "error");
     } catch (err) {
       showToast(
@@ -256,16 +340,26 @@ export const useAdminDashboard = () => {
       const freshQueue = res?.data?.queue || res?.data || res;
 
       // Start queue returns a fresh queue object with 0 members and active status
-      setSelectedQueue({ 
-        ...freshQueue, 
-        stats: { 
-          waitingCount: 0, 
-          completedCount: 0, 
-          totalJoined: 0, 
-          currentToken: 0 
-        } 
+      setSelectedQueue({
+        ...freshQueue,
+        stats: {
+          waitingCount: 0,
+          completedCount: 0,
+          totalJoined: 0,
+          currentToken: 0,
+        },
       });
-      setQueues(prev => prev.map(q => q._id === selectedQueue._id ? { ...q, status: "active", stats: { ...q.stats, currentToken: 0, waitingCount: 0 } } : q));
+      setQueues((prev) =>
+        prev.map((q) =>
+          q._id === selectedQueue._id
+            ? {
+                ...q,
+                status: "active",
+                stats: { ...q.stats, currentToken: 0, waitingCount: 0 },
+              }
+            : q,
+        ),
+      );
 
       showToast("Queue started for new session!", "success");
     } catch (err) {

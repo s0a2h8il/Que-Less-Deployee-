@@ -258,7 +258,7 @@ const BusinessCTA = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     <div
                       className="h-16 rounded-xl border"
                       style={{
@@ -305,7 +305,7 @@ const BusinessCTA = () => {
 
 const BusinessFeature = ({ icon: Icon, text, palette }) => (
   <div
-    className="flex items-center gap-3 rounded-xl border px-3 py-2.5 whitespace-nowrap"
+    className="flex min-w-0 items-center gap-3 rounded-xl border px-3 py-2.5 text-sm sm:text-base"
     style={{
       borderColor: "rgba(61,64,91,0.12)",
       background: "rgba(255,255,255,0.68)",
@@ -321,7 +321,7 @@ const BusinessFeature = ({ icon: Icon, text, palette }) => (
     >
       <Icon size={18} />
     </div>
-    <span className="font-semibold" style={{ color: palette.ink }}>
+    <span className="font-semibold leading-snug" style={{ color: palette.ink }}>
       {text}
     </span>
   </div>

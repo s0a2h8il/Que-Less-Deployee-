@@ -30,19 +30,22 @@ export const getSocketInstance = () => {
 export const emitQueueUpdated = async (queue, message = "Queue updated") => {
   if (!io) return;
 
-  // Ensure members.userId is populated if we want to send names via socket
-  // Note: We'll do a quick check if it's already populated
-  if (queue.members.length > 0 && typeof queue.members[0].userId === 'string') {
-    await queue.populate("members.userId", "name avatar");
+  // Ensure members.userId is populated so we can send real user data (names) via socket
+  if (queue.members && queue.members.length > 0) {
+    await queue.populate("members.userId", "name avatar email");
   }
 
   const waitingCount = queue.members.filter((m) => m.status === "waiting").length;
+  const completedCount = queue.members.filter((m) => m.status === "completed").length;
+  const totalJoined = queue.members.length;
 
   const payload = {
     queueId: queue._id,
     status: queue.status,
     currentToken: queue.currentToken,
     waitingCount,
+    completedCount,
+    totalJoined,
     estimatedWaitTime: waitingCount * queue.estimatedTimePerUser,
     updatedAt: queue.updatedAt,
     message,

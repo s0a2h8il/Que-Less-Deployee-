@@ -7,7 +7,7 @@ const BusinessPerformanceTable = ({ queueStats }) => {
   const businessMetrics = useMemo(() => {
     const metrics = {};
 
-    if (!queueStats || queueStats.length === 0) {
+    if (!Array.isArray(queueStats) || queueStats.length === 0) {
       return [];
     }
 

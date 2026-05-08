@@ -10,9 +10,18 @@ export const businessValidator = [
     .trim()
     .notEmpty().withMessage("Category is required"),
   
-  body("address")
+  body("addressLine1")
     .trim()
-    .notEmpty().withMessage("Address is required"),
+    .notEmpty().withMessage("Address Line 1 is required")
+    .isLength({ min: 3 }).withMessage("Address must be at least 3 characters"),
+
+  body("areaName")
+    .optional()
+    .trim(),
+
+  body("pincode")
+    .optional()
+    .trim(),
   
   body("city")
     .trim()

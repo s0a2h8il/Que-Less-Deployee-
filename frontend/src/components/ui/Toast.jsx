@@ -8,7 +8,7 @@ const Toasts = () => {
   const { toasts, removeToast } = useContext(ToastContext);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 space-y-2 w-80">
+    <div className="fixed bottom-6 z-50 space-y-2 w-[calc(100%-2rem)] max-w-sm left-4 right-4 sm:left-auto sm:right-6 sm:w-80">
       {toasts.map((t) => (
         <div
           key={t.id}
@@ -84,7 +84,7 @@ const Toast = ({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
           className={cn(
-            "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex min-w-[320px] items-center gap-3 rounded-2xl border px-4 py-3.5 shadow-lg",
+            "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex w-[calc(100%-2rem)] max-w-md items-center gap-3 rounded-2xl border px-4 py-3.5 shadow-lg",
             bgColors[type],
           )}
           style={{ borderColor: "rgba(61,64,91,0.10)" }}

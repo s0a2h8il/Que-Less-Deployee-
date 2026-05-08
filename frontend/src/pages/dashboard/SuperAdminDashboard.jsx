@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSuperAdminDashboard } from "../../hooks/useSuperAdminDashboard";
 import SuperAdminSidebar from "../../components/dashboard/superadmin/SuperAdminSidebar";
 import SuperAdminStats from "../../components/dashboard/superadmin/SuperAdminStats";
@@ -10,6 +10,32 @@ import { Toast } from "../../components/ui/Toast";
 import { motion, AnimatePresence } from "framer-motion";
 
 const SuperAdminDashboard = () => {
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.matchMedia("(min-width: 1024px)").matches;
+  });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(isDesktop);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const media = window.matchMedia("(min-width: 1024px)");
+    const handleChange = (event) => setIsDesktop(event.matches);
+
+    handleChange(media);
+    media.addEventListener("change", handleChange);
+
+    return () => media.removeEventListener("change", handleChange);
+  }, []);
+
+  useEffect(() => {
+    setIsSidebarOpen(isDesktop);
+  }, [isDesktop]);
+
+  const showMobileOverlay = !isDesktop && isSidebarOpen;
+  const handleNavigate = () => {
+    if (!isDesktop) setIsSidebarOpen(false);
+  };
   const {
     stats,
     users,
@@ -140,13 +166,45 @@ const SuperAdminDashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-slate-50">
+      {showMobileOverlay && (
+        <button
+          type="button"
+          aria-label="Close sidebar"
+          className="fixed inset-0 z-30 bg-slate-950/40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <SuperAdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <motion.aside
+        className="fixed left-0 top-0 z-40 h-full lg:static lg:h-auto"
+        initial={false}
+        animate={{ x: isDesktop ? 0 : isSidebarOpen ? 0 : "-100%" }}
+        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <SuperAdminSidebar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          onNavigate={handleNavigate}
+        />
+      </motion.aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="p-8">
+      <main className="flex-1 min-w-0 overflow-y-auto">
+        <div className="p-4 sm:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
+            <div className="mb-6 flex items-center justify-between lg:hidden">
+              <button
+                type="button"
+                onClick={() => setIsSidebarOpen(true)}
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 shadow-sm"
+              >
+                Menu
+              </button>
+              <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                Super Admin
+              </span>
+            </div>
             {/* Error Banner */}
             {error && (
               <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-2xl border border-red-100 flex justify-between items-center">

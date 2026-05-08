@@ -48,8 +48,8 @@ const useAnalytics = () => {
       setLoading(true);
       setError(null);
       const params = getQueryParams();
-      const data = await analyticsApi.getOverviewAnalytics(params);
-      setOverview(data);
+      const res = await analyticsApi.getOverviewAnalytics(params);
+      setOverview(res.data);
     } catch (err) {
       setError(err.message || "Failed to fetch overview analytics");
       console.error("Overview analytics error:", err);
@@ -63,11 +63,11 @@ const useAnalytics = () => {
     if (!filters.businessId) return;
     try {
       const params = getQueryParams();
-      const data = await analyticsApi.getBusinessAnalytics(
+      const res = await analyticsApi.getBusinessAnalytics(
         filters.businessId,
         params,
       );
-      setBusinessAnalytics(data);
+      setBusinessAnalytics(res.data);
     } catch (err) {
       console.error("Business analytics error:", err);
     }
@@ -77,11 +77,12 @@ const useAnalytics = () => {
   const fetchQueueAnalytics = useCallback(async () => {
     try {
       const params = getQueryParams();
-      const data = await analyticsApi.getQueueAnalytics(params);
+      const res = await analyticsApi.getQueueAnalytics(params);
+      const data = res.data || [];
       setQueueStats(data);
 
       // Prepare data for wait time chart
-      if (data && data.length > 0) {
+      if (Array.isArray(data) && data.length > 0) {
         const chartData = data.map((queue) => ({
           name: queue.title.substring(0, 10), // Truncate for chart display
           waitTime: queue.avgWaitingTime,
@@ -97,8 +98,8 @@ const useAnalytics = () => {
   const fetchPeakHours = useCallback(async () => {
     try {
       const params = getQueryParams();
-      const data = await analyticsApi.getPeakHours(params);
-      setPeakHoursData(data.peakHoursData || []);
+      const res = await analyticsApi.getPeakHours(params);
+      setPeakHoursData(res.data?.peakHoursData || []);
     } catch (err) {
       console.error("Peak hours error:", err);
     }
@@ -108,8 +109,8 @@ const useAnalytics = () => {
   const fetchCompletionRate = useCallback(async () => {
     try {
       const params = getQueryParams();
-      const data = await analyticsApi.getCompletionRate(params);
-      setCompletionData(data.completionData || []);
+      const res = await analyticsApi.getCompletionRate(params);
+      setCompletionData(res.data?.completionData || []);
     } catch (err) {
       console.error("Completion rate error:", err);
     }
@@ -122,33 +123,47 @@ const useAnalytics = () => {
     try {
       const params = getQueryParams();
 
-      const [overviewRes, queueRes, peakRes, completionRes] =
-        await Promise.allSettled([
-          analyticsApi.getOverviewAnalytics(params),
-          analyticsApi.getQueueAnalytics(params),
-          analyticsApi.getPeakHours(params),
-          analyticsApi.getCompletionRate(params),
-        ]);
+      const promises = [
+        analyticsApi.getOverviewAnalytics(params),
+        analyticsApi.getQueueAnalytics(params),
+        analyticsApi.getPeakHours(params),
+        analyticsApi.getCompletionRate(params),
+      ];
 
-      if (overviewRes.status === "fulfilled") setOverview(overviewRes.value);
-      if (queueRes.status === "fulfilled") {
-        setQueueStats(queueRes.value);
-        const chartData = queueRes.value.map((queue) => ({
-          name: queue.title.substring(0, 10),
-          waitTime: queue.avgWaitingTime,
-        }));
-        setWaitTimeData(chartData);
+      // Add business specific analytics if filtered
+      if (filters.businessId) {
+        promises.push(analyticsApi.getBusinessAnalytics(filters.businessId, params));
       }
-      if (peakRes.status === "fulfilled")
-        setPeakHoursData(peakRes.value.peakHoursData || []);
-      if (completionRes.status === "fulfilled")
-        setCompletionData(completionRes.value.completionData || []);
+
+      const results = await Promise.allSettled(promises);
+
+      if (results[0].status === "fulfilled") setOverview(results[0].value.data);
+      if (results[1].status === "fulfilled") {
+        const data = results[1].value.data || [];
+        setQueueStats(data);
+        if (Array.isArray(data)) {
+          const chartData = data.map((queue) => ({
+            name: queue.title.substring(0, 10),
+            waitTime: queue.avgWaitingTime,
+          }));
+          setWaitTimeData(chartData);
+        }
+      }
+      if (results[2].status === "fulfilled")
+        setPeakHoursData(results[2].value.data?.peakHoursData || []);
+      if (results[3].status === "fulfilled")
+        setCompletionData(results[3].value.data?.completionData || []);
+      
+      // Handle business analytics result if it was requested
+      if (filters.businessId && results[4]?.status === "fulfilled") {
+        setBusinessAnalytics(results[4].value.data);
+      }
     } catch (err) {
       setError(err.message || "Failed to fetch analytics");
     } finally {
       setLoading(false);
     }
-  }, [getQueryParams]);
+  }, [getQueryParams, filters.businessId]);
 
   // Initial fetch on component mount and filter changes
   useEffect(() => {

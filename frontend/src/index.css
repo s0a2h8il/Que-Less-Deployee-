@@ -68,6 +68,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  min-width: 0;
 }
 
 html,
@@ -76,6 +77,7 @@ body {
   padding: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
   background:
     radial-gradient(
       circle at top left,
@@ -97,6 +99,24 @@ body {
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.6;
+}
+
+/* ── Custom Text Selection ────────────────────────────────────────────────── */
+::selection {
+  background: rgba(190, 227, 248, 0.45); /* Lighter Signal Blue */
+  color: var(--night-ink);
+}
+
+::-moz-selection {
+  background: rgba(190, 227, 248, 0.45);
+  color: var(--night-ink);
+}
+
+img,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
 }
 
 /* Responsive typography: slightly larger base font on small screens for readability */
@@ -185,6 +205,15 @@ body::before {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(61, 64, 91, 0.32);
+}
+
+/* ── Scrollbar Utilities ─────────────────────────────────────────────────── */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* ── Page Transition (used with framer-motion) ───────────────────────────── */

@@ -5,6 +5,7 @@ import {
   getMyBusinesses,
   getBusinessById,
   updateBusiness,
+  getCategories,
 } from "../controllers/businessController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
 import { businessValidator } from "../validators/businessValidator.js";
@@ -14,6 +15,7 @@ const router = Router();
 
 // Public routes
 router.get("/", getAllBusinesses);
+router.get("/categories", getCategories);
 router.get("/my", protect, authorize("admin", "superadmin"), getMyBusinesses);
 router.get("/:id([0-9a-fA-F]{24})", getBusinessById);
 

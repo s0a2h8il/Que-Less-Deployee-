@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { queueApi } from "../api/queueApi";
 import { useAuth } from "../context/AuthContext";
+import { useQueueSocket } from "./useQueueSocket";
 
 /**
  * Custom hook to manage queue data and interactions
@@ -20,8 +21,6 @@ export const useQueue = (queueId) => {
     try {
       const res = await queueApi.getQueueById(queueId);
       if (res.success) {
-        // API returns { queue: {...}, stats: {...}, userStatus: {...} }
-        // Flatten so components can access queue.title, queue.status, etc directly
         const { queue: queueData, stats, userStatus } = res.data;
         setQueue({ ...queueData, stats, userStatus });
       }
@@ -36,8 +35,37 @@ export const useQueue = (queueId) => {
     fetchQueue();
   }, [fetchQueue]);
 
+  // Real-time updates integration
+  useQueueSocket(
+    queueId,
+    (updatedData) => {
+      const incomingId = updatedData?.queueId || updatedData?._id;
+      if (incomingId !== queueId) return;
+
+      setQueue((prev) => {
+        if (!prev) return prev;
+
+        // Merge stats if they exist in payload
+        const stats = { 
+          ...prev.stats,
+          totalWaitingUsers: updatedData.waitingCount ?? prev.stats?.totalWaitingUsers,
+          currentToken: updatedData.currentToken ?? prev.stats?.currentToken,
+          completedCount: updatedData.completedCount ?? prev.stats?.completedCount,
+          totalJoined: updatedData.totalJoined ?? prev.stats?.totalJoined,
+        };
+
+        return {
+          ...prev,
+          ...updatedData,
+          stats
+        };
+      });
+    }
+  );
+
   const joinQueueHandler = async () => {
-    if (!isAuthenticated) return { success: false, message: "Please login to join" };
+    if (!isAuthenticated)
+      return { success: false, message: "Please login to join" };
     setJoining(true);
     try {
       const res = await queueApi.joinQueue(queueId);
@@ -46,7 +74,10 @@ export const useQueue = (queueId) => {
         return { success: true };
       }
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || "Failed to join queue" };
+      return {
+        success: false,
+        message: err.response?.data?.message || "Failed to join queue",
+      };
     } finally {
       setJoining(false);
     }
@@ -61,7 +92,10 @@ export const useQueue = (queueId) => {
         return { success: true };
       }
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || "Failed to leave queue" };
+      return {
+        success: false,
+        message: err.response?.data?.message || "Failed to leave queue",
+      };
     } finally {
       setLeaving(false);
     }
@@ -69,8 +103,40 @@ export const useQueue = (queueId) => {
 
   // Derived state for the current logged-in user's membership
   const userMember = useMemo(() => {
-    if (!user || !queue) return null;
-    return queue.members?.find(m => m.userId === user._id) || null;
+    if (!user || !queue?.members?.length) return null;
+
+    const matches = queue.members.filter((member) => {
+      const rawId =
+        typeof member.userId === "object"
+          ? member.userId?._id || member.userId?.id
+          : member.userId;
+
+      if (!rawId) return false;
+      return rawId.toString() === user._id?.toString();
+    });
+
+    if (!matches.length) return null;
+
+    return matches.reduce((latest, current) => {
+      const latestTime = new Date(
+        latest.joinedAt ||
+          latest.calledAt ||
+          latest.completedAt ||
+          latest.leftAt ||
+          latest.skippedAt ||
+          0,
+      ).getTime();
+      const currentTime = new Date(
+        current.joinedAt ||
+          current.calledAt ||
+          current.completedAt ||
+          current.leftAt ||
+          current.skippedAt ||
+          0,
+      ).getTime();
+
+      return currentTime >= latestTime ? current : latest;
+    }, matches[0]);
   }, [user, queue]);
 
   return {

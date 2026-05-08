@@ -22,7 +22,7 @@ const CreateQueueForm = ({ businesses, onSubmit, onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.businessId) return;
-    
+
     setLoading(true);
     try {
       await onSubmit(formData);
@@ -35,20 +35,26 @@ const CreateQueueForm = ({ businesses, onSubmit, onCancel }) => {
   };
 
   return (
-    <Card className="max-w-xl mx-auto p-8 shadow-xl border-indigo-100">
+    <Card className="max-w-xl mx-auto p-6 sm:p-8 shadow-xl border-indigo-100">
       <div className="flex items-center gap-4 mb-8">
         <div className="p-3 bg-indigo-100 text-indigo-600 rounded-2xl">
           <ListOrdered size={28} />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">Create New Queue</h2>
-          <p className="text-slate-500">Set up a virtual queue for your business</p>
+          <h2 className="text-2xl font-bold text-slate-800">
+            Create New Queue
+          </h2>
+          <p className="text-slate-500">
+            Set up a virtual queue for your business
+          </p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-slate-700">Select Business</label>
+          <label className="text-sm font-medium text-slate-700">
+            Select Business
+          </label>
           <select
             name="businessId"
             className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
@@ -75,7 +81,9 @@ const CreateQueueForm = ({ businesses, onSubmit, onCancel }) => {
         />
 
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-slate-700">Queue Description</label>
+          <label className="text-sm font-medium text-slate-700">
+            Queue Description
+          </label>
           <textarea
             name="description"
             rows="2"
@@ -86,7 +94,7 @@ const CreateQueueForm = ({ businesses, onSubmit, onCancel }) => {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             label="Est. Time (min/user)"
             name="estimatedTimePerUser"
@@ -109,7 +117,7 @@ const CreateQueueForm = ({ businesses, onSubmit, onCancel }) => {
           />
         </div>
 
-        <div className="flex gap-4 pt-4">
+        <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:gap-4">
           <Button
             type="button"
             variant="outline"

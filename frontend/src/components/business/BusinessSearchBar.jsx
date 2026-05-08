@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Search, X, Sparkles } from "lucide-react";
+import { Search as SearchIcon, X as XIcon, Sparkles as SparklesIcon } from "lucide-react";
 
 const BusinessSearchBar = ({ onSearch, initialValue = "" }) => {
   const [value, setValue] = useState(initialValue);
@@ -55,17 +55,17 @@ const BusinessSearchBar = ({ onSearch, initialValue = "" }) => {
         }}
       >
         {/* Search Icon */}
-        <Search
+        <SearchIcon
           size={20}
           className="shrink-0 transition-colors duration-200"
           style={{ color: isFocused ? "#81B29A" : "rgba(61,64,91,0.38)" }}
         />
 
-        {/* Input */}
+        {/* Input - Shortened placeholder for mobile */}
         <input
           ref={inputRef}
           type="text"
-          placeholder="Search by name, category, or location..."
+          placeholder={window.innerWidth < 640 ? "Search queues..." : "Search by name, category, or location..."}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onFocus={() => setIsFocused(true)}
@@ -94,16 +94,8 @@ const BusinessSearchBar = ({ onSearch, initialValue = "" }) => {
               color: "rgba(61,64,91,0.45)",
               background: "rgba(61,64,91,0.06)",
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(224,122,95,0.12)";
-              e.currentTarget.style.color = "#E07A5F";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(61,64,91,0.06)";
-              e.currentTarget.style.color = "rgba(61,64,91,0.45)";
-            }}
           >
-            <X size={16} />
+            <XIcon size={16} />
           </button>
         )}
 
@@ -120,8 +112,8 @@ const BusinessSearchBar = ({ onSearch, initialValue = "" }) => {
               letterSpacing: "0.02em",
             }}
           >
-            <Sparkles size={12} />
-            Live Search
+            <SparklesIcon size={12} />
+            Live
           </div>
         )}
       </div>

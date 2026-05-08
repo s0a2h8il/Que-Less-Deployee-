@@ -42,6 +42,7 @@ export const getAdminQueues = asyncHandler(async (req, res) => {
 
   const queues = await Queue.find({ businessId: { $in: businessIds } })
     .populate("businessId", "name category city")
+    .populate("members.userId", "name avatar")
     .sort({ createdAt: -1 });
 
   const formattedQueues = queues.map((queue) => ({
@@ -137,14 +138,19 @@ export const getQueueDetails = asyncHandler(async (req, res) => {
       estimatedTimePerUser: queue.estimatedTimePerUser,
       maxUsers: queue.maxUsers,
       business: queue.businessId,
-      members: isOwner || isSuperAdmin
-        ? queue.members
-        : queue.members.map((m) => ({
-            userId: m.userId ? (m.userId._id || m.userId) : null,
-            tokenNumber: m.tokenNumber,
-            status: m.status,
-            joinedAt: m.joinedAt,
-          })),
+      members: queue.members.map((m) => ({
+        _id: m._id,
+        userId: m.userId && typeof m.userId === 'object' ? {
+          _id: m.userId._id,
+          name: m.userId.name || "Guest User",
+          avatar: m.userId.avatar,
+          email: (isOwner || isSuperAdmin) ? m.userId.email : undefined,
+        } : { _id: m.userId, name: "Guest User" },
+        tokenNumber: m.tokenNumber,
+        status: m.status,
+        joinedAt: m.joinedAt,
+        calledAt: m.calledAt,
+      })),
     },
     stats: {
       totalWaitingUsers: waitingCount,
@@ -252,9 +258,17 @@ export const callNext = asyncHandler(async (req, res) => {
   await emitQueueUpdated(queue, `Token #${nextUser.tokenNumber} is called`);
   emitTurnNear(queue);
 
+  // Populate nextUser.userId for the response
+  await queue.populate("members.userId", "name avatar email");
+  const updatedNextUser = queue.members.find(m => m._id.toString() === nextUser._id.toString());
+
   res.status(200).json(new ApiResponse(200, {
     currentToken: queue.currentToken,
-    calledUser: { userId: nextUser.userId, tokenNumber: nextUser.tokenNumber, status: nextUser.status },
+    calledUser: { 
+      userId: updatedNextUser.userId, 
+      tokenNumber: updatedNextUser.tokenNumber, 
+      status: updatedNextUser.status 
+    },
   }, "Next user called successfully"));
 });
 

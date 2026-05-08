@@ -39,6 +39,17 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    phone: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    bio: {
+      type: String,
+      trim: true,
+      maxlength: [160, "Bio must be less than 160 characters"],
+      default: "",
+    },
   },
   {
     timestamps: true, // Adds createdAt and updatedAt automatically

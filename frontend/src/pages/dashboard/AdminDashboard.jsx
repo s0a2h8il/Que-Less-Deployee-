@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAdminDashboard } from "../../hooks/useAdminDashboard";
 import AdminSidebar from "../../components/dashboard/admin/AdminSidebar";
 import CreateBusinessForm from "../../components/dashboard/admin/CreateBusinessForm";
@@ -21,7 +21,34 @@ import { motion, AnimatePresence } from "framer-motion";
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [showCreateBiz, setShowCreateBiz] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.matchMedia("(min-width: 1024px)").matches;
+  });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(isDesktop);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const media = window.matchMedia("(min-width: 1024px)");
+    const handleChange = (event) => setIsDesktop(event.matches);
+
+    handleChange(media);
+    media.addEventListener("change", handleChange);
+
+    return () => media.removeEventListener("change", handleChange);
+  }, []);
+
+  useEffect(() => {
+    setIsSidebarOpen(isDesktop);
+  }, [isDesktop]);
+
+  // Close sidebar on mobile when tab changes
+  useEffect(() => {
+    if (!isDesktop) {
+      setIsSidebarOpen(false);
+    }
+  }, [activeTab, isDesktop]);
 
   const {
     businesses,
@@ -53,6 +80,18 @@ const AdminDashboard = () => {
     );
   }
 
+  const sidebarWidth = isDesktop ? (isSidebarOpen ? 256 : 80) : 256;
+  const sidebarX = isDesktop ? 0 : isSidebarOpen ? 0 : "-100%";
+  const mainOffset = isDesktop ? (isSidebarOpen ? 256 : 80) : 0;
+  const showMobileOverlay = !isDesktop && isSidebarOpen;
+  const toggleLabel = isDesktop
+    ? isSidebarOpen
+      ? "Collapse"
+      : "Expand"
+    : isSidebarOpen
+      ? "Close"
+      : "Menu";
+
   /* ── Tab Content ─────────────────────────────────────────── */
   const renderContent = () => {
     switch (activeTab) {
@@ -60,7 +99,7 @@ const AdminDashboard = () => {
         return (
           <div className="space-y-8">
             {/* Section header */}
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1
                   style={{
@@ -85,7 +124,8 @@ const AdminDashboard = () => {
               </div>
               <button
                 onClick={refetch}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all whitespace-nowrap"
+                disabled={loading}
+                className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all whitespace-nowrap sm:w-auto disabled:opacity-50"
                 style={{
                   background: "rgba(247,244,239,0.06)",
                   border: "1px solid rgba(247,244,239,0.12)",
@@ -93,16 +133,23 @@ const AdminDashboard = () => {
                   fontFamily: "var(--font-body)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(58,160,255,0.40)";
-                  e.currentTarget.style.color = "#3AA0FF";
+                  if (!loading) {
+                    e.currentTarget.style.borderColor = "rgba(58,160,255,0.40)";
+                    e.currentTarget.style.color = "#3AA0FF";
+                  }
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.borderColor = "rgba(247,244,239,0.12)";
                   e.currentTarget.style.color = "rgba(247,244,239,0.60)";
                 }}
               >
-                <RefreshCcw size={15} />
-                Refresh
+                <motion.div
+                  animate={loading ? { rotate: 360 } : { rotate: 0 }}
+                  transition={{ duration: 1, repeat: loading ? Infinity : 0, ease: "linear" }}
+                >
+                  <RefreshCcw size={15} />
+                </motion.div>
+                {loading ? "Refreshing..." : "Refresh"}
               </button>
             </div>
 
@@ -162,7 +209,7 @@ const AdminDashboard = () => {
               </div>
             ) : (
               <div className="space-y-5">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <h2
                     style={{
                       fontFamily: "var(--font-heading)",
@@ -175,7 +222,7 @@ const AdminDashboard = () => {
                   </h2>
                   <button
                     onClick={() => setActiveTab("create-queue")}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all whitespace-nowrap"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all whitespace-nowrap sm:w-auto"
                     style={{
                       background: "#3AA0FF",
                       color: "#0B1320",
@@ -196,7 +243,7 @@ const AdminDashboard = () => {
       case "businesses":
         return (
           <div className="space-y-8">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h1
                 style={{
                   fontFamily: "var(--font-heading)",
@@ -210,7 +257,7 @@ const AdminDashboard = () => {
               </h1>
               <button
                 onClick={() => setShowCreateBiz(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap"
+                className="flex w-full items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all whitespace-nowrap sm:w-auto"
                 style={{
                   background: "#3AA0FF",
                   color: "#0B1320",
@@ -233,7 +280,7 @@ const AdminDashboard = () => {
                 {businesses?.length > 0 ? (
                   businesses.map((biz) => (
                     <div
-                      key={biz._id}
+                      key={String(biz._id)}
                       className="rounded-2xl p-6 transition-all"
                       style={{
                         background: "rgba(247,244,239,0.04)",
@@ -331,7 +378,7 @@ const AdminDashboard = () => {
       case "queues":
         return (
           <div className="space-y-8">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h1
                 style={{
                   fontFamily: "var(--font-heading)",
@@ -345,7 +392,7 @@ const AdminDashboard = () => {
               </h1>
               <button
                 onClick={() => setActiveTab("create-queue")}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap"
+                className="flex w-full items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold whitespace-nowrap sm:w-auto"
                 style={{
                   background: "#3AA0FF",
                   color: "#0B1320",
@@ -395,46 +442,84 @@ const AdminDashboard = () => {
 
   return (
     <div
-      className="flex min-h-[calc(100vh-4rem)] relative"
+      className="flex min-h-screen relative"
       style={{ background: "var(--night-ink)" }}
     >
+      <AnimatePresence>
+        {showMobileOverlay && (
+          <motion.button
+            type="button"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            aria-label="Close sidebar"
+            className="fixed inset-0 z-20 bg-slate-950/40 lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
       <motion.aside
-        className="fixed top-16 left-0 z-30 h-[calc(100vh-4rem)]"
+        className="fixed top-0 left-0 z-30 h-screen"
         initial={false}
-        animate={{ width: isSidebarOpen ? 256 : 80 }}
-        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        animate={{ 
+          width: isDesktop ? sidebarWidth : 256, 
+          x: isDesktop ? 0 : (isSidebarOpen ? 0 : "-100%") 
+        }}
+        transition={{ 
+          duration: 0.45, 
+          ease: [0.16, 1, 0.3, 1] // Custom quint ease for smoother motion
+        }}
       >
-        <AdminSidebar 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
-          collapsed={!isSidebarOpen} 
+        <AdminSidebar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          collapsed={isDesktop && !isSidebarOpen}
         />
       </motion.aside>
 
-      <main
-        className="flex-1 p-8 transition-all duration-300 ease-[0.22,1,0.36,1]"
-        style={{ marginLeft: isSidebarOpen ? 256 : 80 }}
+      <motion.main
+        className="flex-1 min-w-0 px-4 py-6 sm:px-6 sm:py-8 lg:px-8"
+        animate={{ marginLeft: mainOffset }}
+        transition={{ 
+          duration: 0.45, 
+          ease: [0.16, 1, 0.3, 1] 
+        }}
       >
         <div className="max-w-7xl mx-auto">
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex flex-wrap items-center gap-3">
             <button
               type="button"
               onClick={() => setIsSidebarOpen((prev) => !prev)}
               className="group flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-sm"
               style={{
-                background: isSidebarOpen ? "rgba(247,244,239,0.06)" : "rgba(58,160,255,0.12)",
-                border: isSidebarOpen ? "1px solid rgba(247,244,239,0.12)" : "1px solid rgba(58,160,255,0.30)",
+                background: isSidebarOpen
+                  ? "rgba(247,244,239,0.06)"
+                  : "rgba(58,160,255,0.12)",
+                border: isSidebarOpen
+                  ? "1px solid rgba(247,244,239,0.12)"
+                  : "1px solid rgba(58,160,255,0.30)",
                 color: isSidebarOpen ? "rgba(247,244,239,0.60)" : "#3AA0FF",
                 fontFamily: "var(--font-heading)",
               }}
-              aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+              aria-label={
+                toggleLabel === "Menu"
+                  ? "Open sidebar"
+                  : `${toggleLabel} sidebar`
+              }
             >
               {isSidebarOpen ? (
-                <PanelLeftClose size={16} className="transition-transform group-hover:-translate-x-0.5" />
+                <PanelLeftClose
+                  size={16}
+                  className="transition-transform group-hover:-translate-x-0.5"
+                />
               ) : (
-                <PanelLeftOpen size={16} className="transition-transform group-hover:translate-x-0.5" />
+                <PanelLeftOpen
+                  size={16}
+                  className="transition-transform group-hover:translate-x-0.5"
+                />
               )}
-              <span>{isSidebarOpen ? "Collapse" : "Expand"}</span>
+              <span>{toggleLabel}</span>
             </button>
           </div>
 
@@ -470,7 +555,7 @@ const AdminDashboard = () => {
             </motion.div>
           </AnimatePresence>
         </div>
-      </main>
+      </motion.main>
 
       <Toast
         isOpen={toast.show}

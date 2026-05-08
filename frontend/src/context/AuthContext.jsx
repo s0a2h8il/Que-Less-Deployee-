@@ -5,32 +5,40 @@ import { setToken, getToken, removeToken } from "../utils/token";
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user,            setUser]            = useState(null);
-  const [loading,         setLoading]         = useState(true);
+  const [user, setUser] = useState(null);
+  const [token, setTokenState] = useState(getToken());
+  const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // ── Helpers ──────────────────────────────────────────────────────────────
-  const applySession = (userData, token) => {
-    setToken(token);
+  const applySession = (userData, newToken) => {
+    setToken(newToken);
+    setTokenState(newToken);
     setUser(userData);
     setIsAuthenticated(true);
   };
 
   const logout = useCallback(() => {
     removeToken();
+    setTokenState(null);
     setUser(null);
     setIsAuthenticated(false);
   }, []);
 
   // ── Restore session on mount ─────────────────────────────────────────────
   useEffect(() => {
-    if (!getToken()) { setLoading(false); return; }
+    const storedToken = getToken();
+    if (!storedToken) {
+      setLoading(false);
+      return;
+    }
 
     authApi.getMe()
       .then((res) => {
         if (res.success) {
           setUser(res.data.user);
           setIsAuthenticated(true);
+          setTokenState(storedToken);
         }
       })
       .catch(() => logout())
@@ -69,7 +77,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, isAuthenticated, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, setUser, loading, isAuthenticated, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

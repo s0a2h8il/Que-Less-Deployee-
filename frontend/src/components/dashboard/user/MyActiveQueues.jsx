@@ -22,8 +22,8 @@ const MyActiveQueues = ({ queues }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-       {queues.map(queue => (
-         <ActiveQueueCard key={queue._id} queue={queue} />
+       {queues.map((queue, idx) => (
+         <ActiveQueueCard key={String(queue._id || idx)} queue={queue} />
        ))}
     </div>
   );

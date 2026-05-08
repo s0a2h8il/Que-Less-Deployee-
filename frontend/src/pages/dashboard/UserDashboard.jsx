@@ -7,7 +7,8 @@ import MyActiveQueues from "../../components/dashboard/user/MyActiveQueues";
 import NotificationList from "../../components/dashboard/user/NotificationList";
 import ExchangeSpotCard from "../../components/dashboard/user/ExchangeSpotCard";
 import { Loader } from "../../components";
-import { RefreshCcw, AlertTriangle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Zap, RefreshCcw, AlertTriangle } from "lucide-react";
 
 const UserDashboard = () => {
   const { user, activeQueues, notifications, stats, loading, error, refetch } =
@@ -59,7 +60,7 @@ const UserDashboard = () => {
   }
 
   return (
-    <div className="w-full pb-24 py-10" style={{ background: "var(--bg)" }}>
+    <div className="w-full pb-24" style={{ background: "var(--bg)" }}>
       {/* ── Page header ───────────────────────────────── */}
       <div
         className="relative overflow-hidden mb-10"
@@ -102,6 +103,29 @@ const UserDashboard = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           >
+            {/* Brand Logo Link */}
+            <Link to="/" className="flex items-center gap-3 group mb-8 w-fit">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg"
+                style={{
+                  background: "linear-gradient(135deg, #E07A5F 0%, #F2CC8F 100%)",
+                  boxShadow: "0 8px 16px rgba(224,122,95,0.2)",
+                }}
+              >
+                <Zap size={18} fill="white" className="text-white" />
+              </motion.div>
+              <div className="flex flex-col leading-none">
+                <span className="text-lg font-bold tracking-tight text-white">
+                  Queue<span className="text-[#E07A5F]">-Less</span>
+                </span>
+                <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+                  Virtual Queue
+                </span>
+              </div>
+            </Link>
+
             <p
               className="text-xs font-bold uppercase tracking-widest mb-2"
               style={{

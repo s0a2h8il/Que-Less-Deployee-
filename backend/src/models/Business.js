@@ -27,10 +27,20 @@ const businessSchema = new mongoose.Schema(
       maxlength: [500, "Description must be less than 500 characters"],
       default: "",
     },
-    address: {
+    addressLine1: {
       type: String,
-      required: [true, "Address is required"],
+      required: [true, "Address Line 1 is required"],
       trim: true,
+    },
+    addressLine2: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    areaName: {
+      type: String,
+      trim: true,
+      default: "",
     },
     city: {
       type: String,
@@ -39,6 +49,11 @@ const businessSchema = new mongoose.Schema(
       index: true,
     },
     state: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    pincode: {
       type: String,
       trim: true,
       default: "",

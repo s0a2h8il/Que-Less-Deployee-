@@ -23,26 +23,32 @@ export const createBusiness = asyncHandler(async (req, res) => {
     name,
     category,
     description,
-    address,
+    addressLine1,
+    addressLine2,
+    areaName,
     city,
     state,
+    pincode,
     phone,
     email,
     openingTime,
     closingTime,
   } = req.body;
 
-  if (!name || !category || !address || !city)
-    throw new ApiError(400, "Please provide name, category, address and city");
+  if (!name || !category || !addressLine1 || !city)
+    throw new ApiError(400, "Please provide name, category, address line 1 and city");
 
   const business = await Business.create({
     ownerId: req.user._id,
     name,
     category,
     description,
-    address,
+    addressLine1,
+    addressLine2,
+    areaName,
     city,
     state,
+    pincode,
     phone,
     email,
     openingTime,
@@ -232,4 +238,21 @@ export const updateBusiness = asyncHandler(async (req, res) => {
         "Business updated successfully",
       ),
     );
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// @desc    Get all unique categories currently in use
+// @route   GET /api/business/categories
+// @access  Public
+// ─────────────────────────────────────────────────────────────────────────────
+export const getCategories = asyncHandler(async (req, res) => {
+  const categories = await Business.distinct("category", { isActive: true });
+  
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      { categories: categories.filter(Boolean) },
+      "Categories fetched successfully"
+    )
+  );
 });

@@ -19,7 +19,7 @@ export const useNotificationSocket = (onNewNotification, onUnreadCountUpdate) =>
     });
 
     socket.on("connect", () => {
-      console.log("Connected to Notification Socket");
+      // console.log("Connected to Notification Socket");
       socket.emit("joinUserRoom", user._id);
     });
 

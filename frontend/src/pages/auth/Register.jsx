@@ -15,7 +15,11 @@ const Register = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [toast, setToast] = useState({ open: false, message: "", type: "info" });
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    type: "info",
+  });
   const { register, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -35,7 +39,11 @@ const Register = () => {
     const result = await register(registerData);
 
     if (result.success) {
-      setToast({ open: true, message: "Account created successfully!", type: "success" });
+      setToast({
+        open: true,
+        message: "Account created successfully!",
+        type: "success",
+      });
       setTimeout(() => navigate("/"), 1000);
     } else {
       setError(result.message);
@@ -43,15 +51,17 @@ const Register = () => {
   };
 
   return (
-    <div className="flex min-h-[90vh] items-center justify-center px-6 py-12">
+    <div className="flex min-h-[90vh] items-center justify-center px-4 py-10 sm:px-6 sm:py-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <Card className="p-8">
+        <Card className="p-6 sm:p-8">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-extrabold text-slate-900">Create Account</h1>
+            <h1 className="text-3xl font-extrabold text-slate-900">
+              Create Account
+            </h1>
             <p className="mt-2 text-slate-500">Join QueueLess today</p>
           </div>
 
@@ -80,15 +90,18 @@ const Register = () => {
             />
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-slate-700 ml-1">Account Type</label>
-              <div className="grid grid-cols-2 gap-3">
+              <label className="text-sm font-medium text-slate-700 ml-1">
+                Account Type
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, role: "user" })}
-                  className={`flex h-11 items-center justify-center gap-2 rounded-xl border text-sm font-semibold transition-all ${formData.role === "user"
-                    ? "border-blue-600 bg-blue-50 text-blue-600"
-                    : "border-slate-200 bg-white text-slate-500 hover:border-slate-300"
-                    }`}
+                  className={`flex h-11 items-center justify-center gap-2 rounded-xl border text-sm font-semibold transition-all ${
+                    formData.role === "user"
+                      ? "border-blue-600 bg-blue-50 text-blue-600"
+                      : "border-slate-200 bg-white text-slate-500 hover:border-slate-300"
+                  }`}
                 >
                   <User size={16} />
                   User
@@ -96,10 +109,11 @@ const Register = () => {
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, role: "admin" })}
-                  className={`flex h-11 items-center justify-center gap-2 rounded-xl border text-sm font-semibold transition-all ${formData.role === "admin"
-                    ? "border-blue-600 bg-blue-50 text-blue-600"
-                    : "border-slate-200 bg-white text-slate-500 hover:border-slate-300"
-                    }`}
+                  className={`flex h-11 items-center justify-center gap-2 rounded-xl border text-sm font-semibold transition-all ${
+                    formData.role === "admin"
+                      ? "border-blue-600 bg-blue-50 text-blue-600"
+                      : "border-slate-200 bg-white text-slate-500 hover:border-slate-300"
+                  }`}
                 >
                   <Shield size={16} />
                   Admin
@@ -146,19 +160,17 @@ const Register = () => {
               </p>
             )}
 
-            <Button
-              type="submit"
-              fullWidth
-              size="lg"
-              isLoading={loading}
-            >
+            <Button type="submit" fullWidth size="lg" isLoading={loading}>
               Get Started
             </Button>
           </form>
 
           <div className="mt-8 text-center text-sm text-slate-500">
             Already have an account?{" "}
-            <Link to="/login" className="font-bold text-blue-600 hover:underline">
+            <Link
+              to="/login"
+              className="font-bold text-blue-600 hover:underline"
+            >
               Sign In
             </Link>
           </div>

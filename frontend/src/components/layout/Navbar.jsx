@@ -44,6 +44,13 @@ const Navbar = () => {
 
   useEffect(() => setIsOpen(false), [location.pathname]);
 
+  const getAvatarUrl = (path) => {
+    if (!path) return null;
+    if (path.startsWith("http") || path.startsWith("data:")) return path;
+    const cleanPath = path.startsWith("/") ? path : `/${path}`;
+    return `http://localhost:5000${cleanPath}`;
+  };
+
   const navLinks = [
     { title: "Home", path: "/", icon: Home },
     { title: "Explore", path: "/explore", icon: Compass },
@@ -198,13 +205,25 @@ const Navbar = () => {
                   }}
                 >
                   <div
-                    className="flex h-7 w-7 items-center justify-center rounded-lg text-white font-bold text-xs shadow-sm"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg text-white font-bold text-xs shadow-sm overflow-hidden"
                     style={{
                       background:
                         "linear-gradient(135deg, #E07A5F 0%, #F2CC8F 100%)",
                     }}
                   >
-                    {user?.name?.[0]?.toUpperCase() || <User size={12} />}
+                    {user?.avatar ? (
+                      <img 
+                        src={getAvatarUrl(user.avatar)} 
+                        alt="" 
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.parentElement.innerText = user?.name?.[0]?.toUpperCase() || "U";
+                        }}
+                      />
+                    ) : (
+                      user?.name?.[0]?.toUpperCase() || <User size={12} />
+                    )}
                   </div>
                   <div className="flex flex-col leading-none">
                     <span
@@ -252,6 +271,7 @@ const Navbar = () => {
                   whileTap={{ scale: 0.97 }}
                   className="px-4 py-2 text-sm font-medium transition-colors"
                   style={{
+                    cursor: "pointer",
                     color: "rgba(61,64,91,0.66)",
                     fontFamily: "var(--font-body)",
                   }}
@@ -351,13 +371,25 @@ const Navbar = () => {
                   }}
                 >
                   <div
-                    className="flex h-9 w-9 items-center justify-center rounded-xl text-white font-bold text-sm shrink-0"
+                    className="flex h-9 w-9 items-center justify-center rounded-xl text-white font-bold text-sm shrink-0 overflow-hidden"
                     style={{
                       background:
                         "linear-gradient(135deg, #E07A5F 0%, #F2CC8F 100%)",
                     }}
                   >
-                    {user?.name?.[0]?.toUpperCase() || "U"}
+                    {user?.avatar ? (
+                      <img 
+                        src={getAvatarUrl(user.avatar)} 
+                        alt="" 
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.parentElement.innerText = user?.name?.[0]?.toUpperCase() || "U";
+                        }}
+                      />
+                    ) : (
+                      user?.name?.[0]?.toUpperCase() || "U"
+                    )}
                   </div>
                   <div className="flex flex-col min-w-0">
                     <span

@@ -85,14 +85,14 @@ const CreateExchangeRequest = ({ initialQueueId, onCancel, onSubmit }) => {
             </label>
             {waitingUsers.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto p-1">
-                {waitingUsers.map((member) => (
+                {waitingUsers.map((member, idx) => (
                   <div
-                    key={member.userId._id}
-                    onClick={() => setTargetUserId(member.userId._id)}
+                    key={String(member.userId._id || idx)}
+                    onClick={() => setTargetUserId(String(member.userId._id))}
                     className={`
                       cursor-pointer p-4 rounded-2xl border-2 transition-all flex items-center justify-between
                       ${
-                        targetUserId === member.userId._id
+                        targetUserId === String(member.userId._id)
                           ? "border-indigo-600 bg-indigo-50 shadow-md ring-2 ring-indigo-600/10"
                           : "border-slate-100 bg-white hover:border-slate-200"
                       }

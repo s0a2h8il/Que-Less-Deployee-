@@ -13,6 +13,8 @@ const safeUser = (user) => ({
   email: user.email,
   role: user.role,
   avatar: user.avatar,
+  phone: user.phone || "",
+  bio: user.bio || "",
   createdAt: user.createdAt,
 });
 
@@ -75,7 +77,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
   if (!user) throw new ApiError(404, "User not found");
 
-  const { name, email } = req.body;
+  const { name, email, avatar, phone, bio } = req.body;
 
   if (email && email !== user.email) {
     const existingUser = await User.findOne({ email });
@@ -84,8 +86,32 @@ export const updateProfile = asyncHandler(async (req, res) => {
   }
 
   if (name) user.name = name;
+  if (avatar !== undefined) user.avatar = avatar;
+  if (phone !== undefined) user.phone = phone;
+  if (bio !== undefined) user.bio = bio;
 
   const updatedUser = await user.save();
-
   res.status(200).json(new ApiResponse(200, { user: safeUser(updatedUser) }, "Profile updated successfully"));
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// @desc    Upload profile avatar
+// @route   POST /api/auth/avatar
+// @access  Private
+// ─────────────────────────────────────────────────────────────────────────────
+export const uploadAvatar = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    throw new ApiError(400, "Please upload a file");
+  }
+
+  const user = await User.findById(req.user._id);
+  if (!user) throw new ApiError(404, "User not found");
+
+  // Create public URL
+  const avatarUrl = `/uploads/avatars/${req.file.filename}`;
+  
+  user.avatar = avatarUrl;
+  await user.save();
+
+  res.status(200).json(new ApiResponse(200, { avatar: avatarUrl, user: safeUser(user) }, "Avatar uploaded successfully"));
 });

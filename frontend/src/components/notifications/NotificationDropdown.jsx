@@ -75,9 +75,9 @@ const NotificationDropdown = ({
                 </div>
               ) : notifications.length > 0 ? (
                 <div className="divide-y divide-slate-50">
-                  {notifications.slice(0, 5).map((note) => (
+                  {notifications.slice(0, 5).map((note, idx) => (
                     <NotificationItem
-                      key={note._id}
+                      key={String(note._id || idx)}
                       notification={note}
                       onClick={handleItemClick}
                     />

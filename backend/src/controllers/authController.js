@@ -100,21 +100,16 @@ export const registerUser = asyncHandler(async (req, res) => {
   user.otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
   await user.save();
 
-  // Send Email
+  // Send Email (Non-blocking to prevent 502 timeouts on Render)
   const message = getEmailTemplate(otp, "Welcome to Queue-Less!");
   
-  try {
-    await sendEmail({
-      email: user.email,
-      subject: "Account Verification OTP",
-      message,
-    });
-  } catch (error) {
-    user.otp = undefined;
-    user.otpExpiry = undefined;
-    await user.save({ validateBeforeSave: false });
-    throw new ApiError(500, "Could not send verification email. Please try again later.");
-  }
+  sendEmail({
+    email: user.email,
+    subject: "Account Verification OTP",
+    message,
+  }).catch(err => {
+    console.error("Delayed Email Error:", err.message);
+  });
 
   res.status(201).json(new ApiResponse(201, { user: safeUser(user) }, "Registration successful. Please check your email for the OTP to verify your account."));
 });

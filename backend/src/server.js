@@ -37,9 +37,9 @@ console.log(`📡 Starting server in ${ENV} mode...`);
 console.log(`🔌 Assigned Port: ${PORT}`);
 
 // ── Security middleware (order matters) ───────────────────────────────────────
+app.use(cors(corsConfig));
 applySecurityMiddleware(app);
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
-app.use(cors(corsConfig));
 app.use(globalLimiter);
 
 // ── Body / cookie parsers ─────────────────────────────────────────────────────

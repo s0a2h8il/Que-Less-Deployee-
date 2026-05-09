@@ -31,6 +31,8 @@ export const helmetConfig = helmet({
       imgSrc: ["'self'", "data:", "https:"],
       connectSrc: [
         "'self'",
+        "https://que-less-deployee-backend.onrender.com",
+        "wss://que-less-deployee-backend.onrender.com",
         "http://localhost:5000",
         "http://127.0.0.1:5000",
         "ws://localhost:5000",

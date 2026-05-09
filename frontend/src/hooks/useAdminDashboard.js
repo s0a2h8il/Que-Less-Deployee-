@@ -214,7 +214,7 @@ export const useAdminDashboard = () => {
         
         // Find and update the member that was called
         const updatedMembers = prev.members?.map(m => 
-          m.tokenNumber === updatedQueue.currentToken 
+          (updatedQueue.calledUser && m.tokenNumber === updatedQueue.calledUser.tokenNumber)
             ? { ...m, status: "called", calledAt: new Date().toISOString() }
             : m.status === "called" 
               ? { ...m, status: "completed", completedAt: new Date().toISOString() } // auto-complete previous

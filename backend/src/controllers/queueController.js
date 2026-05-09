@@ -245,6 +245,7 @@ export const callNext = asyncHandler(async (req, res) => {
 
   if (waitingMembers.length === 0) {
     await queue.save();
+    await emitQueueUpdated(queue, "Queue is now empty");
     return res.status(200).json(new ApiResponse(200, { currentToken: queue.currentToken }, "No waiting users left"));
   }
 

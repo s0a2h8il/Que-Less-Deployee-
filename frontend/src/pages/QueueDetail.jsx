@@ -160,7 +160,9 @@ const QueueDetail = () => {
       ? waitingMembers.filter(
         (member) => member.tokenNumber < userMember.tokenNumber,
       ).length
-      : null;
+      : userMember?.status === "called"
+        ? 0
+        : null;
   const userWaitTime =
     userAheadCount !== null ? userAheadCount * avgTime : null;
 

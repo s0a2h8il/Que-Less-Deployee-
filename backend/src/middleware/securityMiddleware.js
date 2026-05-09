@@ -70,7 +70,7 @@ export const corsConfig = {
   origin: (origin, callback) => {
     const rawOrigins = process.env.CORS_ORIGIN || "";
     const allowedOrigins = rawOrigins.split(",").map(o => o.trim()).filter(o => o !== "");
-    
+
     // Default local origins
     const defaultOrigins = [
       "http://localhost:5173",

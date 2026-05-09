@@ -15,13 +15,17 @@ const sendEmail = async (options) => {
     }
 
     // 1. Create a transporter
+    const port = parseInt(process.env.SMTP_PORT) || 587;
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || "smtp.gmail.com",
-      port: process.env.SMTP_PORT || 587,
+      port: port,
+      secure: port === 465, // Use SSL for port 465
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      // Force IPv4 to avoid ENETUNREACH errors on Render
+      family: 4, 
     });
 
     // 2. Define the email options

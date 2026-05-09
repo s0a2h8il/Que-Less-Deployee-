@@ -22,10 +22,13 @@ const SuperAdminSidebar = ({ activeTab, setActiveTab, onNavigate }) => {
   ];
 
   return (
-    <aside className="w-64 bg-slate-900 text-white p-6 flex flex-col border-r border-slate-800">
-      <div className="mb-8 flex flex-col gap-6">
-        <Link
-          to="/"
+    <div
+      className="bg-white border-r border-slate-200 flex flex-col h-full overflow-y-auto transition-all duration-500 ease-[0.16,1,0.3,1] w-64"
+    >
+      <div className="p-6 flex flex-col gap-6">
+        {/* Logo Section */}
+        <Link 
+          to="/" 
           onClick={onNavigate}
           className="flex items-center gap-3 group"
         >
@@ -41,23 +44,23 @@ const SuperAdminSidebar = ({ activeTab, setActiveTab, onNavigate }) => {
             <Zap size={18} fill="white" className="text-white" />
           </motion.div>
           <div className="flex flex-col leading-none">
-            <span className="text-lg font-bold tracking-tight text-white">
+            <span className="text-lg font-bold tracking-tight text-slate-800">
               Queue<span className="text-[#E07A5F]">-Less</span>
             </span>
-            <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+            <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
               Virtual Queue
             </span>
           </div>
         </Link>
 
         <div>
-          <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+          <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
             Platform Admin
           </h2>
         </div>
       </div>
 
-      <nav className="flex-1 space-y-2">
+      <nav className="flex-1 px-4 space-y-2 mt-4">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -70,30 +73,30 @@ const SuperAdminSidebar = ({ activeTab, setActiveTab, onNavigate }) => {
                 onNavigate?.();
               }}
               className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm transition-all whitespace-nowrap",
+                "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 whitespace-nowrap overflow-hidden",
                 isActive
-                  ? "bg-indigo-600 text-white shadow-lg"
-                  : "text-slate-300 hover:bg-slate-800 hover:text-white",
+                  ? "bg-indigo-50 text-indigo-600 shadow-sm"
+                  : "text-slate-600 hover:bg-slate-50",
               )}
             >
-              <Icon size={18} />
+              <Icon size={22} className="shrink-0" />
               <span>{tab.label}</span>
             </button>
           );
         })}
       </nav>
 
-      <div className="pt-4 border-t border-slate-700">
+      <div className="mt-auto p-4 border-t border-slate-100">
         <Link
           to="/dashboard"
           onClick={onNavigate}
-          className="flex items-center gap-2 px-4 py-2 text-sm text-slate-400 hover:text-slate-200 transition-colors whitespace-nowrap"
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-all duration-300 whitespace-nowrap overflow-hidden"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={22} className="shrink-0" />
           <span>Regular Dashboard</span>
         </Link>
       </div>
-    </aside>
+    </div>
   );
 };
 

@@ -8,4 +8,6 @@ export const authApi = {
   uploadAvatar: (formData) => api.post("/auth/avatar", formData, {
     headers: { "Content-Type": "multipart/form-data" }
   }).then(r => r.data),
+  verifyOTP: (data) => api.post("/auth/verify-otp", data).then(r => r.data),
+  resendOTP: (data) => api.post("/auth/resend-otp", data).then(r => r.data),
 };

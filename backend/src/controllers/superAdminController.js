@@ -10,7 +10,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 // Helper: build pagination meta
 // ─────────────────────────────────────────────────────────────────────────────
 const paginate = (page, limit) => {
-  const pageNum  = Math.max(1, parseInt(page));
+  const pageNum = Math.max(1, parseInt(page));
   const limitNum = Math.min(50, Math.max(1, parseInt(limit)));
   return { pageNum, limitNum, skip: (pageNum - 1) * limitNum };
 };
@@ -61,7 +61,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 
   const filter = {};
   if (search) filter.$or = [
-    { name:  { $regex: search, $options: "i" } },
+    { name: { $regex: search, $options: "i" } },
     { email: { $regex: search, $options: "i" } },
   ];
   if (role) filter.role = role;
@@ -88,13 +88,13 @@ export const getAllBusinesses = asyncHandler(async (req, res) => {
 
   const filter = {};
   if (search) filter.$or = [
-    { name:     { $regex: search, $options: "i" } },
+    { name: { $regex: search, $options: "i" } },
     { category: { $regex: search, $options: "i" } },
-    { city:     { $regex: search, $options: "i" } },
+    { city: { $regex: search, $options: "i" } },
   ];
-  if (isVerified !== undefined) filter.isVerified = isVerified === "true";
-  if (isActive   !== undefined) filter.isActive   = isActive   === "true";
-  if (category)                 filter.category   = category;
+  if (isVerified === "true" || isVerified === "false") filter.isVerified = isVerified === "true";
+  if (isActive === "true" || isActive === "false") filter.isActive = isActive === "true";
+  if (category) filter.category = category;
 
   const [businesses, total] = await Promise.all([
     Business.find(filter).populate("ownerId", "name email").sort({ createdAt: -1 }).skip(skip).limit(limitNum).lean(),
@@ -182,9 +182,9 @@ export const getAllQueues = asyncHandler(async (req, res) => {
   const queuesWithStats = queues.map((queue) => ({
     ...queue,
     stats: {
-      waitingCount:  queue.members?.filter((m) => m.status === "waiting").length   || 0,
+      waitingCount: queue.members?.filter((m) => m.status === "waiting").length || 0,
       completedCount: queue.members?.filter((m) => m.status === "completed").length || 0,
-      totalMembers:  queue.members?.length || 0,
+      totalMembers: queue.members?.length || 0,
     },
   }));
 

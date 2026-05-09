@@ -28,3 +28,22 @@ export const loginValidator = [
     .trim()
     .notEmpty().withMessage("Password is required"),
 ];
+
+export const verifyOTPValidator = [
+  body("email")
+    .trim()
+    .notEmpty().withMessage("Email is required")
+    .isEmail().withMessage("Please provide a valid email address"),
+  
+  body("otp")
+    .trim()
+    .notEmpty().withMessage("OTP is required")
+    .isLength({ min: 6, max: 6 }).withMessage("OTP must be exactly 6 digits"),
+];
+
+export const resendOTPValidator = [
+  body("email")
+    .trim()
+    .notEmpty().withMessage("Email is required")
+    .isEmail().withMessage("Please provide a valid email address"),
+];

@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await authApi.register(userData);
       if (res.success) {
-        applySession(res.data.user, res.data.token);
+        // Backend no longer sends token on register; user must verify OTP.
         return { success: true };
       }
     } catch (err) {
@@ -76,6 +76,33 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const verifyOTP = async (data) => {
+    setLoading(true);
+    try {
+      const res = await authApi.verifyOTP(data);
+      if (res.success) {
+        applySession(res.data.user, res.data.token);
+        return { success: true };
+      }
+    } catch (err) {
+      return { success: false, message: err.message || "Verification failed" };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resendOTP = async (data) => {
+    try {
+      const res = await authApi.resendOTP(data);
+      if (res.success) {
+        return { success: true };
+      }
+    } catch (err) {
+      return { success: false, message: err.message || "Could not resend OTP" };
+    }
+  };
+
+
   const authValue = React.useMemo(() => ({ 
     user, 
     token, 
@@ -84,8 +111,10 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated, 
     login, 
     register, 
+    verifyOTP,
+    resendOTP,
     logout 
-  }), [user, token, loading, isAuthenticated, login, register, logout]);
+  }), [user, token, loading, isAuthenticated, login, register, verifyOTP, resendOTP, logout]);
 
   return (
     <AuthContext.Provider value={authValue}>

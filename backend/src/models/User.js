@@ -23,9 +23,16 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: function() {
+        return !this.googleId; // Only required if not a Google user
+      },
       minlength: [6, "Password must be at least 6 characters"],
-      select: false, // Never return password in queries by default
+      select: false,
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows multiple nulls for users without googleId
     },
     role: {
       type: String,
@@ -50,6 +57,17 @@ const userSchema = new mongoose.Schema(
       maxlength: [160, "Bio must be less than 160 characters"],
       default: "",
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    otp: {
+      type: String,
+      select: false,
+    },
+    otpExpiry: {
+      type: Date,
+    },
   },
   {
     timestamps: true, // Adds createdAt and updatedAt automatically
@@ -58,8 +76,8 @@ const userSchema = new mongoose.Schema(
 
 // ─── Hash password before saving ──────────────────────────────────────────────
 userSchema.pre("save", async function (next) {
-  // Only hash the password if it has been modified (or is new)
-  if (!this.isModified("password")) return next();
+  // Only hash the password if it has been modified (or is new) AND exists
+  if (!this.isModified("password") || !this.password) return next();
 
   try {
     const salt = await bcrypt.genSalt(12);

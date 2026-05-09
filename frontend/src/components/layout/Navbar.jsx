@@ -194,7 +194,7 @@ const Navbar = () => {
                 style={{ background: "rgba(61,64,91,0.12)" }}
               />
 
-              <Link to="/dashboard">
+              <Link to={isAdmin ? "/admin/dashboard" : "/dashboard"}>
                 <motion.div
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}

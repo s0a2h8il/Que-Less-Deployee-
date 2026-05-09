@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { superAdminApi } from "../api/superAdminApi";
 
 /**
@@ -11,7 +12,16 @@ export const useSuperAdminDashboard = () => {
   const [queues, setQueues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState("overview");
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "overview");
+
+  // Sync activeTab with URL params if they change
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   // Toast state
   const [toast, setToast] = useState({
@@ -50,11 +60,14 @@ export const useSuperAdminDashboard = () => {
   // Fetch platform stats
   const fetchStats = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await superAdminApi.getPlatformStats();
       setStats(response.data);
     } catch (err) {
       console.error("Failed to fetch stats:", err);
       showToast("Failed to load platform stats", "error");
+    } finally {
+      setLoading(false);
     }
   }, []);
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Card } from "../../ui/Card";
 import { Button } from "../../ui/Button";
-import { Users, Clock, ArrowRight, Edit2, Trash2 } from "lucide-react";
+import { Users, Clock, ArrowRight, Edit2, Trash2, BadgeCheck } from "lucide-react";
 import QueueStatusBadge from "./QueueStatusBadge";
 
 const QueueList = ({ queues, onSelect, onEdit, onDelete }) => {
@@ -57,7 +57,23 @@ const QueueList = ({ queues, onSelect, onEdit, onDelete }) => {
               >
                 {queue.title}
               </h3>
-              <p className="text-sm font-medium text-slate-500">{queue.business?.name}</p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-sm font-medium text-slate-500">{queue.business?.name}</p>
+                {queue.business?.isVerified && (
+                  <div className="relative group/tooltip inline-block leading-none">
+                    <BadgeCheck 
+                      size={14} 
+                      className="shrink-0 cursor-help" 
+                      style={{ color: "#3AA0FF" }} 
+                      fill="rgba(58,160,255,0.08)" 
+                    />
+                    <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-slate-900 text-white text-[10px] font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl z-50">
+                      Verified Business
+                      <div className="absolute top-full right-1 border-4 border-transparent border-t-slate-900" />
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="flex items-center gap-3">
               <QueueStatusBadge status={queue.status} />

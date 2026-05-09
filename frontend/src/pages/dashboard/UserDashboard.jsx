@@ -8,7 +8,7 @@ import NotificationList from "../../components/dashboard/user/NotificationList";
 import ExchangeSpotCard from "../../components/dashboard/user/ExchangeSpotCard";
 import { Loader } from "../../components";
 import { Link } from "react-router-dom";
-import { Zap, RefreshCcw, AlertTriangle } from "lucide-react";
+import { Zap, RefreshCcw, AlertTriangle, Home } from "lucide-react";
 
 const UserDashboard = () => {
   const { user, activeQueues, notifications, stats, loading, error, refetch } =
@@ -98,66 +98,87 @@ const UserDashboard = () => {
           />
         </div>
         <div className="container mx-auto px-6 relative">
-          <motion.div
-            initial={{ opacity: 0, x: -16 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {/* Brand Logo Link */}
-            <Link to="/" className="flex items-center gap-3 group mb-8 w-fit">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg"
+          <div className="flex items-start justify-between">
+            <motion.div
+              initial={{ opacity: 0, x: -16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {/* Brand Logo Link */}
+              <Link to="/" className="flex items-center gap-3 group mb-8 w-fit">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg"
+                  style={{
+                    background: "linear-gradient(135deg, #E07A5F 0%, #F2CC8F 100%)",
+                    boxShadow: "0 8px 16px rgba(224,122,95,0.2)",
+                  }}
+                >
+                  <Zap size={18} fill="white" className="text-white" />
+                </motion.div>
+                <div className="flex flex-col leading-none">
+                  <span className="text-lg font-bold tracking-tight text-white">
+                    Queue<span className="text-[#E07A5F]">-Less</span>
+                  </span>
+                  <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+                    Virtual Queue
+                  </span>
+                </div>
+              </Link>
+
+              <p
+                className="text-xs font-bold uppercase tracking-widest mb-2"
                 style={{
-                  background: "linear-gradient(135deg, #E07A5F 0%, #F2CC8F 100%)",
-                  boxShadow: "0 8px 16px rgba(224,122,95,0.2)",
+                  color: "rgba(58,160,255,0.80)",
+                  fontFamily: "var(--font-body)",
                 }}
               >
-                <Zap size={18} fill="white" className="text-white" />
-              </motion.div>
-              <div className="flex flex-col leading-none">
-                <span className="text-lg font-bold tracking-tight text-white">
-                  Queue<span className="text-[#E07A5F]">-Less</span>
+                Personal Cockpit
+              </p>
+              <h1
+                className="text-4xl font-black"
+                style={{
+                  fontFamily: "var(--font-heading)",
+                  color: "#F7F4EF",
+                  letterSpacing: "-0.025em",
+                }}
+              >
+                Welcome back,{" "}
+                <span style={{ color: "#3AA0FF" }}>
+                  {user?.name?.split(" ")[0]}!
                 </span>
-                <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
-                  Virtual Queue
-                </span>
-              </div>
-            </Link>
+              </h1>
+              <p
+                className="mt-2"
+                style={{
+                  color: "rgba(247,244,239,0.45)",
+                  fontFamily: "var(--font-body)",
+                }}
+              >
+                Manage your active spots and notifications here.
+              </p>
+            </motion.div>
 
-            <p
-              className="text-xs font-bold uppercase tracking-widest mb-2"
-              style={{
-                color: "rgba(58,160,255,0.80)",
-                fontFamily: "var(--font-body)",
-              }}
+            <motion.div
+              initial={{ opacity: 0, x: 16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             >
-              Personal Cockpit
-            </p>
-            <h1
-              className="text-4xl font-black"
-              style={{
-                fontFamily: "var(--font-heading)",
-                color: "#F7F4EF",
-                letterSpacing: "-0.025em",
-              }}
-            >
-              Welcome back,{" "}
-              <span style={{ color: "#3AA0FF" }}>
-                {user?.name?.split(" ")[0]}!
-              </span>
-            </h1>
-            <p
-              className="mt-2"
-              style={{
-                color: "rgba(247,244,239,0.45)",
-                fontFamily: "var(--font-body)",
-              }}
-            >
-              Manage your active spots and notifications here.
-            </p>
-          </motion.div>
+              <Link
+                to="/"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  color: "#fff",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                }}
+              >
+                <Home size={16} />
+                <span className="hidden sm:inline">Go to Home</span>
+              </Link>
+            </motion.div>
+          </div>
         </div>
       </div>
 
@@ -167,7 +188,7 @@ const UserDashboard = () => {
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
             <ProfileCard user={user} />
-            <ExchangeSpotCard />
+            {user?.role === "user" && <ExchangeSpotCard />}
           </div>
 
           {/* Main */}

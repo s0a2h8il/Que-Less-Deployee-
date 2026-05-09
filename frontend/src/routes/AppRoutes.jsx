@@ -10,6 +10,7 @@ import ProtectedRoute from "./ProtectedRoute";
 const Home = lazyLoad(() => import("../pages/Home"));
 const Login = lazyLoad(() => import("../pages/auth/Login"));
 const Register = lazyLoad(() => import("../pages/auth/Register"));
+const VerifyOTP = lazyLoad(() => import("../pages/auth/VerifyOTP"));
 const ExploreQueues = lazyLoad(() => import("../pages/ExploreQueues"));
 const QueueDetail = lazyLoad(() => import("../pages/QueueDetail"));
 const UserDashboard = lazyLoad(
@@ -60,6 +61,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/explore" element={<ExploreQueues />} />
         <Route path="/how-it-works" element={<HowItWorksPage />} />
         <Route path="/about" element={<About />} />

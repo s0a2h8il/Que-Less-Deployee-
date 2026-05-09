@@ -22,40 +22,40 @@ const SuperAdminStats = ({ stats, loading }) => {
       label: "Total Users",
       value: stats.totalUsers,
       icon: Users,
-      color: "bg-blue-50",
-      iconColor: "text-blue-600",
+      color: "from-blue-500/20 to-blue-600/5",
+      iconColor: "#3AA0FF",
       trend: `${stats.totalAdmins} admins`,
     },
     {
       label: "Total Businesses",
       value: stats.totalBusinesses,
       icon: Building2,
-      color: "bg-purple-50",
-      iconColor: "text-purple-600",
+      color: "from-purple-500/20 to-purple-600/5",
+      iconColor: "#A78BFA",
       trend: `${stats.unverifiedBusinesses} unverified`,
     },
     {
       label: "Verified Businesses",
       value: stats.verifiedBusinesses,
       icon: CheckCircle,
-      color: "bg-green-50",
-      iconColor: "text-green-600",
+      color: "from-green-500/20 to-green-600/5",
+      iconColor: "#10B981",
       trend: `${Math.round((stats.verifiedBusinesses / stats.totalBusinesses) * 100)}% of total`,
     },
     {
       label: "Active Queues",
       value: stats.activeQueues,
       icon: Zap,
-      color: "bg-amber-50",
-      iconColor: "text-amber-600",
+      color: "from-amber-500/20 to-amber-600/5",
+      iconColor: "#F59E0B",
       trend: `${stats.totalQueues} total queues`,
     },
     {
       label: "Pending Reports",
       value: stats.pendingReports || 0,
       icon: AlertCircle,
-      color: "bg-red-50",
-      iconColor: "text-red-600",
+      color: "from-red-500/20 to-red-600/5",
+      iconColor: "#EF4444",
       trend: "Needs review",
     },
   ];
@@ -72,20 +72,39 @@ const SuperAdminStats = ({ stats, loading }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
           >
-            <Card className={`p-6 ${card.color} border-0`}>
+            <div 
+               className={`p-6 rounded-[2rem] bg-gradient-to-br ${card.color} border border-white/10 backdrop-blur-md h-full`}
+            >
               <div className="flex items-start justify-between mb-4">
-                <div className={`p-3 rounded-2xl ${card.color}`}>
-                  <Icon className={`${card.iconColor}`} size={24} />
+                <div className="p-3 rounded-2xl bg-white/5">
+                  <Icon style={{ color: card.iconColor }} size={24} />
                 </div>
               </div>
-              <h3 className="text-slate-600 text-sm font-medium mb-1">
+              <h3 
+                className="text-sm font-medium mb-1" 
+                style={{ 
+                  fontFamily: "var(--font-body)",
+                  color: "rgba(247,244,239,0.9)"
+                }}
+              >
                 {card.label}
               </h3>
-              <p className="text-3xl font-black text-slate-900 mb-2">
+              <p 
+                className="text-3xl font-black mb-2" 
+                style={{ 
+                  fontFamily: "var(--font-heading)",
+                  color: "#FFFFFF"
+                }}
+              >
                 {card.value}
               </p>
-              <p className="text-xs text-slate-500 font-medium">{card.trend}</p>
-            </Card>
+              <p 
+                className="text-xs font-medium"
+                style={{ color: "rgba(247,244,239,0.6)" }}
+              >
+                {card.trend}
+              </p>
+            </div>
           </motion.div>
         );
       })}

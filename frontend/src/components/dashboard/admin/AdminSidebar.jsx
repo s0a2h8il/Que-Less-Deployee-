@@ -6,6 +6,7 @@ import {
   PlusCircle,
   LogOut,
   Zap,
+  User,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
@@ -13,14 +14,16 @@ import { cn } from "../../../utils/cn";
 import { motion } from "framer-motion";
 
 const AdminSidebar = ({ activeTab, setActiveTab, collapsed }) => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+  const isSuperAdmin = user?.role === "superadmin";
 
   const menuItems = [
-    { id: "overview", label: "Dashboard", icon: LayoutDashboard },
-    { id: "businesses", label: "My Businesses", icon: Building2 },
-    { id: "queues", label: "My Queues", icon: ListOrdered },
-    { id: "create-queue", label: "Create Queue", icon: PlusCircle },
-  ];
+    { id: "overview", label: "Dashboard", icon: LayoutDashboard, hidden: isSuperAdmin },
+    { id: "businesses", label: "My Businesses", icon: Building2, hidden: isSuperAdmin },
+    { id: "queues", label: "My Queues", icon: ListOrdered, hidden: isSuperAdmin },
+    { id: "create-queue", label: "Create Queue", icon: PlusCircle, hidden: isSuperAdmin },
+    { id: "settings", label: "Profile Settings", icon: User },
+  ].filter(item => !item.hidden);
 
   return (
     <div

@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import helmet from "helmet";
 import path from "path";
+import session from "express-session";
+import passport from "./config/passport.js";
 import { fileURLToPath } from "url";
 import { createServer } from "http";
 import connectDB from "./config/db.js";
@@ -45,6 +47,18 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
+
+// ── Passport & Session (for Google OAuth) ──────────────────────────────────
+app.use(
+  session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: process.env.NODE_ENV === "production" },
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // ── Health check (no rate limit) ──────────────────────────────────────────────
 app.get("/api/health", (req, res) =>

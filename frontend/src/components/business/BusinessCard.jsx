@@ -151,12 +151,18 @@ const BusinessCard = ({ business, index }) => {
               {name}
             </h3>
             {isVerified && (
-              <BadgeCheck
-                size={18}
-                className="shrink-0 mt-0.5"
-                style={{ color: "#3AA0FF" }}
-                fill="rgba(58,160,255,0.12)"
-              />
+              <div className="relative group/tooltip">
+                <BadgeCheck
+                  size={18}
+                  className="shrink-0 mt-0.5 cursor-help"
+                  style={{ color: "#3AA0FF" }}
+                  fill="rgba(58,160,255,0.12)"
+                />
+                <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-slate-900 text-white text-[10px] font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl z-50">
+                  Verified Business
+                  <div className="absolute top-full right-1 border-4 border-transparent border-t-slate-900" />
+                </div>
+              </div>
             )}
           </div>
 

@@ -20,13 +20,26 @@ import {
   Trash2,
   MapPin,
   Clock,
+  Home,
+  BadgeCheck,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCategoryIcon } from "../../utils/categoryIcons";
+import { useAuth } from "../../context/AuthContext";
+import ProfileCard from "../../components/dashboard/user/ProfileCard";
 
 const AdminDashboard = () => {
   const [searchParams] = useSearchParams();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "overview");
+
+  // For Super Admins, if no tab is specified, default to settings since other tabs are hidden
+  useEffect(() => {
+    if (user?.role === "superadmin" && !searchParams.get("tab") && activeTab === "overview") {
+      setActiveTab("settings");
+    }
+  }, [user, searchParams, activeTab]);
   const [showCreateBiz, setShowCreateBiz] = useState(false);
   const [editingBusiness, setEditingBusiness] = useState(null);
   const [editingQueue, setEditingQueue] = useState(null);
@@ -89,7 +102,6 @@ const AdminDashboard = () => {
     toast,
     hideToast,
   } = useAdminDashboard();
-
   if (loading && !businesses?.length && !queues?.length) {
     return (
       <div
@@ -255,9 +267,9 @@ const AdminDashboard = () => {
                     New Queue
                   </button>
                 </div>
-                <QueueList 
-                  queues={queues} 
-                  onSelect={selectQueue} 
+                <QueueList
+                  queues={queues}
+                  onSelect={selectQueue}
                   onEdit={(q) => { setEditingQueue(q); setActiveTab("create-queue"); }}
                   onDelete={deleteQueueHandler}
                 />
@@ -333,7 +345,7 @@ const AdminDashboard = () => {
                       }}
                     >
                       {/* Decorative Background Blob */}
-                      <div 
+                      <div
                         className="absolute -top-24 -right-24 w-64 h-64 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-700 blur-[50px] pointer-events-none z-0 transform group-hover:scale-110"
                         style={{ background: "radial-gradient(circle, rgba(58,160,255,0.15) 0%, transparent 70%)" }}
                       />
@@ -342,7 +354,7 @@ const AdminDashboard = () => {
                       <div className="relative z-10 flex items-start justify-between mb-4">
                         <div
                           className="w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3 shadow-sm"
-                          style={{ 
+                          style={{
                             background: "#eff6ff", // blue-50
                             border: "1px solid #dbeafe" // blue-100
                           }}
@@ -377,9 +389,9 @@ const AdminDashboard = () => {
 
                       {/* Content */}
                       <div className="relative z-10 mt-auto">
-                        <div 
-                          className="inline-block px-3 py-1.5 rounded-lg text-[10px] uppercase font-bold mb-4 tracking-widest transition-colors duration-300 shadow-sm" 
-                          style={{ 
+                        <div
+                          className="inline-block px-3 py-1.5 rounded-lg text-[10px] uppercase font-bold mb-4 tracking-widest transition-colors duration-300 shadow-sm"
+                          style={{
                             background: "#f1f5f9", // slate-100
                             color: "#475569", // slate-600
                             border: "1px solid #e2e8f0" // slate-200
@@ -387,17 +399,33 @@ const AdminDashboard = () => {
                         >
                           {biz.category}
                         </div>
-                        <h3
-                          className="font-black text-2xl mb-4 truncate transition-colors duration-300"
-                          style={{
-                            fontFamily: "var(--font-heading)",
-                            color: "#0f172a", // slate-900
-                            letterSpacing: "-0.03em"
-                          }}
-                        >
-                          {biz.name}
-                        </h3>
-                        
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <h3 
+                            className="font-black text-2xl truncate transition-colors duration-300 group-hover:text-indigo-600"
+                            style={{
+                              fontFamily: "var(--font-heading)",
+                              color: "#0f172a", // slate-900
+                              letterSpacing: "-0.03em"
+                            }}
+                          >
+                            {biz.name}
+                          </h3>
+                          {biz.isVerified && (
+                            <div className="relative group/tooltip inline-block leading-none">
+                              <BadgeCheck 
+                                size={18} 
+                                className="shrink-0 cursor-help" 
+                                style={{ color: "#3AA0FF" }} 
+                                fill="rgba(58,160,255,0.12)" 
+                              />
+                              <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-slate-900 text-white text-[10px] font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl z-50">
+                                Verified Business
+                                <div className="absolute top-full right-1 border-4 border-transparent border-t-slate-900" />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
                         <div className="flex flex-col gap-2.5">
                           <div className="flex items-center gap-2.5 transition-colors duration-300" style={{ color: "#64748b" }}> {/* slate-500 */}
                             <MapPin size={15} style={{ color: "#94a3b8" }} /> {/* slate-400 */}
@@ -532,6 +560,68 @@ const AdminDashboard = () => {
           </div>
         );
 
+      case "settings":
+        return (
+          <div className="max-w-4xl mx-auto py-6 md:py-10">
+            <div className="mb-10 text-center sm:text-left">
+              <h1
+                style={{
+                  fontFamily: "var(--font-heading)",
+                  fontSize: "clamp(1.8rem, 5vw, 2.5rem)",
+                  fontWeight: 900,
+                  color: "#F7F4EF",
+                  letterSpacing: "-0.03em",
+                }}
+              >
+                Profile <span style={{ color: "#3AA0FF" }}>Settings</span>
+              </h1>
+              <p
+                className="mt-2"
+                style={{
+                  color: "rgba(247,244,239,0.45)",
+                  fontFamily: "var(--font-body)",
+                }}
+              >
+                Manage your administrative account details and preferences.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+              <div className="md:col-span-1">
+                <ProfileCard user={user} />
+              </div>
+              <div className="md:col-span-2 space-y-6">
+                <div
+                  className="p-8 rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-md"
+                >
+                  <h3 className="text-xl font-bold mb-4" style={{ color: "#F7F4EF" }}>Account Security</h3>
+                  <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+                    Keep your operator account secure. You can update your name, phone number, and bio using the edit button on your profile card.
+                  </p>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5">
+                      <span className="text-sm text-slate-300">Email Verified</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md bg-green-500/20 text-green-400 border border-green-500/20">Active</span>
+                    </div>
+                    <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5">
+                      <span className="text-sm text-slate-300">Account Role</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md bg-blue-500/20 text-blue-400 border border-blue-500/20">{user?.role}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className="p-8 rounded-[2.5rem] bg-gradient-to-br from-[#E07A5F]/10 to-[#F2CC8F]/5 border border-[#E07A5F]/20"
+                >
+                  <h3 className="text-xl font-bold mb-4" style={{ color: "#F7F4EF" }}>Business Management</h3>
+                  <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+                    As an admin, you have full control over your registered businesses and queues. Ensure your contact details are up to date so customers can reach you.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
       default:
         return null;
     }
@@ -559,12 +649,12 @@ const AdminDashboard = () => {
       <motion.aside
         className="fixed top-0 left-0 z-30 h-screen"
         initial={false}
-        animate={{ 
-          width: isDesktop ? sidebarWidth : 256, 
-          x: isDesktop ? 0 : (isSidebarOpen ? 0 : -280) 
+        animate={{
+          width: isDesktop ? sidebarWidth : 256,
+          x: isDesktop ? 0 : (isSidebarOpen ? 0 : -280)
         }}
-        transition={{ 
-          duration: 0.45, 
+        transition={{
+          duration: 0.45,
           ease: [0.16, 1, 0.3, 1] // Custom quint ease for smoother motion
         }}
       >
@@ -578,13 +668,13 @@ const AdminDashboard = () => {
       <motion.main
         className="flex-1 min-w-0 px-4 py-6 sm:px-6 sm:py-8 lg:px-8"
         animate={{ marginLeft: mainOffset }}
-        transition={{ 
-          duration: 0.45, 
-          ease: [0.16, 1, 0.3, 1] 
+        transition={{
+          duration: 0.45,
+          ease: [0.16, 1, 0.3, 1]
         }}
       >
         <div className="max-w-7xl mx-auto">
-          <div className="mb-6 flex flex-wrap items-center gap-3">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <button
               type="button"
               onClick={() => setIsSidebarOpen((prev) => !prev)}
@@ -618,6 +708,38 @@ const AdminDashboard = () => {
               )}
               <span>{toggleLabel}</span>
             </button>
+
+            <div className="flex items-center gap-3">
+              {user?.role === "superadmin" && (
+                <Link
+                  to="/admin/superadmin"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105 shadow-sm"
+                  style={{
+                    background: "rgba(129,178,154,0.1)",
+                    color: "#81B29A",
+                    border: "1px solid rgba(129,178,154,0.2)",
+                    fontFamily: "var(--font-heading)",
+                  }}
+                >
+                  <Building2 size={16} />
+                  <span className="hidden sm:inline">Super Admin Panel</span>
+                </Link>
+              )}
+
+              <Link
+                to="/"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105 shadow-sm"
+                style={{
+                  background: "rgba(58,160,255,0.1)",
+                  color: "#3AA0FF",
+                  border: "1px solid rgba(58,160,255,0.2)",
+                  fontFamily: "var(--font-heading)",
+                }}
+              >
+                <Home size={16} />
+                <span className="hidden sm:inline">Go to Home</span>
+              </Link>
+            </div>
           </div>
 
           {error && (

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Calendar, Building2, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { businessApi } from "../../api/businessApi.js";
+import { superAdminApi } from "../../api/superAdminApi.js";
 
 const AnalyticsFilterBar = ({ filters, onFilterChange, onDateRangeChange }) => {
   const { user } = useAuth();
@@ -14,7 +15,7 @@ const AnalyticsFilterBar = ({ filters, onFilterChange, onDateRangeChange }) => {
     if (user?.role === "superadmin") {
       const fetchBusinesses = async () => {
         try {
-          const data = await businessApi.getAllBusinesses();
+          const data = await superAdminApi.getAllBusinesses();
           setBusinesses(data.businesses || []);
         } catch (err) {
           console.error("Failed to fetch businesses:", err);

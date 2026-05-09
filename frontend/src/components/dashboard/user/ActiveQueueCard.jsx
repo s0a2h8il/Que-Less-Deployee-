@@ -6,6 +6,7 @@ import { cn } from "../../../utils/cn";
 import CreateExchangeRequest from "../../exchange/CreateExchangeRequest";
 import { useExchange } from "../../../hooks/useExchange";
 import { Toast } from "../../ui/Toast";
+import { useAuth } from "../../../context/AuthContext";
 
 const ActiveQueueCard = ({ queue }) => {
   const {
@@ -17,6 +18,9 @@ const ActiveQueueCard = ({ queue }) => {
     estimatedWaitTime,
     userStatus,
   } = queue;
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin" || user?.role === "superadmin";
+
   const isNear = position <= 3 && userStatus === "waiting";
 
   const [showExchangeModal, setShowExchangeModal] = useState(false);
@@ -102,15 +106,17 @@ const ActiveQueueCard = ({ queue }) => {
               <ArrowRight size={16} />
             </Button>
           </Link>
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-xl shrink-0 border-indigo-100 text-indigo-600 hover:bg-indigo-50"
-            onClick={() => setShowExchangeModal(true)}
-            title="Exchange Spot"
-          >
-            <Repeat size={18} />
-          </Button>
+          {!isAdmin && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-xl shrink-0 border-indigo-100 text-indigo-600 hover:bg-indigo-50"
+              onClick={() => setShowExchangeModal(true)}
+              title="Exchange Spot"
+            >
+              <Repeat size={18} />
+            </Button>
+          )}
           <Button variant="outline" size="icon" className="rounded-xl shrink-0">
             <Share2 size={18} />
           </Button>

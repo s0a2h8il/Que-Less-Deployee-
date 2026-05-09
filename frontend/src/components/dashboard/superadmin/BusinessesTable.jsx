@@ -11,6 +11,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { cn } from "../../../utils/cn";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
 const BusinessesTable = ({
@@ -51,30 +52,16 @@ const BusinessesTable = ({
 
   if (loading) {
     return (
-      <Card className="p-6">
+      <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-md">
         <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
             <div
               key={i}
-              className="h-20 rounded-lg bg-slate-100 animate-pulse"
+              className="h-20 rounded-xl bg-white/5 animate-pulse"
             />
           ))}
         </div>
-      </Card>
-    );
-  }
-
-  if (!businesses || businesses.length === 0) {
-    return (
-      <Card className="p-12 text-center">
-        <Building2 size={48} className="mx-auto text-slate-300 mb-4" />
-        <h3 className="text-lg font-semibold text-slate-700">
-          No businesses found
-        </h3>
-        <p className="text-slate-500 mt-2">
-          Try adjusting your search or filters
-        </p>
-      </Card>
+      </div>
     );
   }
 
@@ -86,96 +73,122 @@ const BusinessesTable = ({
     >
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-4">
-        <Input
-          placeholder="Search by name or category..."
-          value={filters.businesses.search}
-          onChange={(e) =>
-            onFilterChange("businesses", "search", e.target.value)
-          }
-          className="flex-1"
-        />
-        <div className="flex gap-2">
-          <Button
-            variant={
-              filters.businesses.isVerified === "true" ? "primary" : "outline"
-            }
-            size="sm"
+        <div className="flex-1 relative group">
+          <Input
+            placeholder="Search by name or category..."
+            value={filters.businesses.search}
+            onChange={(e) => onFilterChange("businesses", "search", e.target.value)}
+            className="w-full bg-white/5 border-white/10 text-white placeholder:text-slate-400 focus:bg-white/10 transition-all rounded-xl pl-4 py-3"
+          />
+        </div>
+        <div className="flex gap-2 p-1 bg-white/5 rounded-xl border border-white/10">
+          <button
             onClick={() => handleRoleFilter("true")}
+            className={cn(
+              "px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
+              filters.businesses.isVerified === "true"
+                ? "bg-green-500 text-white shadow-lg shadow-green-500/20"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
+            )}
           >
             Verified
-          </Button>
-          <Button
-            variant={
-              filters.businesses.isVerified === "false" ? "primary" : "outline"
-            }
-            size="sm"
+          </button>
+          <button
             onClick={() => handleRoleFilter("false")}
+            className={cn(
+              "px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
+              filters.businesses.isVerified === "false"
+                ? "bg-amber-500 text-white shadow-lg shadow-amber-500/20"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
+            )}
           >
             Unverified
-          </Button>
+          </button>
         </div>
       </div>
 
-      {/* Table */}
-      <Card className="overflow-hidden">
+      {!businesses || businesses.length === 0 ? (
+        <div className="p-12 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-md text-center">
+          <Building2 size={48} className="mx-auto text-slate-400 mb-4" />
+          <h3 className="text-lg font-semibold" style={{ color: "#F7F4EF" }}>No businesses found</h3>
+          <p style={{ color: "rgba(247,244,239,0.7)", marginTop: "0.5rem" }}>
+            Try adjusting your search or filters
+          </p>
+        </div>
+      ) : (
+        /* Table */
+        <div className="overflow-hidden rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-md">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-slate-50 border-b border-slate-100">
+            <thead className="bg-white/10 border-b border-white/20">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                <th 
+                  className="px-6 py-5 text-left text-xs font-black uppercase tracking-[0.2em]"
+                  style={{ color: "#F7F4EF" }}
+                >
                   Business Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                <th 
+                  className="px-6 py-5 text-left text-xs font-black uppercase tracking-[0.2em]"
+                  style={{ color: "#F7F4EF" }}
+                >
                   Owner
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                <th 
+                  className="px-6 py-5 text-left text-xs font-black uppercase tracking-[0.2em]"
+                  style={{ color: "#F7F4EF" }}
+                >
                   Category
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                <th 
+                  className="px-6 py-5 text-left text-xs font-black uppercase tracking-[0.2em]"
+                  style={{ color: "#F7F4EF" }}
+                >
                   Verified
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                <th 
+                  className="px-6 py-5 text-left text-xs font-black uppercase tracking-[0.2em]"
+                  style={{ color: "#F7F4EF" }}
+                >
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-white/5">
               {businesses.map((business, idx) => (
                 <motion.tr
                   key={business._id}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: idx * 0.05 }}
-                  className="hover:bg-slate-50 transition-colors"
+                  className="hover:bg-white/[0.02] transition-colors"
                 >
                   <td className="px-6 py-4">
-                    <p className="font-semibold text-slate-900">
-                      {business.name}
-                    </p>
-                    <p className="text-slate-500 text-sm">{business.city}</p>
+                    <p className="font-semibold" style={{ color: "#FFFFFF" }}>{business.name}</p>
+                    <p className="text-xs" style={{ color: "rgba(247,244,239,0.6)" }}>{business.city}</p>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="font-medium text-slate-900">
+                    <p className="font-medium" style={{ color: "#FFFFFF" }}>
                       {business.ownerId?.name || "Unknown"}
                     </p>
-                    <p className="text-slate-500 text-sm">
+                    <p className="text-xs truncate max-w-[150px]" style={{ color: "rgba(247,244,239,0.7)" }}>
                       {business.ownerId?.email}
                     </p>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="text-slate-700 font-medium">
+                    <p className="font-medium text-sm" style={{ color: "rgba(247,244,239,0.9)" }}>
                       {business.category}
                     </p>
                   </td>
                   <td className="px-6 py-4">
                     {business.isVerified ? (
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 whitespace-nowrap">
-                        <CheckCircle size={14} />
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter bg-green-500/10 text-green-400 border border-green-500/20">
+                        <CheckCircle size={12} />
                         Verified
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 whitespace-nowrap">
-                        <XCircle size={14} />
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                        <XCircle size={12} />
                         Unverified
                       </span>
                     )}
@@ -183,33 +196,26 @@ const BusinessesTable = ({
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
                       {business.isVerified ? (
-                        <Button
-                          size="sm"
-                          variant="outline"
+                        <button
                           onClick={() => onUnverify(business._id)}
-                          className="text-amber-600 hover:bg-amber-50 text-xs"
+                          className="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest border border-amber-500/30 text-amber-500 hover:bg-amber-500/10 transition-all"
                         >
                           Unverify
-                        </Button>
+                        </button>
                       ) : (
-                        <Button
-                          size="sm"
+                        <button
                           onClick={() => onVerify(business._id)}
-                          className="bg-green-600 hover:bg-green-700 text-white text-xs"
+                          className="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-green-600 text-white hover:bg-green-700 transition-all shadow-lg shadow-green-600/20"
                         >
                           Verify
-                        </Button>
+                        </button>
                       )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          openDeleteModal(business._id, business.name)
-                        }
-                        className="text-red-600 hover:bg-red-50"
+                      <button
+                        onClick={() => openDeleteModal(business._id, business.name)}
+                        className="p-2 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-all"
                       >
                         <Trash2 size={14} />
-                      </Button>
+                      </button>
                     </div>
                   </td>
                 </motion.tr>
@@ -219,48 +225,30 @@ const BusinessesTable = ({
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 bg-slate-50">
-          <p className="text-sm text-slate-600">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-white/10 bg-white/5">
+          <p className="text-xs font-medium text-slate-300 uppercase tracking-widest">
             Page {pagination.businesses.currentPage} of{" "}
             {pagination.businesses.totalPages}
           </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                onPageChange(
-                  "businesses",
-                  pagination.businesses.currentPage - 1,
-                )
-              }
+          <div className="flex gap-3">
+            <button
+              onClick={() => onPageChange("businesses", pagination.businesses.currentPage - 1)}
               disabled={pagination.businesses.currentPage === 1}
-              className="gap-2"
+              className="p-2.5 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
             >
-              <ChevronLeft size={16} />
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                onPageChange(
-                  "businesses",
-                  pagination.businesses.currentPage + 1,
-                )
-              }
-              disabled={
-                pagination.businesses.currentPage ===
-                pagination.businesses.totalPages
-              }
-              className="gap-2"
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              onClick={() => onPageChange("businesses", pagination.businesses.currentPage + 1)}
+              disabled={pagination.businesses.currentPage === pagination.businesses.totalPages}
+              className="p-2.5 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
             >
-              Next
-              <ChevronRight size={16} />
-            </Button>
+              <ChevronRight size={20} />
+            </button>
           </div>
         </div>
-      </Card>
+        </div>
+      )}
 
       {/* Delete Modal */}
       <DeleteConfirmModal

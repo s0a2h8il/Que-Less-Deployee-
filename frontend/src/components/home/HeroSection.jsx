@@ -228,7 +228,7 @@ const HeroSection = () => {
             {/* Stats */}
             <div
               ref={statsRef}
-              className="flex justify-center lg:justify-start gap-8 sm:gap-12 pt-8"
+              className="flex justify-center lg:justify-start gap-4 sm:gap-12 pt-8"
               style={{ borderTop: "1px solid rgba(61,64,91,0.10)" }}
             >
               <StatItem value="10k+" label="Spots Saved" />

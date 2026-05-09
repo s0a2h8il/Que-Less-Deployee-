@@ -273,7 +273,23 @@ const QueueDetail = () => {
                 className="text-base sm:text-lg md:text-xl font-medium opacity-80"
                 style={{ color: "rgba(255, 255, 255, 0.8)" }}
               >
-                at <span className="font-bold text-white">{businessName}</span>
+                at <span className="font-bold text-white inline-flex items-center gap-1.5">
+                  {businessName}
+                  {businessInfo?.isVerified && (
+                    <div className="relative group/tooltip inline-block leading-none">
+                      <BadgeCheck 
+                        size={18} 
+                        className="shrink-0 cursor-help" 
+                        style={{ color: "#3AA0FF" }} 
+                        fill="rgba(58,160,255,0.12)" 
+                      />
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-lg opacity-0 group-hover/tooltip:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap shadow-2xl z-50 border border-white/10 scale-90 group-hover/tooltip:scale-100 origin-bottom">
+                        Verified Business
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-slate-900" />
+                      </div>
+                    </div>
+                  )}
+                </span>
                 <span className="block sm:inline sm:ml-2 opacity-60">• {addressLine}</span>
               </motion.p>
             </div>

@@ -173,7 +173,7 @@ const Navbar = () => {
                   to="/admin/dashboard"
                   icon={<ShieldCheck size={14} />}
                   label="Admin Panel"
-                  color={palette.sand}
+                  color="#A67B2E"
                 />
               )}
               {isAdmin && (

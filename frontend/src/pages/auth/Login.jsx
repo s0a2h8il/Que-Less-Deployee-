@@ -15,14 +15,14 @@ const Login = () => {
     message: "",
     type: "info",
   });
-  const { login, loading } = useAuth();
+  const { login, loading: authLoading } = useAuth();
+  const [isProcessingOAuth, setIsProcessingOAuth] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state?.from?.pathname || "/";
 
   useEffect(() => {
-    // 1. Handle Google Auth Callback (Token in URL)
     const params = new URLSearchParams(location.search);
     const tokenParam = params.get("token");
     const userParam = params.get("user");
@@ -33,15 +33,16 @@ const Login = () => {
     }
 
     if (tokenParam && userParam) {
+      setIsProcessingOAuth(true);
       try {
-        const userData = JSON.parse(decodeURIComponent(userParam));
-        // Use a small helper or context method to apply the session
-        // We'll expose a 'setSession' method in context or just use token utils
         setToken(tokenParam);
-        window.location.href = from; // Force reload to apply session fully
+        // Direct redirect without full page reload if possible, 
+        // but window.location.href is safer for clearing URL params
+        window.location.href = from;
         return;
       } catch (err) {
         console.error("Failed to parse Google user data", err);
+        setIsProcessingOAuth(false);
       }
     }
 
@@ -56,6 +57,15 @@ const Login = () => {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [location, from]);
+
+  if (isProcessingOAuth) {
+    return (
+      <div className="flex h-[80vh] flex-col items-center justify-center gap-4">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+        <p className="text-lg font-bold text-slate-700 animate-pulse">Authenticating with Google...</p>
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -139,7 +149,7 @@ const Login = () => {
               </p>
             )}
 
-            <Button type="submit" fullWidth size="lg" isLoading={loading}>
+            <Button type="submit" fullWidth size="lg" isLoading={authLoading}>
               Sign In
             </Button>
           </form>

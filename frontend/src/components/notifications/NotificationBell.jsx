@@ -1,19 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Bell } from "lucide-react";
 import { useNotifications } from "../../hooks/useNotifications";
 import { useNotificationSocket } from "../../hooks/useNotificationSocket";
 import NotificationDropdown from "./NotificationDropdown";
 import { cn } from "../../utils/cn";
 
+const MotionBell = motion(Bell);
+
 const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { 
-    notifications, 
-    unreadCount, 
-    loading, 
-    fetchNotifications, 
+  const {
+    notifications,
+    unreadCount,
+    loading,
+    fetchNotifications,
     fetchUnreadCount,
-    markAsRead, 
+    markAsRead,
     markAllAsRead,
     setUnreadCount,
     setNotifications
@@ -46,7 +49,8 @@ const NotificationBell = () => {
 
   return (
     <div className="relative" ref={bellRef}>
-      <button
+      <motion.button
+        whileHover="hover"
         onClick={() => {
           setIsOpen(!isOpen);
           if (!isOpen) {
@@ -56,13 +60,22 @@ const NotificationBell = () => {
         }}
         className={cn(
           "relative p-2.5 rounded-2xl transition-all duration-300 group",
-          isOpen 
-            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200" 
+          isOpen
+            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
             : "bg-slate-100 text-slate-500 hover:bg-slate-200"
         )}
       >
-        <Bell size={20} className={cn("transition-transform group-hover:rotate-12", isOpen && "animate-none")} />
-        
+        <MotionBell
+          size={20}
+          whileHover={{
+            rotate: [0, -15, 12, -15, 12, 0],
+          }}
+          transition={{
+            duration: 0.5,
+            ease: "easeInOut",
+          }}
+        />
+
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -71,16 +84,17 @@ const NotificationBell = () => {
             </span>
           </span>
         )}
-      </button>
+      </motion.button>
 
-      <NotificationDropdown
-        isOpen={isOpen}
-        notifications={notifications}
-        loading={loading}
-        onClose={() => setIsOpen(false)}
-        onMarkRead={markAsRead}
-        onMarkAllRead={markAllAsRead}
-      />
+
+        <NotificationDropdown
+          isOpen={isOpen}
+          notifications={notifications}
+          loading={loading}
+          onClose={() => setIsOpen(false)}
+          onMarkRead={markAsRead}
+          onMarkAllRead={markAllAsRead}
+        />
     </div>
   );
 };

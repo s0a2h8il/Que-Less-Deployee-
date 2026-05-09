@@ -16,26 +16,25 @@ import { globalLimiter, authLimiter, apiLimiter, sensitiveActionLimiter } from "
 import { applySecurityMiddleware, corsConfig } from "./middleware/securityMiddleware.js";
 
 // Route imports
-import authRoutes         from "./routes/authRoutes.js";
-import businessRoutes     from "./routes/businessRoutes.js";
-import queueRoutes        from "./routes/queueRoutes.js";
-import exchangeRoutes     from "./routes/exchangeRoutes.js";
-import superAdminRoutes   from "./routes/superAdminRoutes.js";
-import analyticsRoutes    from "./routes/analyticsRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import businessRoutes from "./routes/businessRoutes.js";
+import queueRoutes from "./routes/queueRoutes.js";
+import exchangeRoutes from "./routes/exchangeRoutes.js";
+import superAdminRoutes from "./routes/superAdminRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app  = express();
+const app = express();
 const PORT = process.env.PORT || 5000;
-const ENV  = process.env.NODE_ENV || "development";
+const ENV = process.env.NODE_ENV || "development";
 
 console.log(`📡 Starting server in ${ENV} mode...`);
 console.log(`🔌 Assigned Port: ${PORT}`);
 
 // ── Security middleware (order matters) ───────────────────────────────────────
-app.use(helmet());
 applySecurityMiddleware(app);
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use(cors(corsConfig));
@@ -53,13 +52,13 @@ app.get("/api/health", (req, res) =>
 );
 
 // ── API routes ────────────────────────────────────────────────────────────────
-app.use("/api/auth",          authLimiter,           authRoutes);
-app.use("/api/business",      apiLimiter,            businessRoutes);
-app.use("/api/queues",        apiLimiter,            queueRoutes);
-app.use("/api/exchanges",     sensitiveActionLimiter, exchangeRoutes);
-app.use("/api/admin",         sensitiveActionLimiter, superAdminRoutes);
-app.use("/api/analytics",     apiLimiter,            analyticsRoutes);
-app.use("/api/notifications",  apiLimiter,            notificationRoutes);
+app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/business", apiLimiter, businessRoutes);
+app.use("/api/queues", apiLimiter, queueRoutes);
+app.use("/api/exchanges", sensitiveActionLimiter, exchangeRoutes);
+app.use("/api/admin", sensitiveActionLimiter, superAdminRoutes);
+app.use("/api/analytics", apiLimiter, analyticsRoutes);
+app.use("/api/notifications", apiLimiter, notificationRoutes);
 
 // ── Serving Frontend (Production) ─────────────────────────────────────────────
 if (process.env.NODE_ENV === "production") {
@@ -103,8 +102,8 @@ connectDB()
       console.log(`🌐 Environment: ${ENV}`);
     });
   })
-  .catch((err) => { 
+  .catch((err) => {
     console.error("❌ CRITICAL: MongoDB connection failed!");
-    console.error("👉 Error Details:", err.message || err); 
-    process.exit(1); 
+    console.error("👉 Error Details:", err.message || err);
+    process.exit(1);
   });

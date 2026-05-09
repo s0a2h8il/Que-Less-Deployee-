@@ -19,8 +19,7 @@ import helmet from "helmet";
 export const helmetConfig = helmet({
   // Cross-Origin Resource Policy
   crossOriginResourcePolicy: {
-    policy:
-      process.env.NODE_ENV === "production" ? "same-site" : "cross-origin",
+    policy: "cross-origin",
   },
 
   // Content Security Policy

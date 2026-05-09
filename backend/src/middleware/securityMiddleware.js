@@ -68,19 +68,23 @@ export const helmetConfig = helmet({
  */
 export const corsConfig = {
   origin: (origin, callback) => {
-    const allowedOrigins = process.env.CORS_ORIGIN?.split(",") || [
+    const rawOrigins = process.env.CORS_ORIGIN || "";
+    const allowedOrigins = rawOrigins.split(",").map(o => o.trim()).filter(o => o !== "");
+    
+    // Default local origins
+    const defaultOrigins = [
       "http://localhost:5173",
       "http://localhost:3000",
+      "https://que-less-deployee-frontend.onrender.com"
     ];
 
-    // Allow requests with no origin (same-site requests like mobile apps)
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else if (process.env.NODE_ENV === "development") {
-      // In development, allow all origins
+    const finalAllowed = [...allowedOrigins, ...defaultOrigins];
+
+    if (!origin || finalAllowed.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      console.warn(`⚠️ CORS blocked request from origin: ${origin}`);
+      callback(null, false); // Return false instead of error to avoid 502/crashes
     }
   },
   credentials: true,

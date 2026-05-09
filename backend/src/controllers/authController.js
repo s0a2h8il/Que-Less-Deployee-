@@ -100,6 +100,8 @@ export const registerUser = asyncHandler(async (req, res) => {
   user.otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
   await user.save();
 
+  console.log("🔑 [DEBUG] OTP for", user.email, "is:", otp);
+
   // Send Email (Non-blocking to prevent 502 timeouts on Render)
   const message = getEmailTemplate(otp, "Welcome to Queue-Less!");
   
@@ -187,6 +189,8 @@ export const resendOTP = asyncHandler(async (req, res) => {
   user.otp = hashedOtp;
   user.otpExpiry = Date.now() + 10 * 60 * 1000;
   await user.save();
+
+  console.log("🔑 [DEBUG] RESEND OTP for", user.email, "is:", otp);
 
   // Send Email (Non-blocking)
   const message = getEmailTemplate(otp, "Your Verification Code");

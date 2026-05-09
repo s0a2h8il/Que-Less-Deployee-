@@ -40,7 +40,7 @@ const NotificationDropdown = ({
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute right-0 mt-4 w-screen max-w-[380px] bg-white rounded-3xl shadow-2xl shadow-indigo-200/50 border border-indigo-50 z-50 overflow-hidden"
+            className="fixed inset-x-4 top-20 lg:absolute lg:inset-auto lg:right-0 lg:top-full lg:mt-4 w-auto lg:w-[380px] bg-white rounded-3xl shadow-2xl shadow-indigo-200/50 border border-indigo-50 z-50 overflow-hidden"
           >
             {/* Header */}
             <div className="p-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
@@ -77,7 +77,7 @@ const NotificationDropdown = ({
                 <div className="divide-y divide-slate-50">
                   {notifications.slice(0, 5).map((note, idx) => (
                     <NotificationItem
-                      key={String(note._id || idx)}
+                      key={idx}
                       notification={note}
                       onClick={handleItemClick}
                     />

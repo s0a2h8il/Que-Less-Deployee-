@@ -104,13 +104,13 @@ const HeroSection = () => {
       />
 
       <div className="relative container mx-auto px-6">
-        <div className="flex flex-col items-center lg:flex-row lg:gap-8">
+        <div className="flex flex-col items-center lg:flex-row lg:gap-12">
           {/* ── Left ─────────────────────────────────────── */}
-          <div className="flex-[0.9] text-center lg:text-left">
+          <div className="flex-[1.1] text-center lg:text-left pt-8 lg:pt-0">
             {/* Badge */}
             <div
               ref={badgeRef}
-              className="mb-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest whitespace-nowrap"
+              className="mb-6 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[10px] font-semibold uppercase tracking-widest whitespace-nowrap"
               style={{
                 background: "rgba(255,255,255,0.74)",
                 border: "1px solid rgba(61,64,91,0.12)",
@@ -129,18 +129,19 @@ const HeroSection = () => {
             {/* Headline */}
             <h1
               ref={titleRef}
-              className="mb-5"
+              className="mb-6"
               style={{
                 fontFamily: "var(--font-heading)",
-                fontSize: "clamp(2.5rem, 4.5vw, 4rem)",
+                fontSize: "clamp(2.2rem, 8vw, 4.5rem)",
                 fontWeight: 800,
-                lineHeight: 1.1,
-                letterSpacing: "-0.03em",
+                lineHeight: 1.05,
+                letterSpacing: "-0.04em",
                 color: palette.ink,
               }}
             >
               Skip the Line.{" "}
               <span
+                className="block sm:inline"
                 style={{
                   backgroundImage:
                     "linear-gradient(135deg, #E07A5F 0%, #F2CC8F 55%, #81B29A 100%)",
@@ -156,14 +157,12 @@ const HeroSection = () => {
             {/* Subtitle */}
             <p
               ref={subRef}
-              className="mb-8 max-w-lg"
+              className="mb-10 max-w-lg mx-auto lg:mx-0"
               style={{
                 fontFamily: "var(--font-body)",
-                fontSize: "1rem",
+                fontSize: "clamp(0.95rem, 2vw, 1.1rem)",
                 lineHeight: 1.6,
                 color: "rgba(61,64,91,0.78)",
-                marginLeft: "0",
-                marginRight: "auto",
               }}
             >
               QueueLess helps businesses create a calmer queue experience, while
@@ -173,11 +172,11 @@ const HeroSection = () => {
             {/* CTAs */}
             <div
               ref={ctaRef}
-              className="mb-12 flex flex-col items-center gap-3 sm:flex-row lg:justify-start"
+              className="mb-16 flex flex-col items-stretch sm:flex-row sm:items-center gap-4 lg:justify-start"
             >
               <Link to="/explore">
                 <button
-                  className="group relative overflow-hidden px-7 py-3.5 rounded-xl font-bold text-sm transition-all duration-300"
+                  className="w-full sm:w-auto group relative overflow-hidden px-10 py-4 rounded-2xl font-bold text-sm transition-all duration-300"
                   style={{
                     background:
                       "linear-gradient(135deg, #3D405B 0%, #4F5D75 100%)",
@@ -202,7 +201,7 @@ const HeroSection = () => {
               </Link>
               <Link to="/business">
                 <button
-                  className="px-7 py-3.5 rounded-xl font-semibold text-sm transition-all duration-300"
+                  className="w-full sm:w-auto px-10 py-4 rounded-2xl font-bold text-sm transition-all duration-300"
                   style={{
                     background: "rgba(255,255,255,0.70)",
                     color: palette.ink,
@@ -229,7 +228,7 @@ const HeroSection = () => {
             {/* Stats */}
             <div
               ref={statsRef}
-              className="flex flex-wrap justify-center gap-6 pt-6 lg:justify-start lg:gap-10"
+              className="flex justify-center lg:justify-start gap-8 sm:gap-12 pt-8"
               style={{ borderTop: "1px solid rgba(61,64,91,0.10)" }}
             >
               <StatItem value="10k+" label="Spots Saved" />
@@ -240,10 +239,9 @@ const HeroSection = () => {
 
           {/* ── Right: Animated Preview ──────────────────── */}
           <div
-            className="mt-12 flex-1 lg:mt-0 flex justify-center lg:justify-end"
-            style={{ padding: "1rem" }}
+            className="mt-16 lg:mt-0 flex-1 w-full max-w-lg lg:max-w-none flex justify-center lg:justify-end"
           >
-            <div className="scale-90 lg:scale-95 transition-transform origin-center">
+            <div className="w-full scale-95 sm:scale-100 lg:scale-105 transition-transform origin-center lg:origin-right">
               <AnimatedQueuePreview />
             </div>
           </div>

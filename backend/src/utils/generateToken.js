@@ -13,7 +13,6 @@ const generateToken = (userId, role) => {
     { expiresIn: process.env.JWT_EXPIRE || "7d" }
   );
 
-  console.log("🎫 JWT Token generated for user:", userId);
   return token;
 };
 

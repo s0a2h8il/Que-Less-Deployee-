@@ -20,12 +20,12 @@ const ExchangeHistory = ({ history }) => {
 
   return (
     <div className="space-y-4">
-      {history.map((item) => {
+      {history.map((item, index) => {
         const isSender = item.fromUser?._id === user?._id;
         const otherUser = isSender ? item.toUser : item.fromUser;
 
         return (
-          <Card key={item._id} className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-slate-100 hover:border-slate-200 transition-colors">
+          <Card key={`${item._id}-${index}`} className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-slate-100 hover:border-slate-200 transition-colors">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400">
                 <User size={20} />

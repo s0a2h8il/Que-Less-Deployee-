@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import io from "socket.io-client";
 import { useAuth } from "../context/AuthContext";
 
@@ -9,6 +9,14 @@ const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
  */
 export const useNotificationSocket = (onNewNotification, onUnreadCountUpdate) => {
   const { user, token } = useAuth();
+  const onNewNotificationRef = useRef(onNewNotification);
+  const onUnreadCountUpdateRef = useRef(onUnreadCountUpdate);
+
+  // Sync refs with latest callbacks
+  useEffect(() => {
+    onNewNotificationRef.current = onNewNotification;
+    onUnreadCountUpdateRef.current = onUnreadCountUpdate;
+  });
 
   useEffect(() => {
     if (!user || !token) return;
@@ -16,24 +24,20 @@ export const useNotificationSocket = (onNewNotification, onUnreadCountUpdate) =>
     const socket = io(SOCKET_URL, {
       auth: { token },
       transports: ["websocket"],
+      reconnection: true,
+      reconnectionAttempts: 5,
     });
 
     socket.on("connect", () => {
-      // console.log("Connected to Notification Socket");
-      socket.emit("joinUserRoom", user._id);
+      socket.emit("joinUserRoom", String(user._id || user));
     });
 
     socket.on("notification:new", (notification) => {
-      if (onNewNotification) onNewNotification(notification);
+      if (onNewNotificationRef.current) onNewNotificationRef.current(notification);
     });
 
     socket.on("notification:unreadCount", (data) => {
-      if (onUnreadCountUpdate) onUnreadCountUpdate(data.unreadCount);
-    });
-
-    // Handle specific legacy events for backward compatibility if needed
-    socket.on("exchangeRequestReceived", (data) => {
-      console.log("Exchange request received via socket", data);
+      if (onUnreadCountUpdateRef.current) onUnreadCountUpdateRef.current(data.unreadCount);
     });
 
     socket.on("error", (err) => {
@@ -41,7 +45,12 @@ export const useNotificationSocket = (onNewNotification, onUnreadCountUpdate) =>
     });
 
     return () => {
-      socket.disconnect();
+      if (socket) {
+        socket.off();
+        setTimeout(() => {
+          socket.disconnect();
+        }, 100);
+      }
     };
-  }, [user, token, onNewNotification, onUnreadCountUpdate]);
+  }, [token, String(user?._id || user)]);
 };

@@ -136,7 +136,7 @@ const Notifications = () => {
             <div className="divide-y divide-slate-50">
               {filteredNotes.map((note, idx) => (
                 <NotificationItem
-                  key={String(note._id || idx)}
+                  key={idx}
                   notification={note}
                   onClick={handleItemClick}
                   onDelete={handleDelete}

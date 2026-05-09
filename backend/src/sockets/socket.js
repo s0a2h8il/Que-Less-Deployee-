@@ -46,18 +46,15 @@ const initSocket = (httpServer) => {
   // ─── Connection Handler ───────────────────────────────────────────────────────
   io.on("connection", (socket) => {
     const userId = socket.user._id.toString();
-    console.log(`🔌 User connected: ${socket.user.name} (${userId}) | Socket ID: ${socket.id}`);
 
     // Join private user room for targeted notifications
     socket.join(`user:${userId}`);
-    console.log(`🏠 User joined private room: user:${userId}`);
 
     // ─── Room Management ────────────────────────────────────────────────────────
     socket.on("joinQueueRoom", (queueId) => {
       if (!queueId) return;
       
       socket.join(`queue:${queueId}`);
-      console.log(`👥 Socket ${socket.id} joined queue room: queue:${queueId}`);
 
       socket.emit("joinedQueueRoom", {
         success: true,
@@ -68,12 +65,10 @@ const initSocket = (httpServer) => {
 
     socket.on("leaveQueueRoom", (queueId) => {
       socket.leave(`queue:${queueId}`);
-      console.log(`👋 Socket ${socket.id} left queue room: queue:${queueId}`);
     });
 
     // ─── Disconnect ─────────────────────────────────────────────────────────────
     socket.on("disconnect", () => {
-      console.log(`❌ User disconnected: ${socket.id}`);
     });
   });
 

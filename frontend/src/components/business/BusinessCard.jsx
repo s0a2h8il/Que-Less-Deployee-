@@ -180,7 +180,7 @@ const BusinessCard = ({ business, index }) => {
           </div>
 
           {/* Rating */}
-          {rating && (
+          {typeof rating === "number" && rating > 0 && (
             <div className="flex items-center gap-1 mb-4 whitespace-nowrap">
               <Star size={13} style={{ color: "#F2B33D" }} fill="#F2B33D" />
               <span

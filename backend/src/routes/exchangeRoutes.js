@@ -4,7 +4,8 @@ import {
   acceptExchangeRequest,
   rejectExchangeRequest,
   getMyRequests,
-  getExchangeHistory
+  getExchangeHistory,
+  getBusinessExchanges
 } from "../controllers/exchangeController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { exchangeValidator } from "../validators/exchangeValidator.js";
@@ -19,5 +20,6 @@ router.get("/my-requests", getMyRequests);
 router.get("/history", getExchangeHistory);
 router.put("/:id/accept", acceptExchangeRequest);
 router.put("/:id/reject", rejectExchangeRequest);
+router.get("/business/:businessId", getBusinessExchanges);
 
 export default router;

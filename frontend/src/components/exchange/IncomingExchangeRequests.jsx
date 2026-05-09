@@ -23,7 +23,7 @@ const IncomingExchangeRequests = ({ requests, onAccept, onReject }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {requests.map((request) => (
         <Card
-          key={request._id}
+          key={String(request._id)}
           className="p-6 border-indigo-50 hover:border-indigo-200 transition-all group"
         >
           <div className="flex justify-between items-start mb-6">

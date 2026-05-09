@@ -21,19 +21,17 @@ const NotificationBell = () => {
 
   const bellRef = useRef(null);
 
+  const handleNewNotification = React.useCallback((newNote) => {
+    setNotifications(prev => [newNote, ...prev].slice(0, 20));
+    setUnreadCount(prev => prev + 1);
+  }, [setNotifications, setUnreadCount]);
+
+  const handleUnreadCountUpdate = React.useCallback((newCount) => {
+    setUnreadCount(newCount);
+  }, [setUnreadCount]);
+
   // Real-time updates via socket
-  useNotificationSocket(
-    (newNote) => {
-      // Add new notification to the top
-      setNotifications(prev => [newNote, ...prev].slice(0, 20));
-      setUnreadCount(prev => prev + 1);
-      
-      // Play a subtle sound or trigger a small animation if desired
-    },
-    (newCount) => {
-      setUnreadCount(newCount);
-    }
-  );
+  useNotificationSocket(handleNewNotification, handleUnreadCountUpdate);
 
   // Close dropdown on outside click
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { notificationApi } from "../api/notificationApi";
 import { useAuth } from "../context/AuthContext";
 
@@ -93,7 +93,7 @@ export const useNotifications = () => {
     }
   };
 
-  return {
+  return useMemo(() => ({
     notifications,
     unreadCount,
     loading,
@@ -106,5 +106,8 @@ export const useNotifications = () => {
     deleteNotification,
     setUnreadCount,
     setNotifications
-  };
+  }), [
+    notifications, unreadCount, loading, pagination, error, 
+    fetchNotifications, fetchUnreadCount, markAsRead, markAllAsRead, deleteNotification
+  ]);
 };

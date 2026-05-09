@@ -106,7 +106,7 @@ const CreateExchangeRequest = ({ initialQueueId, onCancel, onSubmit }) => {
                         {member.userId.name}
                       </span>
                     </div>
-                    {targetUserId === member.userId._id && (
+                    {targetUserId === String(member.userId._id) && (
                       <div className="w-5 h-5 bg-indigo-600 rounded-full flex items-center justify-center text-white">
                         <Send size={10} className="ml-0.5" />
                       </div>

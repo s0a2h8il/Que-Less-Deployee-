@@ -240,12 +240,12 @@ const QueueDetail = () => {
 
         {/* Hero Content */}
         <div className="relative container mx-auto px-6">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-            <div className="max-w-2xl">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-10">
+            <div className="max-w-2xl text-center md:text-left flex flex-col items-center md:items-start">
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-6"
                 style={{
                   background: "rgba(129,178,154,0.15)",
                   border: "1px solid rgba(129,178,154,0.25)",
@@ -259,7 +259,7 @@ const QueueDetail = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-4xl md:text-6xl font-black mb-4 tracking-tight"
+                className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 tracking-tight leading-tight"
                 style={{ color: "#FFFFFF" }}
               >
                 {queue.title}
@@ -268,10 +268,11 @@ const QueueDetail = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="text-lg md:text-xl font-medium"
-                style={{ color: "rgba(255, 255, 255, 0.6)" }}
+                className="text-base sm:text-lg md:text-xl font-medium opacity-80"
+                style={{ color: "rgba(255, 255, 255, 0.8)" }}
               >
-                at <span className="font-bold" style={{ color: "rgba(255, 255, 255, 0.9)" }}>{businessName}</span> • {addressLine}
+                at <span className="font-bold text-white">{businessName}</span>
+                <span className="block sm:inline sm:ml-2 opacity-60">• {addressLine}</span>
               </motion.p>
             </div>
 
@@ -279,15 +280,15 @@ const QueueDetail = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
-              className="flex gap-4"
+              className="grid grid-cols-2 gap-4 w-full md:w-auto"
             >
-              <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 min-w-[140px]">
-                <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: "rgba(255, 255, 255, 0.4)" }}>Waiting</p>
-                <p className="text-3xl font-black text-white">{waitingMembers.length} <span className="text-sm font-normal" style={{ color: "rgba(255, 255, 255, 0.4)" }}>Users</span></p>
+              <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-5 sm:p-6 flex-1 md:min-w-[140px] text-center md:text-left">
+                <p className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-40 text-white">Waiting</p>
+                <p className="text-2xl sm:text-3xl font-black text-white">{waitingMembers.length} <span className="text-[10px] sm:text-sm font-normal opacity-40">Users</span></p>
               </div>
-              <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 min-w-[140px]">
-                <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: "rgba(255, 255, 255, 0.4)" }}>Avg Time</p>
-                <p className="text-3xl font-black text-white">{avgTime} <span className="text-sm font-normal" style={{ color: "rgba(255, 255, 255, 0.4)" }}>Min</span></p>
+              <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-5 sm:p-6 flex-1 md:min-w-[140px] text-center md:text-left">
+                <p className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-40 text-white">Avg Time</p>
+                <p className="text-2xl sm:text-3xl font-black text-white">{avgTime} <span className="text-[10px] sm:text-sm font-normal opacity-40">Min</span></p>
               </div>
             </motion.div>
           </div>
@@ -433,12 +434,12 @@ const QueueDetail = () => {
                     </div>
 
                     <div className="space-y-3">
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="rounded-xl p-3 bg-white/50 border border-var(--border)">
+                      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                        <div className="rounded-xl p-3 bg-white/50 border border-var(--border) text-center sm:text-left">
                           <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Ahead</p>
                           <p className="text-lg font-black text-[var(--text-primary)]">{userAheadCount !== null ? userAheadCount : "--"}</p>
                         </div>
-                        <div className="rounded-xl p-3 bg-white/50 border border-var(--border)">
+                        <div className="rounded-xl p-3 bg-white/50 border border-var(--border) text-center sm:text-left">
                           <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Wait</p>
                           <p className="text-lg font-black text-[var(--text-primary)]">{userWaitTime !== null ? `${userWaitTime}m` : "--"}</p>
                         </div>

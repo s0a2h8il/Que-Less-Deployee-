@@ -93,29 +93,29 @@ const Navbar = () => {
         {/* ── Logo ───────────────────────────────────────────── */}
         <Link
           to="/"
-          className="flex items-center gap-3 shrink-0 group whitespace-nowrap"
+          className="flex items-center gap-2 sm:gap-3 shrink-0 group whitespace-nowrap"
           aria-label="QueueLess"
         >
           <motion.div
             whileHover={{ scale: 1.08, rotate: -6 }}
             whileTap={{ scale: 0.93 }}
-            className="flex h-9 w-9 items-center justify-center rounded-xl shadow-lg"
+            className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl shadow-lg"
             style={{
               background: "linear-gradient(135deg, #E07A5F 0%, #F2CC8F 100%)",
               boxShadow: "0 10px 22px rgba(224,122,95,0.22)",
             }}
           >
-            <Zap size={17} fill="white" className="text-white" />
+            <Zap size={14} fill="white" className="text-white sm:w-[17px] sm:h-[17px]" />
           </motion.div>
-          <div className="hidden sm:flex flex-col leading-none">
+          <div className="flex flex-col leading-none">
             <span
-              className="text-[17px] font-bold tracking-tight"
+              className="text-base sm:text-[17px] font-bold tracking-tight"
               style={{ color: palette.ink, fontFamily: "var(--font-heading)" }}
             >
-              Queue<span style={{ color: palette.peach }}>-Less</span>
+              Queue<span style={{ color: palette.peach }}>Less</span>
             </span>
             <span
-              className="text-[9px] uppercase tracking-[0.18em]"
+              className="text-[8px] sm:text-[9px] uppercase tracking-[0.18em]"
               style={{ color: "rgba(61,64,91,0.52)" }}
             >
               Virtual Queue
@@ -361,7 +361,7 @@ const Navbar = () => {
               background: "rgba(255,247,234,0.96)",
             }}
           >
-            <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
+            <div className="max-w-7xl mx-auto px-4 pt-6 pb-12 space-y-2">
               {isAuthenticated && (
                 <div
                   className="flex items-center gap-3 px-3 py-3 mb-3 rounded-xl whitespace-nowrap"

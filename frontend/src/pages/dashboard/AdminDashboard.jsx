@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useAdminDashboard } from "../../hooks/useAdminDashboard";
 import AdminSidebar from "../../components/dashboard/admin/AdminSidebar";
 import CreateBusinessForm from "../../components/dashboard/admin/CreateBusinessForm";
@@ -19,7 +20,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "overview");
   const [showCreateBiz, setShowCreateBiz] = useState(false);
   const [isDesktop, setIsDesktop] = useState(() => {
     if (typeof window === "undefined") return true;
@@ -42,6 +44,14 @@ const AdminDashboard = () => {
   useEffect(() => {
     setIsSidebarOpen(isDesktop);
   }, [isDesktop]);
+
+  // Sync tab from URL if it changes
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab && tab !== activeTab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   // Close sidebar on mobile when tab changes
   useEffect(() => {

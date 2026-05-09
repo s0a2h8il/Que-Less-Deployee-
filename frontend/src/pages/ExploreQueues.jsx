@@ -265,7 +265,7 @@ const ExploreQueues = () => {
               <div className="grid grid-cols-[repeat(auto-fill,minmax(270px,1fr))] gap-6">
                 {businesses.map((business, index) => (
                   <BusinessCard
-                    key={String(business._id || index)}
+                    key={`${business._id}-${index}`}
                     business={business}
                     index={index}
                   />

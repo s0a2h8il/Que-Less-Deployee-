@@ -44,8 +44,6 @@ export const useQueueSocket = (queueIds, onQueueUpdate, onEvent) => {
     socketRef.current = socket;
 
     socket.on("connect", () => {
-      console.log("📡 Connected to Socket.io server");
-      // Join rooms immediately on connect if IDs exist
       normalizedIds.forEach((id) => {
         socket.emit("joinQueueRoom", id);
       });
@@ -74,14 +72,12 @@ export const useQueueSocket = (queueIds, onQueueUpdate, onEvent) => {
         onEventRef.current({ type: "success", message: "It's your turn!", data });
     });
 
-    socket.on("joinedQueueRoom", (res) => {
-      console.log(`✅ Room Joined: ${res.queueId}`);
-    });
-
     return () => {
       if (socket) {
         socket.off(); // Remove all listeners
-        socket.disconnect();
+        setTimeout(() => {
+          socket.disconnect();
+        }, 100);
       }
     };
   }, [token]);

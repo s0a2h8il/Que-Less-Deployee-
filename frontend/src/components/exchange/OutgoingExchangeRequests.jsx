@@ -18,7 +18,7 @@ const OutgoingExchangeRequests = ({ requests }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {requests.map((request) => (
-        <Card key={request._id} className="p-5 border-slate-100 hover:shadow-md transition-shadow">
+        <Card key={String(request._id)} className="p-5 border-slate-100 hover:shadow-md transition-shadow">
           <div className="flex justify-between items-start mb-4">
             <ExchangeStatusBadge status={request.status} />
             <span className="text-[10px] uppercase font-bold text-slate-400">

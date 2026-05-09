@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/Button";
 import { useAuth } from "../../context/AuthContext";
-import { CheckCircle2, TrendingUp, Monitor } from "lucide-react";
+import { CheckCircle2, TrendingUp, Monitor, Users, Zap, Clock, BarChart3 } from "lucide-react";
 
 const BusinessCTA = () => {
   const { isAuthenticated, user } = useAuth();
@@ -192,109 +192,135 @@ const BusinessCTA = () => {
               transition={{ duration: 0.65 }}
               className="w-full"
             >
-              <div
-                className="mx-auto max-w-[540px] rounded-3xl border p-4 sm:p-5"
-                style={{
-                  borderColor: "rgba(61,64,91,0.15)",
-                  background: "rgba(255,255,255,0.72)",
-                  backdropFilter: "blur(8px)",
-                }}
-              >
                 <div
-                  className="mb-4 flex items-center gap-2 border-b pb-4"
-                  style={{ borderColor: "rgba(61,64,91,0.12)" }}
+                  className="relative mx-auto flex h-full w-full items-center justify-center overflow-hidden rounded-[2.5rem]"
+                  style={{
+                    background: "linear-gradient(170deg, #ffffff 0%, #f0faf4 40%, #fef9f0 100%)",
+                    boxShadow: "0 28px 64px rgba(61,64,91,0.10), 0 0 0 1px rgba(255,255,255,0.7) inset",
+                    border: "1px solid rgba(61,64,91,0.07)",
+                    minHeight: 440,
+                  }}
                 >
-                  <div className="flex gap-1.5">
-                    <div
-                      className="h-2.5 w-2.5 rounded-full"
-                      style={{ background: "#FF7F66" }}
-                    />
-                    <div
-                      className="h-2.5 w-2.5 rounded-full"
-                      style={{ background: palette.sand }}
-                    />
-                    <div
-                      className="h-2.5 w-2.5 rounded-full"
-                      style={{ background: palette.mint }}
-                    />
-                  </div>
-                  <div
-                    className="mx-auto h-2 w-32 rounded-full"
-                    style={{ background: "rgba(61,64,91,0.14)" }}
+                  {/* Digital Network Grid */}
+                  <div 
+                    className="absolute inset-0 opacity-[0.03]" 
+                    style={{ 
+                      backgroundImage: "radial-gradient(circle at 2px 2px, #3D405B 1px, transparent 0)",
+                      backgroundSize: "24px 24px" 
+                    }} 
                   />
-                </div>
 
-                <div className="space-y-4">
-                  <div
-                    className="rounded-2xl border p-4"
-                    style={{
-                      borderColor: "rgba(129,178,154,0.45)",
-                      background:
-                        "linear-gradient(135deg, rgba(129,178,154,0.18) 0%, rgba(190,227,248,0.24) 100%)",
-                    }}
-                  >
-                    <div className="flex items-center justify-between gap-5">
-                      <div className="space-y-2">
-                        <div
-                          className="h-2 w-20 rounded"
-                          style={{ background: "rgba(61,64,91,0.32)" }}
-                        />
-                        <div
-                          className="h-3 w-14 rounded"
-                          style={{ background: palette.ink }}
-                        />
-                        <div
-                          className="h-2 w-24 rounded-full"
-                          style={{ background: "rgba(61,64,91,0.18)" }}
-                        />
+                  {/* Rotating Energy Rings */}
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    className="absolute h-[340px] w-[340px] rounded-full border border-dashed border-mint/20"
+                    style={{ borderColor: "rgba(129,178,154,0.2)" }}
+                  />
+                  <motion.div
+                    animate={{ rotate: -360 }}
+                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                    className="absolute h-[260px] w-[260px] rounded-full border border-dotted border-peach/20"
+                    style={{ borderColor: "rgba(224,122,95,0.15)" }}
+                  />
+
+                  {/* Central Hub — The Business */}
+                  <div className="relative z-20">
+                    <motion.div
+                      animate={{ 
+                        scale: [1, 1.05, 1],
+                        boxShadow: [
+                          "0 0 0 0px rgba(129,178,154,0)",
+                          "0 0 0 20px rgba(129,178,154,0.1)",
+                          "0 0 0 0px rgba(129,178,154,0)"
+                        ]
+                      }}
+                      transition={{ duration: 4, repeat: Infinity }}
+                      className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-white shadow-2xl"
+                      style={{ border: "1px solid rgba(61,64,91,0.05)" }}
+                    >
+                      <div 
+                        className="flex h-16 w-16 items-center justify-center rounded-2xl"
+                        style={{ background: `linear-gradient(135deg, ${palette.ink}, #4F5D75)` }}
+                      >
+                        <Zap size={32} color="#fff" fill={palette.sand} strokeWidth={1.5} />
                       </div>
-                      <div
-                        className="h-10 w-24 rounded-xl"
-                        style={{
-                          background: palette.peach,
-                          boxShadow: "0 8px 20px rgba(224,122,95,0.35)",
-                        }}
-                      />
+                    </motion.div>
+
+                    {/* Floating Info Badges */}
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      className="absolute -right-16 -top-4 rounded-xl bg-white/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md"
+                      style={{ color: palette.mint, border: "1px solid rgba(129,178,154,0.2)" }}
+                    >
+                      Live Sync
+                    </motion.div>
+                  </div>
+
+                  {/* Orbiting Benefit Nodes */}
+                  {[
+                    { icon: Users, color: palette.mint, delay: 0, label: "Happy Staff", radius: 140 },
+                    { icon: Clock, color: palette.peach, delay: 1, label: "Zero Wait", radius: 110 },
+                    { icon: BarChart3, color: palette.sky, delay: 2, label: "Max ROI", radius: 130 },
+                    { icon: CheckCircle2, color: palette.sand, delay: 3, label: "Seamless", radius: 120 },
+                  ].map((node, i) => (
+                    <motion.div
+                      key={i}
+                      animate={{ 
+                        rotate: 360,
+                      }}
+                      transition={{ 
+                        duration: 10 + i * 2, 
+                        repeat: Infinity, 
+                        ease: "linear",
+                        delay: node.delay 
+                      }}
+                      className="absolute z-10"
+                      style={{ width: node.radius * 2, height: node.radius * 2 }}
+                    >
+                      <motion.div
+                        animate={{ rotate: -360 }}
+                        transition={{ duration: 10 + i * 2, repeat: Infinity, ease: "linear", delay: node.delay }}
+                        className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2"
+                      >
+                        <div className="group relative">
+                          <div 
+                            className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-xl transition-all group-hover:scale-110"
+                            style={{ border: `1px solid ${node.color}33` }}
+                          >
+                            <node.icon size={20} color={node.color} strokeWidth={2.5} />
+                          </div>
+                          {/* Mini Label */}
+                          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-white/80 px-2 py-0.5 text-[8px] font-black uppercase tracking-tighter shadow-sm">
+                            {node.label}
+                          </div>
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  ))}
+
+                  {/* Bottom Success Banner */}
+                  <motion.div
+                    initial={{ y: 40, opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="absolute bottom-8 z-30 flex items-center gap-4 rounded-2xl bg-white/80 px-6 py-3 shadow-2xl backdrop-blur-xl"
+                    style={{ border: "1px solid rgba(61,64,91,0.08)" }}
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-50">
+                      <CheckCircle2 size={18} className="text-green-500" />
                     </div>
-                  </div>
+                    <div>
+                      <p className="text-xs font-black" style={{ color: palette.ink }}>98.2% Success Rate</p>
+                      <p className="text-[10px] opacity-60">Across all business types</p>
+                    </div>
+                  </motion.div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    <div
-                      className="h-16 rounded-xl border"
-                      style={{
-                        borderColor: "rgba(61,64,91,0.12)",
-                        background:
-                          "linear-gradient(180deg, rgba(255,255,255,0.80) 0%, rgba(255,247,234,0.92) 100%)",
-                      }}
-                    />
-                    <div
-                      className="h-16 rounded-xl border"
-                      style={{
-                        borderColor: "rgba(61,64,91,0.12)",
-                        background:
-                          "linear-gradient(180deg, rgba(255,255,255,0.80) 0%, rgba(242,204,143,0.16) 100%)",
-                      }}
-                    />
-                    <div
-                      className="h-16 rounded-xl border"
-                      style={{
-                        borderColor: "rgba(61,64,91,0.12)",
-                        background:
-                          "linear-gradient(180deg, rgba(255,255,255,0.80) 0%, rgba(190,227,248,0.20) 100%)",
-                      }}
-                    />
-                  </div>
-
-                  <div
-                    className="h-28 rounded-2xl border"
-                    style={{
-                      borderColor: "rgba(61,64,91,0.10)",
-                      background:
-                        "linear-gradient(135deg, rgba(61,64,91,0.05) 0%, rgba(224,122,95,0.08) 55%, rgba(129,178,154,0.12) 100%)",
-                    }}
-                  />
+                  {/* Glow Blobs */}
+                  <div className="pointer-events-none absolute -left-10 -top-10 h-48 w-48 rounded-full blur-3xl" style={{ background: "rgba(129,178,154,0.12)" }} />
+                  <div className="pointer-events-none absolute -bottom-10 -right-10 h-48 w-48 rounded-full blur-3xl" style={{ background: "rgba(224,122,95,0.08)" }} />
                 </div>
-              </div>
             </motion.div>
           </div>
         </div>

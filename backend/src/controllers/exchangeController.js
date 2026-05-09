@@ -219,9 +219,6 @@ export const getMyRequests = asyncHandler(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// @desc    Get exchange history
-// @route   GET /api/exchanges/history
-// ─────────────────────────────────────────────────────────────────────────────
 export const getExchangeHistory = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
@@ -236,4 +233,37 @@ export const getExchangeHistory = asyncHandler(async (req, res) => {
     .limit(50);
 
   res.status(200).json(new ApiResponse(200, history, "Exchange history fetched successfully"));
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// @desc    Get all exchanges for a specific business (Admin only)
+// @route   GET /api/exchanges/business/:businessId
+// ─────────────────────────────────────────────────────────────────────────────
+export const getBusinessExchanges = asyncHandler(async (req, res) => {
+  const { businessId } = req.params;
+
+  // 1. Verify business ownership
+  const business = await mongoose.model("Business").findById(businessId);
+  if (!business) throw new ApiError(404, "Business not found");
+  
+  const isOwner = business.ownerId.toString() === req.user._id.toString();
+  if (!isOwner && req.user.role !== "superadmin") {
+    throw new ApiError(403, "You are not authorized to view exchanges for this business");
+  }
+
+  // 2. Find all queues for this business
+  const queues = await Queue.find({ businessId });
+  const queueIds = queues.map(q => q._id);
+
+  // 3. Find all exchanges related to these queues
+  const exchanges = await ExchangeRequest.find({
+    queueId: { $in: queueIds }
+  })
+    .populate("fromUser", "name avatar")
+    .populate("toUser", "name avatar")
+    .populate("queueId", "title")
+    .sort("-createdAt")
+    .limit(100);
+
+  res.status(200).json(new ApiResponse(200, exchanges, "Business exchanges fetched successfully"));
 });

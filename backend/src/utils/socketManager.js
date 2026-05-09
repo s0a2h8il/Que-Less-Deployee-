@@ -8,7 +8,6 @@ let io;
  */
 export const setSocketInstance = (ioInstance) => {
   io = ioInstance;
-  console.log("🔌 Socket.io instance stored in Manager");
 };
 
 /**
@@ -67,7 +66,6 @@ export const emitQueueUpdated = async (queue, message = "Queue updated") => {
   };
 
   io.to(`queue:${queue._id}`).emit("queueUpdated", payload);
-  console.log(`📡 Emitted queueUpdated to room: queue:${queue._id} with members list`);
 };
 
 /**
@@ -101,8 +99,6 @@ export const emitTurnNear = (queue) => {
         member.tokenNumber, 
         position
       ).catch(err => console.error("Notification Error:", err));
-
-      console.log(`🔔 Emitted turnNear to user: ${member.userId} | Position: ${position}`);
     }
   });
 };
@@ -135,8 +131,6 @@ export const emitCalledNext = (queueId, calledMember) => {
     "the queue", // Title could be passed or fetched, using generic for now
     calledMember.tokenNumber
   ).catch(err => console.error("Notification Error:", err));
-
-  console.log(`📣 Emitted turnCalled to user: ${calledMember.userId}`);
 };
 
 /**

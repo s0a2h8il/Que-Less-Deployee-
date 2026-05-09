@@ -25,7 +25,7 @@ export const protect = asyncHandler(async (req, res, next) => {
   try {
     // 3. Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("🔓 Token verified for user:", decoded.id);
+    // console.log("🔓 Token verified for user:", decoded.id);
 
     // 4. Find user and attach to request (exclude password)
     const user = await User.findById(decoded.id);
@@ -62,9 +62,9 @@ export const authorize = (...roles) => {
     }
 
     if (!roles.includes(req.user.role)) {
-      console.log(
-        `⛔ Access denied for user ${req.user.email} with role "${req.user.role}". Required: [${roles.join(", ")}]`
-      );
+      // console.log(
+      //   `⛔ Access denied for user ${req.user.email} with role "${req.user.role}". Required: [${roles.join(", ")}]`
+      // );
       throw new ApiError(
         403,
         `Role "${req.user.role}" is not authorized to access this resource`

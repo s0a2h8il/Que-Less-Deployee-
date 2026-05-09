@@ -20,16 +20,18 @@ const QueueControlPanel = ({
   const isActive = queue.status === "active";
 
   return (
-    <Card className="p-8 bg-white border-indigo-100 shadow-xl overflow-hidden relative">
-      <div className="flex flex-col md:flex-row items-center gap-8">
-        <div className="text-center md:text-left">
-          <div className="flex items-center justify-center md:justify-start gap-3 mb-1">
-            <h2 className="text-3xl font-black text-slate-800 break-words max-w-[200px] sm:max-w-[300px] md:max-w-[400px] lg:max-w-[500px]">
+    <Card className="p-6 md:p-8 bg-white border-indigo-100 shadow-xl overflow-hidden relative">
+      <div className="flex flex-col md:flex-row gap-8 items-center md:items-stretch">
+        <div className="text-center md:text-left flex-1 min-w-0 w-full flex flex-col justify-center">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-3 mb-1">
+            <h2 className="text-2xl md:text-3xl font-black text-slate-800 break-words w-full">
               {queue.title}
             </h2>
-            <QueueStatusBadge status={queue.status} />
+            <div className="shrink-0">
+              <QueueStatusBadge status={queue.status} />
+            </div>
           </div>
-          <p className="text-slate-500 mb-6">{queue.business?.name}</p>
+          <p className="text-slate-500 mb-6 truncate w-full">{queue.business?.name}</p>
 
           <div className="flex flex-col items-center md:items-start gap-2">
             <span className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
@@ -52,7 +54,7 @@ const QueueControlPanel = ({
           </div>
         </div>
 
-        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+        <div className="w-full md:w-[380px] shrink-0 grid grid-cols-2 gap-4">
           <Button
             size="lg"
             className="h-20 sm:h-24 flex flex-col gap-2 rounded-3xl"
@@ -95,7 +97,7 @@ const QueueControlPanel = ({
 
           <Button
             size="lg"
-            className={`h-20 sm:h-24 flex flex-col gap-2 rounded-3xl shadow-lg border-none ${isClosed ? "sm:col-span-1" : "sm:col-span-2"}`}
+            className={`h-20 sm:h-24 flex flex-col gap-2 rounded-3xl shadow-lg border-none ${isClosed ? "col-span-1" : "col-span-2"}`}
             style={{ 
               background: isClosed ? "#fee2e2" : "#b91c1c", // light red-100 if closed, dark red-700 if not
               color: isClosed ? "#b91c1c" : "#ffffff"

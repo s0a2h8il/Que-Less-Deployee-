@@ -16,13 +16,20 @@ import {
   Zap,
   PanelLeftClose,
   PanelLeftOpen,
+  Edit2,
+  Trash2,
+  MapPin,
+  Clock,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getCategoryIcon } from "../../utils/categoryIcons";
 
 const AdminDashboard = () => {
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "overview");
   const [showCreateBiz, setShowCreateBiz] = useState(false);
+  const [editingBusiness, setEditingBusiness] = useState(null);
+  const [editingQueue, setEditingQueue] = useState(null);
   const [isDesktop, setIsDesktop] = useState(() => {
     if (typeof window === "undefined") return true;
     return window.matchMedia("(min-width: 1024px)").matches;
@@ -67,7 +74,11 @@ const AdminDashboard = () => {
     loading,
     error,
     createBusinessHandler,
+    updateBusinessHandler,
+    deleteBusinessHandler,
     createQueueHandler,
+    updateQueueHandler,
+    deleteQueueHandler,
     callNextHandler,
     pauseHandler,
     resumeHandler,
@@ -244,7 +255,12 @@ const AdminDashboard = () => {
                     New Queue
                   </button>
                 </div>
-                <QueueList queues={queues} onSelect={selectQueue} />
+                <QueueList 
+                  queues={queues} 
+                  onSelect={selectQueue} 
+                  onEdit={(q) => { setEditingQueue(q); setActiveTab("create-queue"); }}
+                  onDelete={deleteQueueHandler}
+                />
               </div>
             )}
           </div>
@@ -280,10 +296,19 @@ const AdminDashboard = () => {
               </button>
             </div>
 
-            {showCreateBiz ? (
+            {showCreateBiz || editingBusiness ? (
               <CreateBusinessForm
-                onSubmit={createBusinessHandler}
-                onCancel={() => setShowCreateBiz(false)}
+                initialData={editingBusiness}
+                onSubmit={(data) => {
+                  if (editingBusiness) {
+                    return updateBusinessHandler(editingBusiness._id, data).then(() => setEditingBusiness(null));
+                  }
+                  return createBusinessHandler(data).then(() => setShowCreateBiz(false));
+                }}
+                onCancel={() => {
+                  setShowCreateBiz(false);
+                  setEditingBusiness(null);
+                }}
               />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
@@ -291,53 +316,101 @@ const AdminDashboard = () => {
                   businesses.map((biz) => (
                     <div
                       key={String(biz._id)}
-                      className="rounded-2xl p-6 transition-all"
+                      className="group relative overflow-hidden rounded-3xl p-6 transition-all duration-500 flex flex-col justify-between"
                       style={{
-                        background: "rgba(247,244,239,0.04)",
-                        border: "1px solid rgba(247,244,239,0.10)",
+                        background: "#ffffff",
+                        border: "1px solid rgba(255, 255, 255, 0.4)",
+                        boxShadow: "0 10px 30px -10px rgba(0, 0, 0, 0.15)",
+                        minHeight: "240px",
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor =
-                          "rgba(58,160,255,0.30)";
-                        e.currentTarget.style.background =
-                          "rgba(58,160,255,0.05)";
+                        e.currentTarget.style.transform = "translateY(-6px)";
+                        e.currentTarget.style.boxShadow = "0 20px 40px -10px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(58,160,255,0.2)";
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor =
-                          "rgba(247,244,239,0.10)";
-                        e.currentTarget.style.background =
-                          "rgba(247,244,239,0.04)";
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.boxShadow = "0 10px 30px -10px rgba(0, 0, 0, 0.15)";
                       }}
                     >
-                      <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
-                        style={{ background: "rgba(58,160,255,0.15)" }}
-                      >
-                        <Building2 size={20} style={{ color: "#3AA0FF" }} />
-                      </div>
-                      <h3
-                        className="font-bold mb-1"
-                        style={{
-                          fontFamily: "var(--font-heading)",
-                          color: "#F7F4EF",
-                        }}
-                      >
-                        {biz.name}
-                      </h3>
-                      <p
-                        className="text-sm mb-3"
-                        style={{ color: "rgba(247,244,239,0.45)" }}
-                      >
-                        {biz.category} · {biz.city}
-                      </p>
-                      {biz.openingTime && (
-                        <p
-                          className="text-xs"
-                          style={{ color: "rgba(247,244,239,0.30)" }}
+                      {/* Decorative Background Blob */}
+                      <div 
+                        className="absolute -top-24 -right-24 w-64 h-64 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-700 blur-[50px] pointer-events-none z-0 transform group-hover:scale-110"
+                        style={{ background: "radial-gradient(circle, rgba(58,160,255,0.15) 0%, transparent 70%)" }}
+                      />
+
+                      {/* Header & Actions */}
+                      <div className="relative z-10 flex items-start justify-between mb-4">
+                        <div
+                          className="w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3 shadow-sm"
+                          style={{ 
+                            background: "#eff6ff", // blue-50
+                            border: "1px solid #dbeafe" // blue-100
+                          }}
                         >
-                          {biz.openingTime} – {biz.closingTime}
-                        </p>
-                      )}
+                          {(() => {
+                            const Icon = getCategoryIcon(biz.category);
+                            return <Icon size={24} style={{ color: "#3b82f6" }} />; // blue-500
+                          })()}
+                        </div>
+
+                        <div className="flex gap-2 transition-all duration-300">
+                          <button
+                            onClick={() => setEditingBusiness(biz)}
+                            className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all hover:scale-110 border border-transparent hover:border-indigo-100"
+                            title="Edit Business"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (window.confirm("Are you sure you want to delete this business? All associated queues will also be deleted.")) {
+                                deleteBusinessHandler(biz._id);
+                              }
+                            }}
+                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all hover:scale-110 border border-transparent hover:border-red-100"
+                            title="Delete Business"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="relative z-10 mt-auto">
+                        <div 
+                          className="inline-block px-3 py-1.5 rounded-lg text-[10px] uppercase font-bold mb-4 tracking-widest transition-colors duration-300 shadow-sm" 
+                          style={{ 
+                            background: "#f1f5f9", // slate-100
+                            color: "#475569", // slate-600
+                            border: "1px solid #e2e8f0" // slate-200
+                          }}
+                        >
+                          {biz.category}
+                        </div>
+                        <h3
+                          className="font-black text-2xl mb-4 truncate transition-colors duration-300"
+                          style={{
+                            fontFamily: "var(--font-heading)",
+                            color: "#0f172a", // slate-900
+                            letterSpacing: "-0.03em"
+                          }}
+                        >
+                          {biz.name}
+                        </h3>
+                        
+                        <div className="flex flex-col gap-2.5">
+                          <div className="flex items-center gap-2.5 transition-colors duration-300" style={{ color: "#64748b" }}> {/* slate-500 */}
+                            <MapPin size={15} style={{ color: "#94a3b8" }} /> {/* slate-400 */}
+                            <span className="text-sm font-medium">{biz.city}</span>
+                          </div>
+                          {biz.openingTime && (
+                            <div className="flex items-center gap-2.5 transition-colors duration-300" style={{ color: "#64748b" }}>
+                              <Clock size={15} style={{ color: "#94a3b8" }} />
+                              <span className="text-sm">{biz.openingTime} – {biz.closingTime}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   ))
                 ) : (
@@ -419,6 +492,8 @@ const AdminDashboard = () => {
                 selectQueue(id);
                 setActiveTab("overview");
               }}
+              onEdit={(q) => { setEditingQueue(q); setActiveTab("create-queue"); }}
+              onDelete={deleteQueueHandler}
             />
           </div>
         );
@@ -439,8 +514,20 @@ const AdminDashboard = () => {
             </h1>
             <CreateQueueForm
               businesses={businesses}
-              onSubmit={createQueueHandler}
-              onCancel={() => setActiveTab("overview")}
+              initialData={editingQueue}
+              onSubmit={(data) => {
+                if (editingQueue) {
+                  return updateQueueHandler(editingQueue._id, data).then(() => {
+                    setEditingQueue(null);
+                    setActiveTab("overview");
+                  });
+                }
+                return createQueueHandler(data).then(() => setActiveTab("overview"));
+              }}
+              onCancel={() => {
+                setEditingQueue(null);
+                setActiveTab("overview");
+              }}
             />
           </div>
         );
@@ -474,7 +561,7 @@ const AdminDashboard = () => {
         initial={false}
         animate={{ 
           width: isDesktop ? sidebarWidth : 256, 
-          x: isDesktop ? 0 : (isSidebarOpen ? 0 : "-100%") 
+          x: isDesktop ? 0 : (isSidebarOpen ? 0 : -280) 
         }}
         transition={{ 
           duration: 0.45, 

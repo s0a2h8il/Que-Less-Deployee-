@@ -90,12 +90,9 @@ const Contact = () => {
                 placeholder="How can we help?"
                 value={formData.message}
                 onChange={handleChange}
-                className="w-full rounded-2xl border px-4 py-3 text-sm outline-none transition-all resize-none"
+                className="flex w-full rounded-2xl border-2 border-slate-200 bg-white/90 px-3.5 py-2 text-sm transition-all duration-500 ease-out outline-none hover:border-slate-300 hover:bg-white ring-2 ring-transparent ring-offset-2 ring-offset-white focus:border-[#0B1320] focus:bg-white focus:ring-[#0B1320] shadow-[0_8px_20px_rgba(61,64,91,0.04)] resize-none"
                 style={{
-                  background: "rgba(255,255,255,0.84)",
-                  borderColor: "rgba(61,64,91,0.12)",
                   color: "var(--text-primary)",
-                  boxShadow: "0 8px 20px rgba(61,64,91,0.04)",
                 }}
               />
             </div>

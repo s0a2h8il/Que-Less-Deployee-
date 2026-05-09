@@ -5,6 +5,7 @@ import {
   getMyBusinesses,
   getBusinessById,
   updateBusiness,
+  deleteBusiness,
   getCategories,
 } from "../controllers/businessController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
@@ -34,6 +35,11 @@ router.put(
   businessValidator,
   validateRequest,
   updateBusiness,
+);
+router.delete(
+  "/:id([0-9a-fA-F]{24})",
+  protect,
+  deleteBusiness,
 );
 
 export default router;

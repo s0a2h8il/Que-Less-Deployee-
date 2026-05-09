@@ -25,16 +25,15 @@ const Input = React.forwardRef(
           <input
             ref={ref}
             className={cn(
-              "flex h-11 w-full rounded-2xl border px-3.5 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50",
+              "peer flex h-11 w-full rounded-2xl border-2 border-slate-200 bg-white/90 px-3.5 py-2 text-sm transition-all duration-500 ease-out outline-none shadow-[0_8px_20px_rgba(61,64,91,0.04)] ring-2 ring-transparent ring-offset-2 ring-offset-white",
+              "hover:border-slate-300 hover:bg-white",
+              "focus:border-[#0B1320] focus:bg-white focus:ring-[#0B1320]",
               Icon && "pl-11",
-              error && "focus-visible:ring-rose-500/20",
+              error && "!border-rose-500 focus:!ring-rose-500",
               className,
             )}
             style={{
-              background: "rgba(255,255,255,0.84)",
-              borderColor: error ? "#E07A5F" : "rgba(61,64,91,0.12)",
               color: "var(--text-primary)",
-              boxShadow: "0 8px 20px rgba(61,64,91,0.04)",
             }}
             {...props}
           />

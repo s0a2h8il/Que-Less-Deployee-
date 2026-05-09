@@ -440,3 +440,41 @@ export const getMyActiveQueues = asyncHandler(async (req, res) => {
 
   res.status(200).json(new ApiResponse(200, formattedQueues, "Active queues fetched successfully"));
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// @desc    Update a queue
+// @route   PUT /api/queues/:id
+// ─────────────────────────────────────────────────────────────────────────────
+export const updateQueue = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { title, description, estimatedTimePerUser, maxUsers } = req.body;
+
+  const { queue, error } = await checkQueueOwnership(id, req.user._id, req.user.role);
+  if (error) throw error;
+
+  if (title) queue.title = title;
+  if (description !== undefined) queue.description = description;
+  if (estimatedTimePerUser) queue.estimatedTimePerUser = estimatedTimePerUser;
+  if (maxUsers) queue.maxUsers = maxUsers;
+
+  await queue.save();
+
+  await emitQueueUpdated(queue, "Queue details updated");
+
+  res.status(200).json(new ApiResponse(200, { queue }, "Queue updated successfully"));
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// @desc    Delete a queue
+// @route   DELETE /api/queues/:id
+// ─────────────────────────────────────────────────────────────────────────────
+export const deleteQueue = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  const { queue, error } = await checkQueueOwnership(id, req.user._id, req.user.role);
+  if (error) throw error;
+
+  await Queue.findByIdAndDelete(id);
+
+  res.status(200).json(new ApiResponse(200, null, "Queue deleted successfully"));
+});

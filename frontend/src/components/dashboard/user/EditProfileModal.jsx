@@ -162,13 +162,12 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
               <textarea
                 name="bio"
                 rows="5"
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all resize-none text-sm leading-relaxed"
+                className="flex w-full rounded-2xl border-2 border-slate-200 bg-white/90 px-3.5 py-2 text-sm transition-all duration-500 ease-out outline-none hover:border-slate-300 hover:bg-white ring-2 ring-transparent ring-offset-2 ring-offset-white focus:border-[#0B1320] focus:bg-white focus:ring-[#0B1320] shadow-[0_8px_20px_rgba(61,64,91,0.04)] resize-none leading-relaxed"
                 placeholder="Tell us a bit about yourself..."
                 value={formData.bio}
                 onChange={handleChange}
                 style={{
-                  background: "rgba(255,255,255,0.84)",
-                  boxShadow: "0 8px 20px rgba(61,64,91,0.04)",
+                  color: "var(--text-primary)",
                 }}
               />
               <p className="text-[10px] text-right text-slate-400 font-bold mr-1">

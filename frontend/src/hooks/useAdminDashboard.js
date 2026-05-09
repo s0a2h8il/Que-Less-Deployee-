@@ -171,6 +171,41 @@ export const useAdminDashboard = () => {
     }
   };
 
+  const updateBusinessHandler = async (id, formData) => {
+    try {
+      const response = await adminApi.updateBusiness(id, formData);
+      const updatedBiz = response?.data?.business || response?.data || response;
+      setBusinesses((prev) => prev.map((biz) => (biz._id === id ? updatedBiz : biz)));
+      showToast("Business updated successfully!", "success");
+      return updatedBiz;
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || "Failed to update business",
+        "error",
+      );
+      throw err;
+    }
+  };
+
+  const deleteBusinessHandler = async (id) => {
+    try {
+      await adminApi.deleteBusiness(id);
+      setBusinesses((prev) => prev.filter((biz) => biz._id !== id));
+      // Cascade delete on frontend state if needed
+      setQueues((prev) => prev.filter((q) => q.business?._id !== id && q.business !== id));
+      if (selectedQueue?.business?._id === id || selectedQueue?.business === id) {
+        setSelectedQueue(null);
+      }
+      showToast("Business deleted successfully!", "success");
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || "Failed to delete business",
+        "error",
+      );
+      throw err;
+    }
+  };
+
   const createQueueHandler = async (data) => {
     try {
       const response = await adminApi.createQueue(data);
@@ -181,6 +216,42 @@ export const useAdminDashboard = () => {
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to create queue",
+        "error",
+      );
+      throw err;
+    }
+  };
+
+  const updateQueueHandler = async (id, data) => {
+    try {
+      const response = await adminApi.updateQueue(id, data);
+      const updatedQueue = response?.data?.queue || response?.data || response;
+      setQueues((prev) => prev.map((q) => (q._id === id ? { ...q, ...updatedQueue } : q)));
+      if (selectedQueue?._id === id) {
+        setSelectedQueue((prev) => ({ ...prev, ...updatedQueue }));
+      }
+      showToast("Queue updated successfully!", "success");
+      return updatedQueue;
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || "Failed to update queue",
+        "error",
+      );
+      throw err;
+    }
+  };
+
+  const deleteQueueHandler = async (id) => {
+    try {
+      await adminApi.deleteQueue(id);
+      setQueues((prev) => prev.filter((q) => q._id !== id));
+      if (selectedQueue?._id === id) {
+        setSelectedQueue(null);
+      }
+      showToast("Queue deleted successfully!", "success");
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || "Failed to delete queue",
         "error",
       );
       throw err;
@@ -379,7 +450,11 @@ export const useAdminDashboard = () => {
     toast,
     hideToast,
     createBusinessHandler,
+    updateBusinessHandler,
+    deleteBusinessHandler,
     createQueueHandler,
+    updateQueueHandler,
+    deleteQueueHandler,
     callNextHandler,
     pauseHandler,
     resumeHandler,

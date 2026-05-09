@@ -256,3 +256,25 @@ export const getCategories = asyncHandler(async (req, res) => {
     )
   );
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// @desc    Delete a business
+// @route   DELETE /api/business/:id
+// @access  Private (owner or superadmin)
+// ─────────────────────────────────────────────────────────────────────────────
+export const deleteBusiness = asyncHandler(async (req, res) => {
+  const business = await Business.findById(req.params.id);
+  if (!business) throw new ApiError(404, "Business not found");
+
+  const isOwner = business.ownerId.toString() === req.user._id.toString();
+  const isSuperAdmin = req.user.role === "superadmin";
+  if (!isOwner && !isSuperAdmin)
+    throw new ApiError(403, "You are not authorized to delete this business");
+
+  // Cascade delete queues associated with this business
+  await Queue.deleteMany({ businessId: business._id });
+
+  await Business.findByIdAndDelete(req.params.id);
+
+  res.status(200).json(new ApiResponse(200, null, "Business and associated queues deleted successfully"));
+});

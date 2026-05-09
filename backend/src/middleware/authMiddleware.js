@@ -71,7 +71,7 @@ export const authorize = (...roles) => {
       );
     }
 
-    console.log(`✅ Role authorized: ${req.user.role}`);
+    // console.log(`✅ Role authorized: ${req.user.role}`);
     next();
   };
 };

@@ -4,13 +4,13 @@ import { Input } from "../../ui/Input";
 import { Card } from "../../ui/Card";
 import { ListOrdered, Users, Timer } from "lucide-react";
 
-const CreateQueueForm = ({ businesses, onSubmit, onCancel }) => {
+const CreateQueueForm = ({ businesses, initialData, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
-    businessId: businesses[0]?._id || "",
-    title: "",
-    description: "",
-    estimatedTimePerUser: 10,
-    maxUsers: 50,
+    businessId: initialData?.businessId || businesses[0]?._id || "",
+    title: initialData?.title || "",
+    description: initialData?.description || "",
+    estimatedTimePerUser: initialData?.estimatedTimePerUser || 10,
+    maxUsers: initialData?.maxUsers || 50,
   });
   const [loading, setLoading] = useState(false);
 
@@ -42,10 +42,10 @@ const CreateQueueForm = ({ businesses, onSubmit, onCancel }) => {
         </div>
         <div>
           <h2 className="text-2xl font-bold text-slate-800">
-            Create New Queue
+            {initialData ? "Edit Queue" : "Create New Queue"}
           </h2>
           <p className="text-slate-500">
-            Set up a virtual queue for your business
+            {initialData ? "Update queue details" : "Set up a virtual queue for your business"}
           </p>
         </div>
       </div>
@@ -57,10 +57,11 @@ const CreateQueueForm = ({ businesses, onSubmit, onCancel }) => {
           </label>
           <select
             name="businessId"
-            className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+            className="flex h-11 w-full rounded-2xl border-2 border-slate-200 bg-white/90 px-3.5 py-2 text-sm transition-all duration-500 ease-out outline-none hover:border-slate-300 hover:bg-white ring-2 ring-transparent ring-offset-2 ring-offset-white focus:border-[#0B1320] focus:bg-white focus:ring-[#0B1320] shadow-[0_8px_20px_rgba(61,64,91,0.04)]"
             value={formData.businessId}
             onChange={handleChange}
             required
+            disabled={!!initialData}
           >
             <option value="">Select a business</option>
             {businesses.map((biz) => (
@@ -87,7 +88,7 @@ const CreateQueueForm = ({ businesses, onSubmit, onCancel }) => {
           <textarea
             name="description"
             rows="2"
-            className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none"
+            className="flex w-full rounded-2xl border-2 border-slate-200 bg-white/90 px-3.5 py-2 text-sm transition-all duration-500 ease-out outline-none hover:border-slate-300 hover:bg-white ring-2 ring-transparent ring-offset-2 ring-offset-white focus:border-[#0B1320] focus:bg-white focus:ring-[#0B1320] shadow-[0_8px_20px_rgba(61,64,91,0.04)] resize-none"
             placeholder="What is this queue for?"
             value={formData.description}
             onChange={handleChange}
@@ -132,7 +133,7 @@ const CreateQueueForm = ({ businesses, onSubmit, onCancel }) => {
             isLoading={loading}
             disabled={!formData.businessId}
           >
-            Create Queue
+            {initialData ? "Save Changes" : "Create Queue"}
           </Button>
         </div>
       </form>

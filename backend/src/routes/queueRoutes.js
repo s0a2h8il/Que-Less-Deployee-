@@ -11,7 +11,9 @@ import {
   startQueue,
   updateMemberStatus,
   getMyActiveQueues,
-  getAdminQueues
+  getAdminQueues,
+  updateQueue,
+  deleteQueue
 } from "../controllers/queueController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { queueValidator, statusUpdateValidator } from "../validators/queueValidator.js";
@@ -33,6 +35,9 @@ router.post("/:id/join", protect, joinQueue);
 router.post("/:id/leave", protect, leaveQueue);
 
 // Admin Control routes
+router.put("/:id", protect, queueValidator, validateRequest, updateQueue);
+router.delete("/:id", protect, deleteQueue);
+
 router.post("/:id/next", protect, callNext);
 router.put("/:id/pause", protect, pauseQueue);
 router.put("/:id/resume", protect, resumeQueue);

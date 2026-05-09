@@ -180,7 +180,7 @@ const LocationPicker = ({ onAddressSelect, initialPos = [21.1702, 72.8311] }) =>
   const SearchOverlay = (
     <div className="absolute top-4 left-0 right-0 z-[1002] px-4 flex flex-col items-center pointer-events-none">
       <div className="w-full max-w-md flex flex-col pointer-events-auto">
-        <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-2xl border border-white/20">
+        <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-[0_8px_20px_rgba(61,64,91,0.04)] border-2 border-transparent transition-all duration-500 ease-out ring-2 ring-transparent ring-offset-2 ring-offset-white focus-within:border-[#0B1320] focus-within:ring-[#0B1320] focus-within:bg-white">
           <div className="flex-1 relative">
             <input
               type="text"

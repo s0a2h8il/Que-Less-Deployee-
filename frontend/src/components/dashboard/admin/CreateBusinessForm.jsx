@@ -5,21 +5,21 @@ import { Card } from "../../ui/Card";
 import LocationPicker from "../../ui/LocationPicker";
 import { Building2, MapPin, Phone, Mail, Clock, Map as MapIcon } from "lucide-react";
 
-const CreateBusinessForm = ({ onSubmit, onCancel }) => {
+const CreateBusinessForm = ({ initialData, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    category: "",
-    description: "",
-    addressLine1: "",
-    addressLine2: "",
-    areaName: "",
-    city: "",
-    state: "",
-    pincode: "",
-    phone: "",
-    email: "",
-    openingTime: "09:00",
-    closingTime: "18:00",
+    name: initialData?.name || "",
+    category: initialData?.category || "",
+    description: initialData?.description || "",
+    addressLine1: initialData?.addressLine1 || "",
+    addressLine2: initialData?.addressLine2 || "",
+    areaName: initialData?.areaName || "",
+    city: initialData?.city || "",
+    state: initialData?.state || "",
+    pincode: initialData?.pincode || "",
+    phone: initialData?.phone || "",
+    email: initialData?.email || "",
+    openingTime: initialData?.openingTime || "09:00",
+    closingTime: initialData?.closingTime || "18:00",
   });
   const [loading, setLoading] = useState(false);
 
@@ -61,10 +61,10 @@ const CreateBusinessForm = ({ onSubmit, onCancel }) => {
         </div>
         <div>
           <h2 className="text-2xl font-bold text-slate-800">
-            Register Business
+            {initialData ? "Edit Business" : "Register Business"}
           </h2>
           <p className="text-slate-500">
-            Add your business to start creating queues
+            {initialData ? "Update your business details" : "Add your business to start creating queues"}
           </p>
         </div>
       </div>
@@ -100,7 +100,7 @@ const CreateBusinessForm = ({ onSubmit, onCancel }) => {
                 <textarea
                   name="description"
                   rows="3"
-                  className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none"
+                  className="flex w-full rounded-2xl border-2 border-slate-200 bg-white/90 px-3.5 py-2 text-sm transition-all duration-500 ease-out outline-none hover:border-slate-300 hover:bg-white ring-2 ring-transparent ring-offset-2 ring-offset-white focus:border-[#0B1320] focus:bg-white focus:ring-[#0B1320] shadow-[0_8px_20px_rgba(61,64,91,0.04)] resize-none"
                   placeholder="Brief description of your services"
                   value={formData.description}
                   onChange={handleChange}
@@ -242,7 +242,7 @@ const CreateBusinessForm = ({ onSubmit, onCancel }) => {
             Cancel
           </Button>
           <Button type="submit" className="flex-1 h-12 text-base shadow-lg shadow-indigo-200" isLoading={loading}>
-            Register Business
+            {initialData ? "Save Changes" : "Register Business"}
           </Button>
         </div>
       </form>

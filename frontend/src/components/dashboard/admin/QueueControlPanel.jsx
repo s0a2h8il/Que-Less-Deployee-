@@ -24,7 +24,7 @@ const QueueControlPanel = ({
       <div className="flex flex-col md:flex-row items-center gap-8">
         <div className="text-center md:text-left">
           <div className="flex items-center justify-center md:justify-start gap-3 mb-1">
-            <h2 className="text-3xl font-black text-slate-800">
+            <h2 className="text-3xl font-black text-slate-800 break-words max-w-[200px] sm:max-w-[300px] md:max-w-[400px] lg:max-w-[500px]">
               {queue.title}
             </h2>
             <QueueStatusBadge status={queue.status} />

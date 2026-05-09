@@ -214,6 +214,7 @@ const Navbar = () => {
                   >
                     {user?.avatar ? (
                       <img 
+                        key={user.avatar}
                         src={getAvatarUrl(user.avatar)} 
                         alt="" 
                         className="w-full h-full object-cover"
@@ -380,6 +381,7 @@ const Navbar = () => {
                   >
                     {user?.avatar ? (
                       <img 
+                        key={user.avatar}
                         src={getAvatarUrl(user.avatar)} 
                         alt="" 
                         className="w-full h-full object-cover"

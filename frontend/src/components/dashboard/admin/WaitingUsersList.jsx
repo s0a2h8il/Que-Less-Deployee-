@@ -2,8 +2,15 @@ import React from "react";
 import { Card } from "../../ui/Card";
 import { Users, Clock, CheckCircle2, User } from "lucide-react";
 import { cn } from "../../../utils/cn";
+import { CONFIG } from "../../../constants/config";
 
 const WaitingUsersList = ({ members = [] }) => {
+  const getAvatarUrl = (path) => {
+    if (!path) return null;
+    if (path.startsWith("http") || path.startsWith("data:")) return path;
+    const cleanPath = path.startsWith("/") ? path : `/${path}`;
+    return `${CONFIG.BASE_URL}${cleanPath}`;
+  };
   if (members.length === 0) {
     return (
       <div className="text-center py-12 bg-white rounded-3xl border border-dashed border-slate-300">
@@ -51,13 +58,30 @@ const WaitingUsersList = ({ members = [] }) => {
               >
                 #{member.tokenNumber}
               </div>
-              <div>
-                <p className="font-semibold text-slate-800">
-                  {member.userId?.name || "Guest User"}
-                </p>
-                <p className="text-xs text-slate-400 flex items-center gap-1">
-                  <Clock size={12} /> Joined at {new Date(member.joinedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </p>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center font-bold text-indigo-500 overflow-hidden shrink-0 border border-indigo-200">
+                  {member.userId?.avatar ? (
+                    <img 
+                      src={getAvatarUrl(member.userId.avatar)} 
+                      alt={member.userId?.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerText = member.userId?.name?.[0]?.toUpperCase() || "U";
+                      }}
+                    />
+                  ) : (
+                    member.userId?.name?.[0]?.toUpperCase() || "U"
+                  )}
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-800">
+                    {member.userId?.name || "Guest User"}
+                  </p>
+                  <p className="text-xs text-slate-400 flex items-center gap-1">
+                    <Clock size={12} /> Joined at {new Date(member.joinedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
               </div>
             </div>
 

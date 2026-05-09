@@ -23,6 +23,10 @@ const ProfileCard = ({ user }) => {
 
   const [imgError, setImgError] = useState(false);
 
+  React.useEffect(() => {
+    setImgError(false);
+  }, [user?.avatar]);
+
   return (
     <>
       <Card className="p-8 border-slate-100 shadow-soft overflow-hidden relative">
@@ -31,6 +35,7 @@ const ProfileCard = ({ user }) => {
           <div className="h-24 w-24 bg-indigo-600 text-white rounded-[2rem] flex items-center justify-center text-3xl font-black shadow-xl shadow-indigo-100 mb-6 overflow-hidden border-4 border-white">
             {user.avatar && !imgError ? (
               <img 
+                key={user.avatar}
                 src={getAvatarUrl(user.avatar)} 
                 alt={user.name} 
                 className="w-full h-full object-cover"

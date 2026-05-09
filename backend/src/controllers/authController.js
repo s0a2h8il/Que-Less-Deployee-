@@ -188,20 +188,16 @@ export const resendOTP = asyncHandler(async (req, res) => {
   user.otpExpiry = Date.now() + 10 * 60 * 1000;
   await user.save();
 
+  // Send Email (Non-blocking)
   const message = getEmailTemplate(otp, "Your Verification Code");
 
-  try {
-    await sendEmail({
-      email: user.email,
-      subject: "New Account Verification OTP",
-      message,
-    });
-  } catch (error) {
-    user.otp = undefined;
-    user.otpExpiry = undefined;
-    await user.save({ validateBeforeSave: false });
-    throw new ApiError(500, "Could not send verification email. Please try again later.");
-  }
+  sendEmail({
+    email: user.email,
+    subject: "New Account Verification OTP",
+    message,
+  }).catch(err => {
+    console.error("❌ Background Resend Email Error:", err.message);
+  });
 
   res.status(200).json(new ApiResponse(200, null, "A new OTP has been sent to your email."));
 });

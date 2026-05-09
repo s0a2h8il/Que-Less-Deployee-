@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { User, Mail, Shield, Calendar, Phone } from "lucide-react";
 import { Card, Button } from "../..";
 import EditProfileModal from "./EditProfileModal";
+import { CONFIG } from "../../../constants/config";
 
 const ProfileCard = ({ user }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -17,7 +18,7 @@ const ProfileCard = ({ user }) => {
     if (path.startsWith("http") || path.startsWith("data:")) return path;
     // Handle both cases: path starting with / or not
     const cleanPath = path.startsWith("/") ? path : `/${path}`;
-    return `http://localhost:5000${cleanPath}`;
+    return `${CONFIG.BASE_URL}${cleanPath}`;
   };
 
   const [imgError, setImgError] = useState(false);

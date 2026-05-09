@@ -18,6 +18,7 @@ import {
 import { cn } from "../../utils/cn";
 import { useAuth } from "../../context/AuthContext";
 import NotificationBell from "../notifications/NotificationBell";
+import { CONFIG } from "../../constants/config";
 
 const Navbar = () => {
   const palette = {
@@ -48,7 +49,7 @@ const Navbar = () => {
     if (!path) return null;
     if (path.startsWith("http") || path.startsWith("data:")) return path;
     const cleanPath = path.startsWith("/") ? path : `/${path}`;
-    return `http://localhost:5000${cleanPath}`;
+    return `${CONFIG.BASE_URL}${cleanPath}`;
   };
 
   const navLinks = [

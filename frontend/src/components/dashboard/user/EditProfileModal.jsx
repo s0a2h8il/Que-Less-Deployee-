@@ -5,6 +5,7 @@ import { authApi } from "../../../api/authApi";
 import { useAuth } from "../../../context/AuthContext";
 import { useToast } from "../../../context/ToastContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { CONFIG } from "../../../constants/config";
 
 const EditProfileModal = ({ isOpen, onClose, user }) => {
   const [formData, setFormData] = useState({
@@ -99,7 +100,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
     if (path.startsWith("data:")) return path;
     if (path.startsWith("http")) return path;
     const cleanPath = path.startsWith("/") ? path : `/${path}`;
-    return `http://localhost:5000${cleanPath}`;
+    return `${CONFIG.BASE_URL}${cleanPath}`;
   };
 
   return (

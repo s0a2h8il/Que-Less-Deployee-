@@ -16,6 +16,7 @@ import { notFound } from "./middleware/notFoundMiddleware.js";
 import { ApiResponse } from "./utils/ApiResponse.js";
 import { globalLimiter, authLimiter, apiLimiter, sensitiveActionLimiter } from "./middleware/rateLimitMiddleware.js";
 import { applySecurityMiddleware, corsConfig } from "./middleware/securityMiddleware.js";
+import { logEmailStartup } from "./utils/sendEmail.js";
 
 // Route imports
 import authRoutes from "./routes/authRoutes.js";
@@ -35,6 +36,7 @@ const ENV = process.env.NODE_ENV || "development";
 
 console.log(`📡 Starting server in ${ENV} mode...`);
 console.log(`🔌 Assigned Port: ${PORT}`);
+logEmailStartup();
 
 // ── Security middleware (order matters) ───────────────────────────────────────
 app.use(cors(corsConfig));

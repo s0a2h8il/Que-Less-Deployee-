@@ -3,10 +3,14 @@ import { CONFIG } from "../constants/config";
 import { getToken, removeToken } from "../utils/token";
 import { handleApiError } from "./errorHandler";
 
+const baseURL = CONFIG.API_URL || "http://localhost:5000/api";
+const isLocalApi =
+  baseURL.includes("localhost") || baseURL.includes("127.0.0.1");
+
 const api = axios.create({
-  baseURL: CONFIG.API_URL || "http://localhost:5000/api",
+  baseURL,
   withCredentials: true,
-  timeout: 15000,
+  timeout: isLocalApi ? 15000 : 60000,
   headers: {
     "Content-Type": "application/json",
   },

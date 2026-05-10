@@ -40,8 +40,13 @@ const sendEmail = async (options) => {
     await transporter.sendMail(mailOptions);
     console.log("✉️ Email sent successfully to:", options.email);
   } catch (error) {
-    console.error("❌ Email could not be sent:", error);
-    throw new ApiError(500, "There was an error sending the email. Try again later!");
+    const code = error.code || error.responseCode;
+    const reason = error.response ?? error.message;
+    console.error("❌ Email could not be sent:", { code, reason, response: error.response });
+    throw new ApiError(
+      500,
+      `There was an error sending the email. Try again later!${code ? ` [${code}]` : ""}`,
+    );
   }
 };
 

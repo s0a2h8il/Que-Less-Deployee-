@@ -109,8 +109,8 @@ export const registerUser = asyncHandler(async (req, res) => {
     email: user.email,
     subject: "Account Verification OTP",
     message,
-  }).catch(err => {
-    console.error("Delayed Email Error:", err.message);
+  }).catch((err) => {
+    console.error("Delayed Email Error:", err?.message, err);
   });
 
   res.status(201).json(new ApiResponse(201, { user: safeUser(user) }, "Registration successful. Please check your email for the OTP to verify your account."));

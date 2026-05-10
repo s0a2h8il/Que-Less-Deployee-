@@ -1,9 +1,39 @@
 import nodemailer from "nodemailer";
 import { ApiError } from "./ApiError.js";
 
+/** App passwords and secrets pasted from UI often include spaces — Gmail rejects those. */
+const normalizeSecret = (value) =>
+  typeof value === "string" ? value.replace(/\s+/g, "").trim() : value;
+
+function createTransporter() {
+  const user = process.env.SMTP_USER;
+  const pass = normalizeSecret(process.env.SMTP_PASS);
+  const host = (process.env.SMTP_HOST || "").toLowerCase();
+  const port = parseInt(process.env.SMTP_PORT, 10) || 587;
+
+  const useGmailBuiltin =
+    process.env.SMTP_SERVICE === "gmail" ||
+    !host ||
+    host === "smtp.gmail.com";
+
+  if (useGmailBuiltin) {
+    return nodemailer.createTransport({
+      service: "gmail",
+      auth: { user, pass },
+    });
+  }
+
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port,
+    secure: port === 465,
+    auth: { user, pass },
+    family: 4,
+  });
+}
+
 const sendEmail = async (options) => {
   try {
-    // If no SMTP credentials are provided, mock the email send for local testing
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
       console.log("\n=======================================================");
       console.log("⚠️  MOCK EMAIL SENT (No SMTP Credentials Configured) ⚠️");
@@ -11,24 +41,11 @@ const sendEmail = async (options) => {
       console.log(`Subject: ${options.subject}`);
       console.log(`Message HTML:\n${options.message}`);
       console.log("=======================================================\n");
-      return; // Successfully "sent"
+      return;
     }
 
-    // 1. Create a transporter
-    const port = parseInt(process.env.SMTP_PORT) || 587;
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.gmail.com",
-      port: port,
-      secure: port === 465, // Use SSL for port 465
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-      // Force IPv4 to avoid ENETUNREACH errors on Render
-      family: 4, 
-    });
+    const transporter = createTransporter();
 
-    // 2. Define the email options
     const mailOptions = {
       from: `Que-Less <${process.env.SMTP_USER}>`,
       to: options.email,
@@ -36,7 +53,6 @@ const sendEmail = async (options) => {
       html: options.message,
     };
 
-    // 3. Actually send the email
     await transporter.sendMail(mailOptions);
     console.log("✉️ Email sent successfully to:", options.email);
   } catch (error) {
